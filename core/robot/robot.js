@@ -7,9 +7,24 @@ let Core = require('../common/core')
 module.exports = Robot extends Core{
   constructor() {
     super()
+
+    this.tickers = null
+    this.books = null
+    this.trades = null
   }
 
   this.feeds = {} // 观察标的
+
+  /**
+   * 为机器人注册一个模块
+   */
+  registeModel(name, model) {
+    if(!this[name]) {
+      this[name] = model
+    } else {
+      super.error(`registerModel(): ${name} already exsit!`)
+    }
+  }
 
   /**
    * 启动准备函数
@@ -19,7 +34,12 @@ module.exports = Robot extends Core{
   }
 
   /**
-   * 
+   * 注册事件
+   */
+  subscribe() {}
+
+  /**
+   *
    */
 
 }

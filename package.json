@@ -4,7 +4,7 @@
   "description": "Flexible quantized transation framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test" : "mocha --recursive"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/leedow/vtrade/issues"
   },
-  "homepage": "https://github.com/leedow/vtrade#readme"
+  "homepage": "https://github.com/leedow/vtrade#readme",
+  "devDependencies": {
+    "mocha": "^6.2.2"
+  }
 }

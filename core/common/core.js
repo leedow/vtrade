@@ -13,4 +13,12 @@ module.exports = class Core {
     this.events.on(eventName, listener)
   }
 
+  log(content) {
+    console.log(content)
+  }
+
+  error(content) {
+    console.error(content)
+  }
+
 }

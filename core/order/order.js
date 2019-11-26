@@ -6,12 +6,15 @@ let Core = require('../common/core')
 module.exports = Order extends Core{
   constructor() {
     super()
-    
+
     this.exchange = '' // 所属交易所
     this.orderNumber = '' // 交易所订单号
     this.pair = '' // 交易对
 
-    this.side = '' // buy|sell
+    this.side = '' // buy|sell 买单卖单，多单，空单
+
+    this.makerFee = 0 // maker费率，千分之一设 0.001
+    this.takerFee = 0 // taker费率
 
     this._price = 0 // 设置价格精度后的价格
     this.priceAcc = 0 // 价格精度小数位数

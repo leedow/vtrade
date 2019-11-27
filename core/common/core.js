@@ -11,6 +11,15 @@ module.exports = class Core {
     this.enableError = true
   }
 
+  copyOptions(options) {
+
+    if(typeof options == 'object') {
+      for(let key in options) {
+        this[key] = options[key]
+      }
+    }
+  }
+
   subscribe(eventName, listener) {
     this.events.on(eventName, listener)
   }

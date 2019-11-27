@@ -26,7 +26,7 @@ module.exports = class Ex extends Core {
       super.error(`createAsset(): ${name} already exsit!`)
       return
     }
-    this.assets.push(new Asset(name, balance))
+    this.assets.push(new Asset({name, balance}))
   }
 
   /**

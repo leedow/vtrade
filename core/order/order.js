@@ -4,7 +4,7 @@ let Core = require('../common/core')
  * 订单基础模型
  */
 module.exports = class Order extends Core{
-  constructor() {
+  constructor(options) {
     super()
 
     this.exchange = '' // 所属交易所
@@ -22,6 +22,8 @@ module.exports = class Order extends Core{
     this.priceAcc = 0 // 价格精度小数位数
     this._amount = 0 // 设置精度后的数量
     this.amountAcc = 0 // 数量精度小数位数
+
+    super.copyOptions.call(this, options)
 
     // 订单状态
     this.UNACTIVE = 0

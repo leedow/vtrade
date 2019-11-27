@@ -4,17 +4,15 @@ let Core = require('../common/core')
  * 单资产类
  */
 module.exports = class Asset extends Core{
-  constructor(name, balance = 0) {
+  constructor(options) {
     super()
 
-    if(typeof name == 'undefined') {
-      super.error(`constructor(): name cant not be empty!`)
-    }
-
     super.modelName = 'Asset model'
-    this.name = name // 账户名称
-    this.balance = balance // 资产总数量，包含冻结部分
+    this.name = '' // 账户名称
+    this.balance = 0 // 资产总数量，包含冻结部分
     this.balanceFrozen = 0 // 资产冻结数量
+
+    super.copyOptions.call(this, options)
   }
 
   /**

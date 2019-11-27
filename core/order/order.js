@@ -14,6 +14,7 @@ module.exports = class Order extends Core{
 
     this.makerFee = 0 // maker费率，千分之一设 0.001
     this.takerFee = 0 // taker费率
+    this.isMaker = false // 是否是maker单
     this.amountFill = 0 // 已完成数量
     this.fee = 0 // 手续费
 
@@ -63,9 +64,9 @@ module.exports = class Order extends Core{
   /**
    * 创建订单
    */
-  async create() {
+  create() {
     this.status = this.OPEN
-    
+    super.publish(`ORDER_CREATE_${this.exchange}`, this)
   }
 
   /**
@@ -78,6 +79,7 @@ module.exports = class Order extends Core{
    */
   async cancel() {
     this.status = this.CANCELED
+    super.publish(`ORDER_CENCEL_${this.exchange}`, this)
   }
 
   /**
@@ -85,6 +87,15 @@ module.exports = class Order extends Core{
    */
   finish() {
     this.status = this.DONE
+    this.amountFill = this.amount
+
+    if(this.side == 'buy') {
+      this.fee = this.isMaker?this.amount*this.makerFee:this.amount*this.takerFee
+    } else if(this.side == 'sell') {
+      this.fee = this.isMaker?this.amount*this.makerFee*this.price:this.amount*this.takerFee*this.price
+    }
+
+    super.publish(`ORDER_FILL_${this.exchange}`, this)
   }
 
   /**
@@ -98,8 +109,22 @@ module.exports = class Order extends Core{
    * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交
    * 用于加快更新订单状态，减少API请求
    */
-  checkStatusByPrice(price) {
+  checkStatusByPrice(buyPrice, sellPrice) {
+    if(this.status != this.OPEN) return
 
+    if(this.side == 'buy') {
+      if(sellPrice <= this.price) {
+        this.finish()
+      } else {
+        this.isMaker = true
+      }
+    } else if(this.side == 'sell') {
+      if(buyPrice >= this.price) {
+        this.finish()
+      } else {
+        this.isMaker = true
+      }
+    }
   }
 
 }

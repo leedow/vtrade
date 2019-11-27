@@ -11,4 +11,8 @@ describe('测试消息模块',function(){
   it('发布消息',function(){
     events.emit('test', 123)
   })
+
+  it('发布消息2',function(){
+    events.emit('test2', 123)
+  })
 })

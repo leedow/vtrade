@@ -55,17 +55,25 @@ describe('测试order模块',function(){
 
 
 
-  let order2 = new Order()
-  order2.pair = 'btcusdt'
-  order2.amountAcc = 4
-  order2.priceAcc = 2
-  order2.amount = 100.123456
-  order2.price = 4321.123
-  order2.makerFee = -0.001
-  order2.takerFee = 0.001
-  order2.side = 'sell'
-  order2.exchange = 'TEST'
+  let order2 = null
 
+  it('用构造函数方法初始化',function(){
+    order2 = new Order({
+      pair: 'btcusdt',
+      amountAcc: 4,
+      priceAcc: 2,
+      amount: 100.123456,
+      price: 4321.123,
+      makerFee: -0.001,
+      takerFee: 0.001,
+      side: 'sell',
+      exchange: 'TEST'
+    })
+
+    assert.equal( order2.price, 4321.12)
+    assert.equal( order2.amount, 100.1234)
+    //assert.deepEqual( order.status, 2)
+  })
 
 
   it('以taker形式成交',function(){

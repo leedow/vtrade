@@ -9,6 +9,18 @@ module.exports = class Ex extends Core {
     this.assets = []
     this.orders = []
     this.Order = null
+    // super.copyOptions.call(this, options)
+
+  }
+
+  getOrdersLength() {
+    return this.orders.length
+  }
+
+  getOrdersByStatus(status) {
+    return this.orders.filter(order => {
+      return order.status == status
+    })
   }
 
   /**
@@ -23,7 +35,7 @@ module.exports = class Ex extends Core {
    */
   createAsset(name, balance) {
     if(this.getAsset(name)) {
-      super.error(`createAsset(): ${name} already exsit!`)
+      this.error(`createAsset(): ${name} already exsit!`)
       return
     }
     this.assets.push(new Asset({name, balance}))
@@ -35,5 +47,19 @@ module.exports = class Ex extends Core {
   registerOrder(Order) {
     this.Order = Order
   }
+
+  /**
+   * 检查order模型是否注册
+   */
+  checkOrderModel() {
+    if(!this.Order) {
+      this.error(`buy(): Order model must be registered!`)
+      return false
+    } else {
+      return true
+    }
+  }
+
+
 
 }

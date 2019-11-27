@@ -23,7 +23,7 @@ module.exports = class Order extends Core{
     this._amount = 0 // 设置精度后的数量
     this.amountAcc = 0 // 数量精度小数位数
 
-    super.copyOptions.call(this, options)
+    this.copyOptions(options)
 
     // 订单状态
     this.UNACTIVE = 0
@@ -68,7 +68,8 @@ module.exports = class Order extends Core{
    */
   create() {
     this.status = this.OPEN
-    super.publish(`ORDER_CREATE_${this.exchange}`, this)
+    this.publish(`ORDER_CREATE_${this.exchange}`, this)
+    return true
   }
 
   /**
@@ -81,7 +82,7 @@ module.exports = class Order extends Core{
    */
   async cancel() {
     this.status = this.CANCELED
-    super.publish(`ORDER_CENCEL_${this.exchange}`, this)
+    this.publish(`ORDER_CENCEL_${this.exchange}`, this)
   }
 
   /**
@@ -97,7 +98,7 @@ module.exports = class Order extends Core{
       this.fee = this.isMaker?this.amount*this.makerFee*this.price:this.amount*this.takerFee*this.price
     }
 
-    super.publish(`ORDER_FILL_${this.exchange}`, this)
+    this.publish(`ORDER_FILL_${this.exchange}`, this)
   }
 
   /**

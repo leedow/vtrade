@@ -12,7 +12,7 @@ module.exports = class Asset extends Core{
     this.balance = 0 // 资产总数量，包含冻结部分
     this.balanceFrozen = 0 // 资产冻结数量
 
-    super.copyOptions.call(this, options)
+    this.copyOptions(options)
   }
 
   /**
@@ -37,7 +37,7 @@ module.exports = class Asset extends Core{
     amount = Number(amount)
     let left = this.getAvailable()
     if(amount > left) {
-      super.error(`frozen(): ${left} is not enough for ${amount}`)
+      this.error(`frozen(): ${left} is not enough for ${amount}`)
       return false
     } else {
       this.balanceFrozen += amount

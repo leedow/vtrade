@@ -28,7 +28,6 @@ describe('测试tickers模块',function(){
     assert.deepEqual( tickers.LIVE_BUY_PRICE, [3,4,5] )
     assert.deepEqual( tickers.LIVE_SELL_PRICE, [5,3] )
 
-    //assert.deepEqual( [1,2,5,4,3,6], [1,2,5,4,3,6] )
   })
 
   it('get part',function(){

@@ -1,24 +1,34 @@
-let Events = require('./events')
-
-let e = new Events()
+let events = require('./events')
 
 module.exports = class Core {
   constructor() {
     this.id = 0
     this.robotId = 0
-    this.events = e
+    this.events = events
+    this.modelName = ''
+
+    this.enableLog = true
+    this.enableError = true
   }
 
   subscribe(eventName, listener) {
     this.events.on(eventName, listener)
   }
 
+  publish(eventName, data) {
+    this.events.emit(eventName, data)
+  }
+
   log(content) {
-    console.log(content)
+    if(this.enableLog) {
+      console.log(content)
+    }
   }
 
   error(content) {
-    console.error(content)
+    if(this.enableError) {
+      console.error(content)
+    }
   }
 
 }

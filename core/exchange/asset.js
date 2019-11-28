@@ -46,6 +46,18 @@ module.exports = class Asset extends Core{
   }
 
   /**
+   * 释放（撤销）冻结资金
+   */
+  free(amount) {
+    amount = Number(amount)
+    if(amount >= this.getFrozen() ) {
+       this.balanceFrozen = 0
+    } else {
+      this.balanceFrozen -= amount
+    }
+  }
+
+  /**
    * 减少资产，默认优先减少冻结资产
    */
   decrease(amount) {

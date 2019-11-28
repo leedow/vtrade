@@ -1,5 +1,4 @@
 let Core = require('../common/core')
-
 /**
  * 订单基础模型
  */
@@ -26,16 +25,16 @@ module.exports = class Order extends Core{
     this.copyOptions(options)
 
     // 订单状态
-    this.UNACTIVE = 0
-    this.SENDING = 1
-    this.OPEN = 2
-    this.PARTDONE = 3
-    this.DONE = 4
-    this.ARTCANCELED = 5
-    this.CANCELED = 6
-    this.ERROR = 7
-    this.LIMIT = 8
-    this.status = this.UNACTIVE
+    // this.UNACTIVE = 0
+    // this.SENDING = 1
+    // this.OPEN = 2
+    // this.PARTDONE = 3
+    // this.DONE = 4
+    // this.ARTCANCELED = 5
+    // this.CANCELED = 6
+    // this.ERROR = 7
+    // this.LIMIT = 8
+    this.status = UNACTIVE
   }
 
   set price(value) {
@@ -54,6 +53,10 @@ module.exports = class Order extends Core{
     return this._amount
   }
 
+  get eventName() {
+    return `${this.exchange}_${this.pair}`
+  }
+
   _formatPrice(price) {
     return price.toFixed(this.priceAcc)
   }
@@ -67,8 +70,8 @@ module.exports = class Order extends Core{
    * 创建订单
    */
   create() {
-    this.status = this.OPEN
-    this.publish(`ORDER_CREATE_${this.exchange}`, this)
+    this.status = OPEN
+    this.publish(`ORDER_${this.eventName}`, this)
     return true
   }
 
@@ -81,15 +84,15 @@ module.exports = class Order extends Core{
    * 取消订单
    */
   async cancel() {
-    this.status = this.CANCELED
-    this.publish(`ORDER_CENCEL_${this.exchange}`, this)
+    this.status = CANCELED
+    this.publish(`ORDER_${this.eventName}`, this)
   }
 
   /**
    * 完成订单
    */
   finish() {
-    this.status = this.DONE
+    this.status = FILLED
     this.amountFill = this.amount
 
     if(this.side == 'buy') {
@@ -98,7 +101,7 @@ module.exports = class Order extends Core{
       this.fee = this.isMaker?this.amount*this.makerFee*this.price:this.amount*this.takerFee*this.price
     }
 
-    this.publish(`ORDER_FILL_${this.exchange}`, this)
+    this.publish(`ORDER_${this.eventName}`, this)
   }
 
   /**
@@ -120,7 +123,7 @@ module.exports = class Order extends Core{
    * 用于加快更新订单状态，减少API请求
    */
   checkStatusByPrice(buyPrice, sellPrice) {
-    if(this.status != this.OPEN) return
+    if(this.status != OPEN) return
 
     if(this.side == 'buy') {
       if(sellPrice <= this.price) {

@@ -32,12 +32,14 @@ describe('测试exchange模块',function(){
 
   it('测试tickers数据订阅',function(){
     events.emit('TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
+    assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
+    events.emit('TICKERS_test_btcusdt', [5001, 1, 4999.5, 2, 5001.2, 2])
+    assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
+    assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
 
-    assert.equal( exchange.getAsset('btc').balance, 1)
-    assert.equal( exchange.getAsset('usdt').balance, 8000)
   })
 
-  it('3000买入1.5BTC，成功下单',function(){
+  it('3000买入1.5BTC，成功下单，冻结4500USDT',function(){
     exchange.registerOrder(Order)
     exchange.buy(3000, 1.5)
     assert.equal( exchange.getAsset('usdt').getFrozen(), 3000*1.5)
@@ -53,7 +55,7 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
-  it('7000卖出1BTC，成功下单',function(){
+  it('7000卖出1BTC，成功下单，冻结1BTC',function(){
     exchange.sell(7000, 1)
     assert.equal( exchange.getAsset('btc').getFrozen(), 1)
     assert.equal( exchange.getOrdersLength(), 2)
@@ -69,12 +71,14 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
   })
 
-  it('价格波动，taker成交卖单',function(){
+  it('价格波动，taker成交卖单，卖出1BTC',function(){
+    events.emit('TICKERS_test_btcusdt', [7000, 1, 7000, 2, 7001, 2])
+
     assert.equal( exchange.getAsset('btc').getFrozen(), 1)
     assert.equal( exchange.getAsset('btc').getBalance(), 1)
     assert.equal( exchange.getAsset('btc').getAvailable(), 0)
     assert.equal( exchange.getOrdersLength(), 2)
-    assert.equal( exchange.getOrdersByStatus(2).length, 2)
+    assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
 })

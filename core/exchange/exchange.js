@@ -26,12 +26,40 @@ module.exports = class Exchange extends Ex{
     this.subscribeTicker()
   }
 
+  get eventName() {
+    return `${this.exchange}_${this.pair}`
+  }
+
   /**
    * 订阅ticker数据
    */
   subscribeTicker() {
-    this.subscribe(`TICKERS_${this.exchange}_${this.pair}`, (data) => {
+    this.subscribe(`TICKERS_${this.eventName}`, (data) => {
       this.tickers.remember(data)
+      this.orders.forEach(order => {
+        order.checkStatusByPrice(
+          data[2],
+          data[4]
+        )
+      })
+    })
+  }
+
+  /**
+   * 订阅订单消息
+   */
+  subscribeOrders() {
+    this.subscribe(`ORDER_${this.eventName}`, (data) => {
+      // switch(data.status) {
+      //   case
+      // }
+      this.tickers.remember(data)
+      this.orders.forEach(order => {
+        order.checkStatusByPrice(
+          data[2],
+          data[4]
+        )
+      })
     })
   }
 
@@ -39,7 +67,7 @@ module.exports = class Exchange extends Ex{
     if(!this.checkOrderModel()) return
     if( this.getAsset(this.from).frozen(amount*price) ) {
       let order = new this.Order({
-        exchange: this.name,
+        exchange: this.exchange,
         pair: this.pair,
         side: 'buy',
         amount: amount,
@@ -52,7 +80,11 @@ module.exports = class Exchange extends Ex{
 
       this.orders.push( order )
       this.removeFillOrders()
-      return order.create()
+      let res = order.create()
+
+      if(!res) {
+
+      }
     } else {
       return false
     }
@@ -62,7 +94,7 @@ module.exports = class Exchange extends Ex{
     if(!this.checkOrderModel()) return
     if( this.getAsset(this.to).frozen(amount) ) {
       let order = new this.Order({
-        exchange: this.name,
+        exchange: this.exchange,
         pair: this.pair,
         side: 'sell',
         amount: amount,

@@ -1,5 +1,6 @@
 let events = require('./events')
 let clock = require('./clock')
+require('../common/const')
 
 module.exports = class Core {
   constructor() {

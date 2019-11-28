@@ -42,4 +42,15 @@ describe('测试asset模块',function(){
     assert.equal( asset.getBalance(), 523.4)
     assert.equal( asset.getAvailable(), 523.4)
   })
+
+  it('冻结资产后解冻资产',function(){
+    asset.frozen(100)
+    assert.equal( asset.getFrozen(), 100)
+    asset.free(50)
+    assert.equal( asset.getFrozen(), 50)
+    asset.free(150)
+    assert.equal( asset.getFrozen(), 0)
+
+  })
+
 })

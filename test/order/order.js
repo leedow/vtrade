@@ -3,10 +3,11 @@ var Order = require('../../core/order/order')
 var e = require('../../core/common/events')
 
 let order1 = new Order()
-
+let eventName = 'ORDER_TEST_btcusdt'
 describe('测试order模块',function(){
 
   it('创建一个买单',function(){
+    order1.id = 1
     order1.pair = 'btcusdt'
     order1.amountAcc = 4
     order1.priceAcc = 2
@@ -22,34 +23,43 @@ describe('测试order模块',function(){
   })
 
   it('模拟发送订单，接收OPEN事件',function(){
-    e.once('ORDER_CREATE_TEST', (o) => {
-      assert.deepEqual( order1, o)
-      assert.equal( o.status, 2)
+    e.on(eventName, (o) => {
+      if(o.status == OPEN && o.id ==1) {
+        assert.deepEqual( order1, o)
+        assert.equal( o.status, OPEN)
+      }
     })
     order1.create()
   })
 
   it('模拟取消订单，接收CANCEL事件',function(){
-    e.on('ORDER_CANCEL_TEST', (o) => {
-      assert.deepEqual( order1, o)
-      assert.equal( o.status, 6)
+    e.on(eventName, (o) => {
+      if(o.status == CANCELED && o.id ==1) {
+        assert.deepEqual( order1, o)
+        assert.equal( o.status, CANCELED)
+      }
     })
-    order1.create()
+    order1.cancel()
   })
 
   it('模拟发送买单，测试不成交',function(){
     order1.create()
     order1.checkStatusByPrice(2000, 5000)
-    assert.deepEqual( order1.status, 2)
+    assert.deepEqual( order1.status, OPEN)
   })
 
   it('以maker形式成交',function(){
-    e.once('ORDER_FILL_TEST', (o) => {
-      assert.equal( o.status, 4)
-      assert.equal( o.isMaker, true)
-      assert.equal( o.fee, o.amount*-0.001)
+    e.on(eventName, (o) => {
+      if(o.status == FILLED && o.id ==1) {
+        assert.equal( o.status, FILLED)
+        assert.equal( o.isMaker, true)
+        assert.equal( o.fee, o.amount*-0.001)
+      }
     })
     order1.checkStatusByPrice(4000, 4300)
+    assert.equal( order1.status, FILLED)
+    assert.equal( order1.isMaker, true)
+    assert.equal( order1.fee, order1.amount*-0.001)
 
   })
 
@@ -59,6 +69,7 @@ describe('测试order模块',function(){
 
   it('用构造函数方法初始化',function(){
     order2 = new Order({
+      id: 2,
       pair: 'btcusdt',
       amountAcc: 4,
       priceAcc: 2,
@@ -72,19 +83,24 @@ describe('测试order模块',function(){
 
     assert.equal( order2.price, 4321.12)
     assert.equal( order2.amount, 100.1234)
-    //assert.deepEqual( order.status, 2)
+    // assert.deepEqual( order.status, 2)
   })
 
 
   it('以taker形式成交',function(){
     order2.create()
 
-    e.once('ORDER_FILL_TEST', (o) => {
-      assert.equal( o.status, 4)
-      assert.equal( o.isMaker, false)
-      assert.equal( o.fee, o.amount*0.001*o.price)
+    e.on(eventName, (o) => {
+      if(o.status == FILLED && o.id ==2) {
+        assert.equal( o.status, 4)
+        assert.equal( o.isMaker, false)
+        assert.equal( o.fee, o.amount*0.001*o.price)
+      }
     })
     order2.checkStatusByPrice(4321.123, 5000)
+    assert.equal( order2.status, 4)
+    assert.equal( order2.isMaker, false)
+    assert.equal( order2.fee, order2.amount*0.001*order2.price)
     //assert.deepEqual( order.status, 2)
   })
 

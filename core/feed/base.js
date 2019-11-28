@@ -1,5 +1,8 @@
-module.exports = class Base {
+let Core = require('../common/core')
+
+module.exports = class Base extends Core {
   constructor() {
+    super()
     this.name = ''
     this.data = []
     this.memorySize = 100 // 最大记忆长度

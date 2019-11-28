@@ -1,4 +1,5 @@
 let events = require('./events')
+let clock = require('./clock')
 
 module.exports = class Core {
   constructor() {
@@ -9,10 +10,11 @@ module.exports = class Core {
 
     this.enableLog = true
     this.enableError = true
+
+    this.clock = clock
   }
 
   copyOptions(options) {
-
     if(typeof options == 'object') {
       for(let key in options) {
         this[key] = options[key]

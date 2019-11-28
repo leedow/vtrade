@@ -37,6 +37,10 @@ describe('测试tickers模块',function(){
     assert.deepEqual( tickers.getPart('BUY_PRICE', 3), [4,5,5] )
     assert.deepEqual( tickers.getPart('SELL_PRICE', 3), [5,3,3] )
 
+    assert.deepEqual( tickers.getPart('PRICE', 1), [1] )
+    assert.deepEqual( tickers.getPart('BUY_PRICE', 1), [5] )
+    assert.deepEqual( tickers.getPart('SELL_PRICE', 1), [3] )
+
     assert.deepEqual( tickers.getPart('LIVE_PRICE', 2), [1] )
     assert.deepEqual( tickers.getPart('LIVE_BUY_PRICE', 2), [4,5] )
     assert.deepEqual( tickers.getPart('LIVE_SELL_PRICE', 2), [5,3] )

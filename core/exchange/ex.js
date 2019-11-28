@@ -9,18 +9,33 @@ module.exports = class Ex extends Core {
     this.assets = []
     this.orders = []
     this.Order = null
+    this.removeOrders = false // 是否移除完成订单，节约内存
     // super.copyOptions.call(this, options)
-
   }
 
+  /**
+   * 获取订单数量
+   */
   getOrdersLength() {
     return this.orders.length
   }
 
+  /**
+   * 获取指定状态订单
+   */
   getOrdersByStatus(status) {
     return this.orders.filter(order => {
       return order.status == status
     })
+  }
+
+  /**
+   * 移除已完成订单
+   */
+  removeFillOrders() {
+    if(this.removeOrders) {
+      // ........
+    }
   }
 
   /**

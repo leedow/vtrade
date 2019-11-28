@@ -14,6 +14,8 @@ module.exports = class Tickers extends Base{
     super()
     super.name = 'TICKER MODEL'
 
+    this.exchange = ''
+
     this.keys = {
       PRICE: 0,
       AMOUNT: 1,
@@ -69,6 +71,7 @@ module.exports = class Tickers extends Base{
     Object.keys(this.keys).forEach(key => {
       this._pushDif(`LIVE_${key}`, data[ this.keys[key] ])
     })
+    this.publish(`TICKERS_${this.exchange}`)
   }
 
 

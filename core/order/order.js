@@ -105,8 +105,15 @@ module.exports = class Order extends Core{
    * 订阅ticker价格变化
    */
   subscribeTicker() {
-    // super.on(``)
+    this.subscribe(`TICKERS_${this.exchange}`,(ticker) => {
+       this.checkStatusByPrice(
+         ticker.getPart('BUY_PRICE', 1),
+         ticker.getPart('SELL_PRICE', 1)
+       )
+    })
   }
+
+
 
   /**
    * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交

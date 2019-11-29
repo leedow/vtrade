@@ -24,6 +24,7 @@ module.exports = class Exchange extends Ex{
     this.tickers = new Tickers()
 
     this.subscribeTicker()
+    this.subscribeOrders()
   }
 
   get eventName() {
@@ -49,42 +50,49 @@ module.exports = class Exchange extends Ex{
    * 订阅订单消息
    */
   subscribeOrders() {
-    this.subscribe(`ORDER_${this.eventName}`, (data) => {
-      // switch(data.status) {
-      //   case
-      // }
-      this.tickers.remember(data)
-      this.orders.forEach(order => {
-        order.checkStatusByPrice(
-          data[2],
-          data[4]
-        )
-      })
+    this.subscribe(`ORDER_${this.eventName}`, (order) => {
+      switch(order.status) {
+        case OPEN: {
+          if(order.side == 'buy') {
+            this.getAsset(this.from).frozen(order.amount*order.price)
+          } else if(order.side == 'sell') {
+            this.getAsset(this.to).frozen(order.amount)
+          }
+          break
+        }
+        case FILLED: {
+          if(order.side == 'buy') {
+            this.getAsset(this.from).decrease(order.amount*order.price)
+            this.getAsset(this.to).increase(order.amount-order.fee)
+          } else if(order.side == 'sell') {
+            // console.log(order.fee)
+            this.getAsset(this.from).increase(order.amount*order.price-order.fee)
+            this.getAsset(this.to).decrease(order.amount)
+          }
+        }
+      }
     })
   }
 
   buy(price, amount) {
     if(!this.checkOrderModel()) return
-    if( this.getAsset(this.from).frozen(amount*price) ) {
+    if( this.getAsset(this.from).test(amount*price) ) {
       let order = new this.Order({
         exchange: this.exchange,
         pair: this.pair,
         side: 'buy',
-        amount: amount,
-        price: price,
         amountAcc: this.amountAcc,
         priceAcc: this.priceAcc,
         makerFee: this.makerFee,
-        takerFee: this.takerFee
+        takerFee: this.takerFee,
+        amount: amount,
+        price: price
       })
-
+      // console.log(order)
       this.orders.push( order )
       this.removeFillOrders()
-      let res = order.create()
+      return order.create()
 
-      if(!res) {
-
-      }
     } else {
       return false
     }
@@ -92,22 +100,23 @@ module.exports = class Exchange extends Ex{
 
   sell(price, amount) {
     if(!this.checkOrderModel()) return
-    if( this.getAsset(this.to).frozen(amount) ) {
+    if( this.getAsset(this.to).test(amount) ) {
       let order = new this.Order({
         exchange: this.exchange,
         pair: this.pair,
         side: 'sell',
-        amount: amount,
-        price: price,
         amountAcc: this.amountAcc,
         priceAcc: this.priceAcc,
         makerFee: this.makerFee,
-        takerFee: this.takerFee
+        takerFee: this.takerFee,
+        amount: amount,
+        price: price
       })
 
       this.orders.push( order )
       //this.removeFillOrders()
       return order.create()
+
     } else {
       return false
     }

@@ -50,6 +50,13 @@ describe('测试asset模块',function(){
     assert.equal( asset.getFrozen(), 50)
     asset.free(150)
     assert.equal( asset.getFrozen(), 0)
+  })
+
+  it('查询是否有资金可下单',function(){
+    assert.equal( asset.test(100), true)
+    assert.equal( asset.test(1000), false)
+    asset.frozen(500)
+    assert.equal( asset.test(100), false)
 
   })
 

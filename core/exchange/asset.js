@@ -15,19 +15,34 @@ module.exports = class Asset extends Core{
     this.copyOptions(options)
   }
 
+  _numberFix(number, fix) {
+    if(fix) {
+      return Number(number.toFixed(fix))
+    } else {
+      return number
+    }
+  }
+
   /**
    * 获得可用资产数量
    */
-  getAvailable() {
-    return this.balance - this.balanceFrozen
+  getAvailable(fix) {
+    return this._numberFix(this.balance - this.balanceFrozen, fix)
   }
 
-  getFrozen() {
-    return this.balanceFrozen
+  getFrozen(fix) {
+    return this._numberFix(this.balanceFrozen, fix)
   }
 
-  getBalance() {
-    return this.balance
+  getBalance(fix) {
+    return this._numberFix(this.balance, fix)
+  }
+
+  /**
+   * 查询是否有资金可下单
+   */
+  test(amount) {
+    return this.getAvailable() >= amount
   }
 
   /**

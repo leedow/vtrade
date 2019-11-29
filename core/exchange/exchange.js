@@ -65,10 +65,33 @@ module.exports = class Exchange extends Ex{
             this.getAsset(this.from).decrease(order.amount*order.price)
             this.getAsset(this.to).increase(order.amount-order.fee)
           } else if(order.side == 'sell') {
-            // console.log(order.fee)
             this.getAsset(this.from).increase(order.amount*order.price-order.fee)
             this.getAsset(this.to).decrease(order.amount)
           }
+          break
+        }
+        case CANCELED: {
+          if(order.side == 'buy') {
+            this.getAsset(this.from).free(order.amount*order.price)
+          } else if(order.side == 'sell') {
+            this.getAsset(this.to).free(order.amount)
+          }
+          break
+        }
+        case PARTDONE: {
+          // ........
+          break
+        }
+        case PARTCANCELED: {
+          // ......
+          break
+        }
+        case LIMIT: {
+          // ......
+          break
+        }
+        case ERROR: {
+          break
         }
       }
     })
@@ -88,7 +111,6 @@ module.exports = class Exchange extends Ex{
         amount: amount,
         price: price
       })
-      // console.log(order)
       this.orders.push( order )
       this.removeFillOrders()
       return order.create()

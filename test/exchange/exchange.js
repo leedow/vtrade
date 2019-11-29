@@ -155,4 +155,45 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(4).length, 4)
   })
 
+  it('6000卖出0.1BTC，成功下单，冻结0.1BTC',function(){
+    exchange.sell(6000, 0.1)
+    assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
+    assert.equal( exchange.getOrdersLength(), 5)
+    assert.equal( exchange.getOrdersByStatus(2).length, 1)
+  })
+
+  it('3000买入0.1BTC，成功下单，冻结300USDT',function(){
+    exchange.buy(3000, 0.01)
+    assert.equal( exchange.getAsset('usdt').getFrozen(2), 30)
+    assert.equal( exchange.getOrdersLength(), 6)
+    assert.equal( exchange.getOrdersByStatus(2).length, 2)
+  })
+
+  events.emit('TICKERS_test_btcusdt', [4998, 1, 4994, 2, 4999, 2])
+
+  it('取消买单',function(){
+    exchange.getOrdersByStatus(2).forEach(order => {
+      if(order.side == 'buy') {
+        order.cancel()
+      }
+    })
+    assert.equal( exchange.getAsset('usdt').getFrozen(2), 0)
+    assert.equal( exchange.getOrdersLength(), 6)
+    assert.equal( exchange.getOrdersByStatus(2).length, 1)
+    assert.equal( exchange.getOrdersByStatus(6).length, 1)
+  })
+
+  it('取消卖单',function(){
+    exchange.getOrdersByStatus(2).forEach(order => {
+      if(order.side == 'sell') {
+        order.cancel()
+      }
+    })
+    assert.equal( exchange.getAsset('usdt').getFrozen(2), 0)
+    assert.equal( exchange.getAsset('btc').getFrozen(2), 0)
+    assert.equal( exchange.getOrdersLength(), 6)
+    assert.equal( exchange.getOrdersByStatus(2).length, 0)
+    assert.equal( exchange.getOrdersByStatus(6).length, 2)
+  })
+
 })

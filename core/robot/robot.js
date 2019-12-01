@@ -4,21 +4,42 @@ let Core = require('../common/core')
  * 交易机器人
  * 支持内置对个交易观察目标，回测以及实盘交易
  */
-module.exports = Robot extends Core{
+module.exports = class Robot extends Core{
   constructor() {
     super()
 
-    this.tickers = null
-    this.books = null
-    this.trades = null
+    this.exchanges = [] // 交易所数组
+    this._policyCallback = null // 决策回调
+    this._prepareCallback = null // 准备回调
   }
 
-  this.feeds = {} // 观察标的
+  get ex() {
+    return this.exchanges[0]
+  }
+
+  run() {
+    this.subscribeExHeartbeat()
+    if(this._prepareCallback) {
+      this._prepareCallback(this)
+    }
+
+  }
 
   /**
-   * 为机器人注册一个模块
+   * 监听exchange心跳，执行策略
    */
-  registeModel(name, model) {
+  subscribeExHeartbeat() {
+    this.exchanges.forEach(ex => {
+        this.subscribe(ex.fullEventName, () => {
+          this._policyCallback(this)
+        })
+    })
+  }
+
+  /**
+   * 为机器人注册一个自定义模块
+   */
+  registerModel(name, model) {
     if(!this[name]) {
       this[name] = model
     } else {
@@ -26,20 +47,17 @@ module.exports = Robot extends Core{
     }
   }
 
-  /**
-   * 启动准备函数
-   */
-  prepare() {
-
+  registerPolicy(model) {
+    this.registerModel('_policyCallback', model)
   }
 
-  /**
-   * 注册事件
-   */
-  subscribe() {}
+  registerPrepare(model) {
+    this.registerModel('_prepareCallback', model)
+  }
 
-  /**
-   *
-   */
+  registerExchange(model) {
+    this.exchanges.push(model)
+  }
+
 
 }

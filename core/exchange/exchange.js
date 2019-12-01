@@ -23,8 +23,12 @@ module.exports = class Exchange extends Ex{
 
     this.tickers = new Tickers()
 
-    this.subscribeTicker()
+    this.subscribeRobotTicker()
     this.subscribeOrders()
+  }
+
+  get fullEventName() {
+    return `EX_${this.eventName}`
   }
 
   get eventName() {
@@ -34,8 +38,8 @@ module.exports = class Exchange extends Ex{
   /**
    * 订阅ticker数据
    */
-  subscribeTicker() {
-    this.subscribe(`TICKERS_${this.eventName}`, (data) => {
+  subscribeRobotTicker() {
+    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
       this.tickers.remember(data)
       this.orders.forEach(order => {
         order.checkStatusByPrice(
@@ -43,7 +47,15 @@ module.exports = class Exchange extends Ex{
           data[4]
         )
       })
+      this.publishHeartbeat()
     })
+  }
+
+  /**
+   * 广播exchange策略执行心跳
+   */
+  publishHeartbeat() {
+    this.publish(this.fullEventName, this)
   }
 
   /**

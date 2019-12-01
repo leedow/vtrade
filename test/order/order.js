@@ -97,6 +97,7 @@ describe('测试order模块',function(){
         assert.equal( o.fee, o.amount*0.001*o.price)
       }
     })
+
     order2.checkStatusByPrice(4321.123, 5000)
     assert.equal( order2.status, 4)
     assert.equal( order2.isMaker, false)

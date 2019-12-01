@@ -1,5 +1,6 @@
 var assert = require('assert')
 var Tickers = require('../../core/feed/tickers')
+var helper = require('../../core/tools/helper')
 
 let tickers = new Tickers()
 describe('测试tickers模块',function(){
@@ -41,8 +42,34 @@ describe('测试tickers模块',function(){
     assert.deepEqual( tickers.getPart('BUY_PRICE', 1), [5] )
     assert.deepEqual( tickers.getPart('SELL_PRICE', 1), [3] )
 
+    assert.deepEqual( tickers.getPart('PRICE', 1, 3), [1] )
+    assert.deepEqual( tickers.getPart('BUY_PRICE', 1, 3), [4] )
+    assert.deepEqual( tickers.getPart('SELL_PRICE', 1, 3), [5] )
+
     assert.deepEqual( tickers.getPart('LIVE_PRICE', 2), [1] )
     assert.deepEqual( tickers.getPart('LIVE_BUY_PRICE', 2), [4,5] )
     assert.deepEqual( tickers.getPart('LIVE_SELL_PRICE', 2), [5,3] )
   })
+
+  it('getEMA',function(){
+    tickers.remember([6,5,4,3,2,1])
+
+    // console.log(tickers.getPart('BUY_PRICE', 5))
+    // 3,4,5,5,4
+    assert.equal( tickers.getEMA('PRICE', 5), helper.ema( tickers.getPart('PRICE', 5), 5) )
+    assert.equal( tickers.getEMA('BUY_PRICE', 5), helper.ema( [3,4,5,5,4], 5) )
+    assert.equal( tickers.getEMA('SELL_PRICE', 5), helper.ema( tickers.getPart('SELL_PRICE', 5), 5) )
+
+
+  })
+
+  it('getMA',function(){
+    assert.equal( tickers.getMA('PRICE', 5), helper.ma( tickers.getPart('PRICE', 5), 5) )
+    assert.equal( tickers.getMA('BUY_PRICE', 5), helper.ma( [3,4,5,5,4], 5) )
+    assert.equal( tickers.getMA('SELL_PRICE', 5), helper.ma( tickers.getPart('SELL_PRICE', 5), 5) )
+
+  })
+
+
+
 })

@@ -33,9 +33,9 @@ describe('测试exchange模块',function(){
   })
 
   it('测试tickers数据订阅',function(){
-    events.emit('TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
     assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
-    events.emit('TICKERS_test_btcusdt', [5001, 1, 4999.5, 2, 5001.2, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
 
@@ -92,8 +92,8 @@ describe('测试exchange模块',function(){
     let usdt = exchange.getAsset('usdt').getBalance()
     let btc = exchange.getAsset('btc').getBalance()
 
-    events.emit('TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
-    events.emit('TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
 
     assert.equal( exchange.getAsset('btc').getFrozen(4), 0.1)
     assert.equal( exchange.getAsset('btc').getBalance(4), 1-0.1+0.1*0.99)
@@ -114,7 +114,7 @@ describe('测试exchange模块',function(){
     let usdt = exchange.getAsset('usdt').getBalance()
     let btc = exchange.getAsset('btc').getBalance()
 
-    events.emit('TICKERS_test_btcusdt', [5001, 1, 5001, 2, 5002, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5001, 1, 5001, 2, 5002, 2])
 
     assert.equal( exchange.getAsset('btc').getFrozen(4), 0.1-0.1)
     assert.equal( exchange.getAsset('btc').getBalance(4), 1-0.1+0.1*0.99-0.1)
@@ -132,7 +132,7 @@ describe('测试exchange模块',function(){
 
   // 4999买 0.1
   it('价格波动至4999-5000，无订单成交',function() {
-    events.emit('TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5000, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5000, 2])
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
     assert.equal( exchange.getOrdersByStatus(4).length, 3)
@@ -140,7 +140,7 @@ describe('测试exchange模块',function(){
 
   // 4999买 0.1
   it('价格波动至4997-4998，maker成交4999买单',function() {
-    events.emit('TICKERS_test_btcusdt', [5000, 1, 4997, 2, 4998, 2])
+    events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4997, 2, 4998, 2])
 
     assert.equal( exchange.getAsset('btc').getFrozen(4), 0)
     assert.equal( exchange.getAsset('btc').getBalance(4), 1-0.1+0.1*0.99-0.1+0.1*1.01)
@@ -169,7 +169,7 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
   })
 
-  events.emit('TICKERS_test_btcusdt', [4998, 1, 4994, 2, 4999, 2])
+  events.emit('ROBOT_TICKERS_test_btcusdt', [4998, 1, 4994, 2, 4999, 2])
 
   it('取消买单',function(){
     exchange.getOrdersByStatus(2).forEach(order => {

@@ -53,6 +53,10 @@ module.exports = class Order extends Core{
     return this._amount
   }
 
+  get fullEventName() {
+    return `ORDER_${this.eventName}`
+  }
+
   get eventName() {
     return `${this.exchange}_${this.pair}`
   }

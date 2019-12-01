@@ -36,7 +36,6 @@ module.exports = class Base extends Core {
    * 获取部分数据
    */
   getPart(data, length, offset=1) {
-
     let len = data.length
     let endindex = len - offset + 1
     let startindex = endindex - length

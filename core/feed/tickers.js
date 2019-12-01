@@ -1,5 +1,5 @@
 let Base = require('./base')
-
+let helper = require('../tools/helper')
 /**
  * Ticker data 数据结构
  [["最新成交价",
@@ -13,7 +13,6 @@ module.exports = class Tickers extends Base{
   constructor() {
     super()
     super.name = 'TICKER MODEL'
-
     this.exchange = ''
 
     this.keys = {
@@ -48,6 +47,20 @@ module.exports = class Tickers extends Base{
     }
   }
 
+  getEMA(name, length, offset=1) {
+    let d = this.getPart(name, length, offset)
+    return helper.ema(d, length)
+  }
+
+  getMA(name, length, offset=1) {
+    let d = this.getPart(name, length, offset)
+    return helper.ma(d, length)
+  }
+
+  // getMA(name) {
+  //
+  // }
+
   /**
    * 记录变化数据
    */
@@ -56,7 +69,6 @@ module.exports = class Tickers extends Base{
       super.error(`_pushDif():${name} do not exsit!`)
       return
     }
-
     if(this[name].length == 0) {
       this[name].push(value)
     } else {
@@ -71,8 +83,7 @@ module.exports = class Tickers extends Base{
     Object.keys(this.keys).forEach(key => {
       this._pushDif(`LIVE_${key}`, data[ this.keys[key] ])
     })
-    this.publish(`TICKERS_${this.exchange}`)
+    this.publish(`TICKERS_${this.exchange}`, this)
   }
-
 
 }

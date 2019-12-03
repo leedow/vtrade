@@ -14,13 +14,15 @@ module.exports = class Order extends Core{
     this.makerFee = 0 // maker费率，千分之一设 0.001
     this.takerFee = 0 // taker费率
     this.isMaker = false // 是否是maker单
-    this.amountFill = 0 // 已完成数量
     this.fee = 0 // 手续费
 
     this._price = 0 // 设置价格精度后的价格
     this.priceAcc = 0 // 价格精度小数位数
     this._amount = 0 // 设置精度后的数量
     this.amountAcc = 0 // 数量精度小数位数
+
+    this.amountFill = 0 // 已完成数量
+    this.amountClear = 0 // 已清算数量
 
     this.copyOptions(options)
 
@@ -59,6 +61,20 @@ module.exports = class Order extends Core{
 
   get eventName() {
     return `${this.exchange}_${this.pair}`
+  }
+
+  /**
+   * 是否清算完毕
+   */
+  get cleared() {
+    return this.amountClear >= this.amountFill
+  }
+
+  /**
+   * 获取待清算数量
+   */
+  get amountUnclear() {
+    return this.amountFill - this.amountClear
   }
 
   _formatPrice(price) {
@@ -128,7 +144,7 @@ module.exports = class Order extends Core{
    */
   checkStatusByPrice(buyPrice, sellPrice) {
     if(this.status != OPEN) return
-
+    // console.log(buyPrice, this.price)
     if(this.side == 'buy') {
       if(sellPrice <= this.price) {
         this.finish()

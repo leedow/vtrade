@@ -102,8 +102,14 @@ describe('测试order模块',function(){
     assert.equal( order2.status, 4)
     assert.equal( order2.isMaker, false)
     assert.equal( order2.fee, order2.amount*0.001*order2.price)
-    //assert.deepEqual( order.status, 2)
+    // assert.deepEqual( order.status, 2)
   })
 
+  it('测试清算标记及待清算数量',function(){
+    order2.amountClear = order2.amountFill
+    assert.equal( order2.amountFill, order2.amount)
+    assert.equal( order2.amountUnclear, 0)
+    assert.equal( order2.cleared, true)
+  })
 
 })

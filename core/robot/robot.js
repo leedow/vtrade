@@ -22,7 +22,6 @@ module.exports = class Robot extends Core{
     if(this._prepareCallback) {
       this._prepareCallback(this)
     }
-
   }
 
   /**
@@ -42,17 +41,19 @@ module.exports = class Robot extends Core{
   registerModel(name, model) {
     if(!this[name]) {
       this[name] = model
+      return true
     } else {
       super.error(`registerModel(): ${name} already exsit!`)
+      return false
     }
   }
 
   registerPolicy(model) {
-    this.registerModel('_policyCallback', model)
+    return this.registerModel('_policyCallback', model)
   }
 
   registerPrepare(model) {
-    this.registerModel('_prepareCallback', model)
+    return this.registerModel('_prepareCallback', model)
   }
 
   registerExchange(model) {

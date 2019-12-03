@@ -1,5 +1,6 @@
 let Ex = require('./ex')
 let Tickers = require('../feed/tickers')
+let Clear = require('./clear')
 
 /**
  * 单交易对现货
@@ -22,6 +23,7 @@ module.exports = class Exchange extends Ex{
     this.createAsset(this.to, 0)
 
     this.tickers = new Tickers()
+    this.clear = new Clear()
 
     this.subscribeRobotTicker()
     this.subscribeOrders()
@@ -40,6 +42,7 @@ module.exports = class Exchange extends Ex{
    */
   subscribeRobotTicker() {
     this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
+      // console.log(data)
       this.tickers.remember(data)
       this.orders.forEach(order => {
         order.checkStatusByPrice(
@@ -155,4 +158,13 @@ module.exports = class Exchange extends Ex{
       return false
     }
   }
+
+  /**
+   * 清算
+   */
+  clear() {
+    return this.clear.clear(this.orders)
+  }
+
+
 }

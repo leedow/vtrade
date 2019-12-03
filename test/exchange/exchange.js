@@ -38,7 +38,6 @@ describe('测试exchange模块',function(){
     events.emit('ROBOT_TICKERS_test_btcusdt', [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
-
   })
 
   it('4999买入0.1BTC，成功下单，冻结499.9USDT',function(){

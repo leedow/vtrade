@@ -48,12 +48,20 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
+  })
+
   it('继续5001买入0.1BTC，成功下单，冻结500.1USDT',function(){
     exchange.buy(5001, 0.1)
     assert.equal( exchange.getAsset('usdt').getAvailable(2), 10000-499.9-500.1)
     assert.equal( exchange.getAsset('usdt').getFrozen(2), 500.1 + 499.9)
     assert.equal( exchange.getOrdersLength(), 2)
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
+  })
+
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
 
   it('继续5001买入10BTC，资金不足，买入失败',function(){
@@ -64,11 +72,19 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
   })
 
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
+  })
+
   it('4999卖出0.1BTC，成功下单，冻结0.1BTC',function(){
     exchange.sell(4999, 0.1)
     assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
     assert.equal( exchange.getOrdersLength(), 3)
     assert.equal( exchange.getOrdersByStatus(2).length, 3)
+  })
+
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
 
   it('5001卖出0.1BTC，成功下单，冻结0.1BTC',function(){
@@ -78,11 +94,19 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
   })
 
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
+  })
+
   it('7000继续卖出10BTC，余额不足',function(){
     exchange.sell(7000, 10)
     assert.equal( exchange.getAsset('btc').getFrozen(2), 0.2)
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
+  })
+
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
 
   // 5001买 0.1  5001卖 0.1
@@ -107,6 +131,10 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(4).length, 2)
   })
 
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), ( exchange.getAsset('btc').getBalance()*5000/(exchange.getAsset('btc').getBalance()*5000+exchange.getAsset('usdt').getBalance())  ).toFixed(4)   )
+  })
+
   // 5001卖 0.1
   // 4999买 0.1
   it('价格波动至5001-5002，maker成交5001卖单',function() {
@@ -126,6 +154,10 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
     assert.equal( exchange.getOrdersByStatus(4).length, 3)
+  })
+
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), ( exchange.getAsset('btc').getBalance()*5001/(exchange.getAsset('btc').getBalance()*5001+exchange.getAsset('usdt').getBalance())  ).toFixed(4)   )
   })
 
 
@@ -168,9 +200,10 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
   })
 
-  events.emit('ROBOT_TICKERS_test_btcusdt', [4998, 1, 4994, 2, 4999, 2])
+
 
   it('取消买单',function(){
+    events.emit('ROBOT_TICKERS_test_btcusdt', [4998, 1, 4994, 2, 4999, 2])
     exchange.getOrdersByStatus(2).forEach(order => {
       if(order.side == 'buy') {
         order.cancel()
@@ -193,6 +226,13 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersLength(), 6)
     assert.equal( exchange.getOrdersByStatus(2).length, 0)
     assert.equal( exchange.getOrdersByStatus(6).length, 2)
+  })
+
+  it('核对报告',function(){
+    let report = exchange.report()
+    // console.log(report)
+    assert.deepEqual( exchange.getPosition(8),  ( exchange.getAsset('btc').getBalance()*4998/(exchange.getAsset('btc').getBalance()*4998+exchange.getAsset('usdt').getBalance())  ).toFixed(8) )
+    //assert.deepEqual(report.clear.profit, 4999*0.1*0.99 + 5001*0.1*1.01 - 4999*0.1*1.01 - 5001*0.1*0.99 )
   })
 
 })

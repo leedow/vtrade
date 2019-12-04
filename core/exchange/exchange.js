@@ -162,8 +162,35 @@ module.exports = class Exchange extends Ex{
   /**
    * 清算
    */
-  clear() {
-    return this.clear.clear(this.orders)
+  // clear() {
+  //   return this.clear.clear(this.orders)
+  // }
+
+  /**
+   * 获得距离上次report时间节点到最新位置的报告
+   */
+  report() {
+    return {
+      position: this.getPosition(),
+      clear: this.clear.clear(this.orders)
+    }
+  }
+
+  /**
+   * 获取仓位，最新价格下to资产占总资产的百分比
+   *
+   */
+  getPosition(fix=4) {
+    try {
+      let price = this.tickers.getPart('PRICE', 1)[0]
+      let to = this.getAsset(this.to).getBalance()*price
+      let from = this.getAsset(this.from).getBalance()
+      return (to/(to + from)).toFixed(fix)
+    } catch(e) {
+      this.error(e)
+      return false
+    }
+
   }
 
 

@@ -137,7 +137,6 @@ module.exports = class Order extends Core{
   }
 
 
-
   /**
    * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交
    * 用于加快更新订单状态，减少API请求

@@ -57,7 +57,7 @@ module.exports = class Clear extends Core{
     let sell = this._getSellOrders(orders)
 
     let amountClearing = this._getAmountClearing(buy, sell)
-
+    //console.log(amountClearing)
     let amountTmp1 = 0, buyTotal = 0
     for (let i = 0; i < buy.length; i++) {
       if(amountTmp1 >= amountClearing) break

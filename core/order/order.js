@@ -128,12 +128,12 @@ module.exports = class Order extends Core{
    * 订阅ticker价格变化
    */
   subscribeTicker() {
-    this.subscribe(`TICKERS_${this.exchange}`,(ticker) => {
-       this.checkStatusByPrice(
-         ticker.getPart('BUY_PRICE', 1),
-         ticker.getPart('SELL_PRICE', 1)
-       )
-    })
+    // this.subscribe(`TICKERS_${this.exchange}`,(ticker) => {
+    //    this.checkStatusByPrice(
+    //      ticker.getPart('BUY_PRICE', 1),
+    //      ticker.getPart('SELL_PRICE', 1)
+    //    )
+    // })
   }
 
 

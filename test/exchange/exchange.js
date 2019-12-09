@@ -18,8 +18,6 @@ describe('测试exchange模块',function(){
       priceAcc: 4
     })
 
-
-
     assert.equal( exchange.getAsset('btc').name, 'btc')
     assert.equal( exchange.getAsset('usdt').name, 'usdt')
     assert.equal( exchange.getAsset('btc').balance, 0)
@@ -278,7 +276,7 @@ describe('测试exchange模块',function(){
 
   it('自动清除清算完的订单',function(){
     exchange.removeOrders = true
-    exchange.report()
+    exchange.clearOrders()
     //assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
     //assert.equal( exchange.getOrdersLength(), 8)
     assert.equal( exchange.getOrdersLength(), 4)

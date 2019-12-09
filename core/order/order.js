@@ -106,7 +106,10 @@ module.exports = class Order extends Core{
     }
 
     this.publish(`ORDER_${this.eventName}`, this)
-    return true
+    return {
+      code: true,
+      msg: 'Order: create order success!'
+    }
   }
 
   /**

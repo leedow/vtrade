@@ -139,7 +139,10 @@ module.exports = class Exchange extends Ex{
       return order.create()
 
     } else {
-      return false
+      return {
+        code: false,
+        msg: `Exchange buy failed, test asset failed!`
+      }
     }
   }
 
@@ -162,23 +165,39 @@ module.exports = class Exchange extends Ex{
       return order.create()
 
     } else {
-      return false
+      return {
+        code: false,
+        msg: `Exchange sell failed, test asset failed!`
+      }
+    }
+  }
+
+
+  /**
+   * 输出asserts状态信息
+   */
+  report() {
+    let from = this.getAsset(this.from)
+    let to = this.getAsset(this.to)
+
+    return {
+      position: this.getPosition(),
+      from: {
+        balance: from.getBalance(),
+        frozen: from.getFrozen()
+      },
+      to: {
+        balance: to.getBalance(),
+        frozen: to.getFrozen()
+      }
     }
   }
 
   /**
-   * 清算
+   * 清算订单
    */
-  // clear() {
-  //   return this.clear.clear(this.orders)
-  // }
-
-  /**
-   * 获得距离上次report时间节点到最新位置的报告
-   */
-  report() {
+  clearOrders() {
     let res = this.clear.clear(this.orders)
-    res.position = this.getPosition()
     this.removeFillOrders() // 清除清算完成订单
     return res
   }

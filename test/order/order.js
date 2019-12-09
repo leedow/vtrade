@@ -57,10 +57,10 @@ describe('测试order模块',function(){
       }
     })
     order1.checkStatusByPrice(4000, 4300)
+    assert.equal( order1.amountUnfill, 0)
     assert.equal( order1.status, FILLED)
     assert.equal( order1.isMaker, true)
     assert.equal( order1.fee, order1.amount*-0.001)
-
   })
 
 
@@ -110,6 +110,37 @@ describe('测试order模块',function(){
     assert.equal( order2.amountFill, order2.amount)
     assert.equal( order2.amountUnclear, 0)
     assert.equal( order2.cleared, true)
+  })
+
+  let order3 = new Order({
+    id: 3,
+    pair: 'btcusdt',
+    amountAcc: 4,
+    priceAcc: 2,
+    amount: 100.123456,
+    price: 4321.123,
+    makerFee: -0.001,
+    takerFee: 0.001,
+    side: 'sell',
+    exchange: 'TEST'
+  })
+  
+  it('测试部分成交update',function(){
+    order3.update(2, 0.1)
+    assert.equal( order3.amountFill, 2)
+    assert.equal( order3.fee, 0.1)
+  })
+
+  it('测试部分完成',function(){
+    order3.finish(2, 0.1)
+    assert.equal( order3.amountFill, 2)
+    assert.equal( order3.fee, 0.1)
+  })
+
+  it('测试部分完成2',function(){
+    order3.finish(3, 0.3)
+    assert.equal( order3.amountFill, 2)
+    assert.equal( order3.fee, 0.1)
   })
 
 })

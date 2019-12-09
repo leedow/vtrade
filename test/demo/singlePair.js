@@ -3,7 +3,6 @@ var Exchange = require('../../core/exchange/exchange')
 var events = require('../../core/common/events')
 let Order = require('../../core/order/order')
 
-
 const tickersData = require('./tickers')
 var assert = require('assert')
 

@@ -34,7 +34,7 @@ module.exports = class Ex extends Core {
    */
   removeFillOrders() {
     if(this.removeOrders) {
-      // ........
+      this.orders = this.orders.filter(order => !order.cleared)
     }
   }
 

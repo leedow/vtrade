@@ -18,6 +18,7 @@ for (var i = 0; i < 4; i++) {
     price: prices[i],
     amount: amounts[i]
   }))
+  orders[orders.length-1].create()
 }
 
 for (var i = 0; i < 4; i++) {
@@ -30,6 +31,7 @@ for (var i = 0; i < 4; i++) {
     price: prices[i+4],
     amount: amounts[i+4]
   }))
+  orders[orders.length-1].create()
 }
 
 describe('测试clear模块',function(){
@@ -87,7 +89,6 @@ describe('测试clear模块',function(){
     assert.deepEqual( res.ordersBuy, 2 )
     assert.deepEqual( res.ordersSell, 2 )
 
-
   })
 
 
@@ -106,6 +107,10 @@ describe('测试clear模块',function(){
   })
 
   it('清算记录',function(){
+    assert.equal( clear.history.length, 2)
+  })
+
+  it('核对待清算订单',function(){
     assert.equal( clear.history.length, 2)
   })
 

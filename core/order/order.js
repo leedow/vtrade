@@ -14,7 +14,7 @@ module.exports = class Order extends Core{
     this.makerFee = 0 // maker费率，千分之一设 0.001
     this.takerFee = 0 // taker费率
     this.isMaker = false // 是否是maker单
-    this.fee = 0 // 手续费
+    this.fee = 0 // 手续费，buy单中以to资产计价，sell单中以from资产计价
 
     this._price = 0 // 设置价格精度后的价格
     this.priceAcc = 0 // 价格精度小数位数
@@ -23,6 +23,12 @@ module.exports = class Order extends Core{
 
     this.amountFill = 0 // 已完成数量
     this.amountClear = 0 // 已清算数量
+
+    this.type = 'limit'
+
+    this.createTime = 0
+    this.finishTime = 0
+
 
     this.copyOptions(options)
 
@@ -55,6 +61,10 @@ module.exports = class Order extends Core{
     return this._amount
   }
 
+  get amountUnfill() {
+    return this._amount - this.amountFill
+  }
+
   get fullEventName() {
     return `ORDER_${this.eventName}`
   }
@@ -67,7 +77,7 @@ module.exports = class Order extends Core{
    * 是否清算完毕
    */
   get cleared() {
-    return this.amountClear >= this.amountFill
+    return this.amountClear >= this.amountFill && (this.amountFill > 0)
   }
 
   /**
@@ -91,6 +101,10 @@ module.exports = class Order extends Core{
    */
   create() {
     this.status = OPEN
+    if(this.orderNumber == '') {
+      this.orderNumber = `${Date.now()}-${(Math.random()*100).toFixed(0)}`
+    }
+
     this.publish(`ORDER_${this.eventName}`, this)
     return true
   }
@@ -104,38 +118,80 @@ module.exports = class Order extends Core{
    * 取消订单
    */
   async cancel() {
-    this.status = CANCELED
+    if(this.amountFill > 0) {
+      this.status = PART_CANCELED
+    } else {
+      this.status = CANCELED
+    }
     this.publish(`ORDER_${this.eventName}`, this)
   }
 
   /**
    * 完成订单
+   * @param {number} amount 完成数量
+   * @param {number} fee 手续费，可为负数
    */
-  finish() {
+  finish(amount, fee) {
+    if(this.status != OPEN) return
+    if(amount) {
+      this._finishPart(amount, fee)
+    } else {
+      this._finishAll()
+    }
+  }
+
+
+  /**
+   * 完成全部订单
+   */
+  _finishAll() {
     this.status = FILLED
     this.amountFill = this.amount
-
-    if(this.side == 'buy') {
-      this.fee = this.isMaker?this.amount*this.makerFee:this.amount*this.takerFee
-    } else if(this.side == 'sell') {
-      this.fee = this.isMaker?this.amount*this.makerFee*this.price:this.amount*this.takerFee*this.price
-    }
-
+    this._setFee()
     this.publish(`ORDER_${this.eventName}`, this)
   }
 
   /**
-   * 订阅ticker价格变化
+   * 完成部分订单
+   * @param {number} amount 完成数量
+   * @param {number} fee 手续费，可为负数
    */
-  subscribeTicker() {
-    // this.subscribe(`TICKERS_${this.exchange}`,(ticker) => {
-    //    this.checkStatusByPrice(
-    //      ticker.getPart('BUY_PRICE', 1),
-    //      ticker.getPart('SELL_PRICE', 1)
-    //    )
-    // })
+  _finishPart(amount, fee) {
+    if(amount >= this.amount) {
+      this._finishAll()
+    } else {
+      this.update(amount, fee)
+      this.status = PART_CANCELED
+      this.publish(`ORDER_${this.eventName}`, this)
+    }
   }
 
+  /**
+   * 更新fee，如果未传入值则根据成交数量和费率自动计算
+   * @param {number} fee 手续费，覆盖更新，可为负数
+   */
+  _setFee(fee) {
+    if(fee) {
+      this.fee = fee
+    } else {
+      if(this.side == 'buy') {
+        this.fee = this.isMaker?this.amountFill*this.makerFee:this.amountFill*this.takerFee
+      } else if(this.side == 'sell') {
+        this.fee = this.isMaker?this.amountFill*this.makerFee*this.price:this.amountFill*this.takerFee*this.price
+      }
+    }
+  }
+
+  /**
+   * 覆盖形式更新订单成交数量和手续费，但不触发订单变更事件(避免assert重复更新错误)
+   * @param {number} amount 完成数量
+   * @param {number} fee 手续费，可为负数
+   */
+  update(amount, fee) {
+    this.amountFill = amount||this.amountFill
+    this._setFee(fee)
+    this.status = PART_FILLED
+  }
 
   /**
    * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交
@@ -158,5 +214,7 @@ module.exports = class Order extends Core{
       }
     }
   }
+
+
 
 }

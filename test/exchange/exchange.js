@@ -18,6 +18,8 @@ describe('测试exchange模块',function(){
       priceAcc: 4
     })
 
+
+
     assert.equal( exchange.getAsset('btc').name, 'btc')
     assert.equal( exchange.getAsset('usdt').name, 'usdt')
     assert.equal( exchange.getAsset('btc').balance, 0)
@@ -118,13 +120,13 @@ describe('测试exchange模块',function(){
     events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
     events.emit('ROBOT_TICKERS_test_btcusdt', [5000, 1, 4999, 2, 5001, 2])
 
-    assert.equal( exchange.getAsset('btc').getFrozen(4), 0.1)
-    assert.equal( exchange.getAsset('btc').getBalance(4), 1-0.1+0.1*0.99)
-    assert.equal( exchange.getAsset('btc').getAvailable(4), 1-0.1+0.1-0.1*0.01-0.1)
+    assert.equal( exchange.getAsset('btc').getFrozen(10), 0.1)
+    assert.equal( exchange.getAsset('btc').getBalance(10), 1-0.1+0.1*0.99)
+    assert.equal( exchange.getAsset('btc').getAvailable(10), 1-0.1+0.1-0.1*0.01-0.1)
 
-    assert.equal( exchange.getAsset('usdt').getFrozen(4), 499.9 )
-    assert.equal( exchange.getAsset('usdt').getBalance(4), 10000-500.1+0.1*4999*0.99)
-    assert.equal( exchange.getAsset('usdt').getAvailable(4), 10000-500.1+0.1*4999*0.99-499.9)
+    assert.equal( exchange.getAsset('usdt').getFrozen(10), 499.9 )
+    assert.equal( exchange.getAsset('usdt').getBalance(10), 10000-500.1+0.1*4999*0.99)
+    assert.equal( exchange.getAsset('usdt').getAvailable(10), 10000-500.1+0.1*4999*0.99-499.9)
 
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
@@ -193,7 +195,7 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
-  it('3000买入0.1BTC，成功下单，冻结300USDT',function(){
+  it('3000买入0.1BTC，成功下单，冻结30USDT',function(){
     exchange.buy(3000, 0.01)
     assert.equal( exchange.getAsset('usdt').getFrozen(2), 30)
     assert.equal( exchange.getOrdersLength(), 6)
@@ -233,6 +235,53 @@ describe('测试exchange模块',function(){
     // console.log(report)
     assert.deepEqual( exchange.getPosition(8),  ( exchange.getAsset('btc').getBalance()*4998/(exchange.getAsset('btc').getBalance()*4998+exchange.getAsset('usdt').getBalance())  ).toFixed(8) )
     //assert.deepEqual(report.clear.profit, 4999*0.1*0.99 + 5001*0.1*1.01 - 4999*0.1*1.01 - 5001*0.1*0.99 )
+  })
+
+  it('再次3000买入0.1BTC，成功下单，冻结30USDT',function(){
+    exchange.buy(3000, 0.01)
+    assert.equal( exchange.getAsset('usdt').getFrozen(2), 30)
+    assert.equal( exchange.getOrdersLength(), 7)
+    assert.equal( exchange.getOrdersByStatus(2).length, 1)
+  })
+
+  it('成交0.05BTC',function(){
+    let order = exchange.getOrdersByStatus(2)[0]
+    order.finish(0.004, 0.01)
+    // console.log(exchange.getAsset('usdt').getFrozen(2))
+    assert.equal( exchange.getAsset('usdt').getFrozen(2), 0)
+    assert.equal( exchange.getOrdersLength(), 7)
+    assert.equal( exchange.getOrdersByStatus(2).length, 0)
+  })
+
+  it('再次3000卖出0.1BTC，成功下单，冻结0.1BTC',function(){
+    exchange.sell(3000, 0.1)
+    assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
+    assert.equal( exchange.getOrdersLength(), 8)
+    assert.equal( exchange.getOrdersByStatus(2).length, 1)
+  })
+
+  it('成交0.02BTC',function(){
+    let order = exchange.getOrdersByStatus(2)[0]
+    let pre1 = exchange.getAsset('usdt').getBalance()
+    let pre2 = exchange.getAsset('btc').getBalance()
+
+    order.finish(0.02, 0.01)
+    // console.log(exchange.getAsset('usdt').getFrozen(2))
+    assert.equal( exchange.getAsset('usdt').getFrozen(10), 0)
+    assert.equal( exchange.getAsset('usdt').getBalance(10), pre1 + 0.02*3000 - 0.01)
+    assert.equal( exchange.getAsset('btc').getFrozen(10), 0)
+    assert.equal( exchange.getAsset('btc').getBalance(10), pre2 - 0.02)
+
+    assert.equal( exchange.getOrdersLength(), 8)
+    assert.equal( exchange.getOrdersByStatus(2).length, 0)
+  })
+
+  it('自动清除清算完的订单',function(){
+    exchange.removeOrders = true
+    exchange.report()
+    //assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
+    //assert.equal( exchange.getOrdersLength(), 8)
+    assert.equal( exchange.getOrdersLength(), 4)
   })
 
 })

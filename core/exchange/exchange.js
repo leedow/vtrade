@@ -66,6 +66,7 @@ module.exports = class Exchange extends Ex{
    */
   subscribeOrders() {
     this.subscribe(`ORDER_${this.eventName}`, (order) => {
+
       switch(order.status) {
         case OPEN: {
           if(order.side == 'buy') {
@@ -77,11 +78,11 @@ module.exports = class Exchange extends Ex{
         }
         case FILLED: {
           if(order.side == 'buy') {
-            this.getAsset(this.from).decrease(order.amount*order.price)
-            this.getAsset(this.to).increase(order.amount-order.fee)
+            this.getAsset(this.from).decrease(order.amountFill*order.price)
+            this.getAsset(this.to).increase(order.amountFill-order.fee)
           } else if(order.side == 'sell') {
-            this.getAsset(this.from).increase(order.amount*order.price-order.fee)
-            this.getAsset(this.to).decrease(order.amount)
+            this.getAsset(this.from).increase(order.amountFill*order.price-order.fee)
+            this.getAsset(this.to).decrease(order.amountFill)
           }
           break
         }
@@ -93,12 +94,20 @@ module.exports = class Exchange extends Ex{
           }
           break
         }
-        case PARTDONE: {
+        case PART_FILLED: {
           // ........
           break
         }
-        case PARTCANCELED: {
-          // ......
+        case PART_CANCELED: {
+          if(order.side == 'buy') {
+            this.getAsset(this.from).decrease(order.amountFill*order.price)
+            this.getAsset(this.from).free(order.amountUnfill*order.price)
+            this.getAsset(this.to).increase(order.amountFill-order.fee)
+          } else if(order.side == 'sell') {
+            this.getAsset(this.from).increase(order.amountFill*order.price-order.fee)
+            this.getAsset(this.to).decrease(order.amountFill)
+            this.getAsset(this.to).free(order.amountUnfill)
+          }
           break
         }
         case LIMIT: {
@@ -127,7 +136,6 @@ module.exports = class Exchange extends Ex{
         price: price
       })
       this.orders.push( order )
-      this.removeFillOrders()
       return order.create()
 
     } else {
@@ -151,7 +159,6 @@ module.exports = class Exchange extends Ex{
       })
 
       this.orders.push( order )
-      //this.removeFillOrders()
       return order.create()
 
     } else {
@@ -170,10 +177,10 @@ module.exports = class Exchange extends Ex{
    * 获得距离上次report时间节点到最新位置的报告
    */
   report() {
-    return {
-      position: this.getPosition(),
-      clear: this.clear.clear(this.orders)
-    }
+    let res = this.clear.clear(this.orders)
+    res.position = this.getPosition()
+    this.removeFillOrders() // 清除清算完成订单
+    return res
   }
 
   /**
@@ -185,7 +192,7 @@ module.exports = class Exchange extends Ex{
       let price = this.tickers.getPart('PRICE', 1)[0]
       let to = this.getAsset(this.to).getBalance()*price
       let from = this.getAsset(this.from).getBalance()
-      return (to/(to + from)).toFixed(fix)
+      return Number( (to/(to + from)).toFixed(fix) )
     } catch(e) {
       this.error(e)
       return false

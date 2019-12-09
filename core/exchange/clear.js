@@ -44,6 +44,13 @@ module.exports = class Clear extends Core{
   }
 
   /**
+   * 获取
+   */
+  getUnclearInfo() {
+    // TODO
+  }
+
+  /**
    * 根据orders队列结对清算盈亏，完成部分标记
    * 忽略已完成清算订单部分
    */
@@ -130,7 +137,9 @@ module.exports = class Clear extends Core{
       buyFee,
       sellFee,
       ordersBuy,
-      ordersSell
+      ordersSell,
+      sellTotal,
+      buyTotal
     }
 
     this.history.push(res)

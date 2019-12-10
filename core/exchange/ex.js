@@ -75,6 +75,35 @@ module.exports = class Ex extends Core {
     }
   }
 
+  /**
+   * 获取指定状态订单的最高价买单
+   */
+  getTopBuyOrder(status = OPEN) {
+    let orders = this.orders.filter(order => order.status == status && order.side == 'buy')
+    let aim = null, price = 0
+    orders.forEach(order => {
+      if(order.price >= price) {
+        price = order.price
+        aim = order
+      }
+    })
+    return aim
+  }
+
+  /**
+   * 获取指定状态订单的最低价卖单
+   */
+  getBottomSellOrder(status = OPEN) {
+    let orders = this.orders.filter(order => order.status == status && order.side == 'sell')
+    let aim = null, price = 99999999999
+    orders.forEach(order => {
+      if(order.price <= price) {
+        price = order.price
+        aim = order
+      }
+    })
+    return aim
+  }
 
 
 }

@@ -48,6 +48,11 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 4999)
+    assert.equal( exchange.getBottomSellOrder(), null)
+  })
+
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
@@ -62,6 +67,11 @@ describe('测试exchange模块',function(){
 
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
+  })
+
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 5001)
+    assert.equal( exchange.getBottomSellOrder(), null)
   })
 
   it('继续5001买入10BTC，资金不足，买入失败',function(){
@@ -87,6 +97,11 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
 
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 5001)
+    assert.equal( exchange.getBottomSellOrder().price, 4999)
+  })
+
   it('5001卖出0.1BTC，成功下单，冻结0.1BTC',function(){
     exchange.sell(5001, 0.1)
     assert.equal( exchange.getAsset('btc').getFrozen(2), 0.2)
@@ -98,6 +113,11 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
   })
 
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 5001)
+    assert.equal( exchange.getBottomSellOrder().price, 4999)
+  })
+
   it('7000继续卖出10BTC，余额不足',function(){
     exchange.sell(7000, 10)
     assert.equal( exchange.getAsset('btc').getFrozen(2), 0.2)
@@ -107,6 +127,11 @@ describe('测试exchange模块',function(){
 
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), (1*5001/(5001+10000)).toFixed(4)   )
+  })
+
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 5001)
+    assert.equal( exchange.getBottomSellOrder().price, 4999)
   })
 
   // 5001买 0.1  5001卖 0.1
@@ -135,6 +160,11 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getPosition(), ( exchange.getAsset('btc').getBalance()*5000/(exchange.getAsset('btc').getBalance()*5000+exchange.getAsset('usdt').getBalance())  ).toFixed(4)   )
   })
 
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 4999)
+    assert.equal( exchange.getBottomSellOrder().price, 5001)
+  })
+
   // 5001卖 0.1
   // 4999买 0.1
   it('价格波动至5001-5002，maker成交5001卖单',function() {
@@ -158,6 +188,11 @@ describe('测试exchange模块',function(){
 
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), ( exchange.getAsset('btc').getBalance()*5001/(exchange.getAsset('btc').getBalance()*5001+exchange.getAsset('usdt').getBalance())  ).toFixed(4)   )
+  })
+
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder().price, 4999)
+    assert.equal( exchange.getBottomSellOrder(), null)
   })
 
 
@@ -184,6 +219,11 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 0)
     assert.equal( exchange.getOrdersByStatus(4).length, 4)
+  })
+
+  it('测试获取极价订单',function(){
+    assert.equal( exchange.getTopBuyOrder(), null)
+    assert.equal( exchange.getBottomSellOrder(), null)
   })
 
   it('6000卖出0.1BTC，成功下单，冻结0.1BTC',function(){

@@ -19,6 +19,8 @@ module.exports = class Order extends Core{
 
     this._price = 0 // 设置价格精度后的价格
     this.priceAcc = 0 // 价格精度小数位数
+    this.priceFill = 0 // 实际成交价格
+
     this._amount = 0 // 设置精度后的数量
     this.amountAcc = 0 // 数量精度小数位数
 
@@ -36,6 +38,7 @@ module.exports = class Order extends Core{
 
   set price(value) {
     this._price = this._formatPrice(value)
+    this.priceFill = this._price
   }
 
   get price() {

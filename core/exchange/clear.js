@@ -15,23 +15,44 @@ module.exports = class Clear extends Core{
   }
 
   /**
+   * 获取一组订单的平均价和总数量
+   * @return {object} {price:平均价, amount:总数}
+   */
+  _getPriceAndAmountOfOrders(orders) {
+    let price = 0, amount = 0, value = 0
+    orders.forEach(order => {
+      value += order.priceFill*order.amountFill
+      amount += order.amountFill
+    })
+    price = value/amount
+    return {
+      price,
+      amount
+    }
+  }
+
+  /**
+   * 获取未清算订单
+   */
+  _getUnclearOrders(orders) {
+    return orders.filter(order =>
+      ( [FILLED, PART_CANCELED].includes(order.status) )
+      && !order.cleared
+    )
+  }
+
+  /**
    * 获取待清算买单
    */
   _getBuyOrders(orders) {
-    return orders.filter(order => order.side == 'buy'
-      && ( [FILLED, PART_CANCELED].includes(order.status) )
-      && !order.cleared
-    )
+    return this._getUnclearOrders(orders).filter(order => order.side == 'buy')
   }
 
   /**
    * 获取待清算卖单
    */
   _getSellOrders(orders) {
-    return orders.filter(order => order.side == 'sell'
-      && ( [FILLED, PART_CANCELED].includes(order.status) )
-      && !order.cleared
-    )
+    return this._getUnclearOrders(orders).filter(order => order.side == 'sell')
   }
 
   /**
@@ -141,4 +162,24 @@ module.exports = class Clear extends Core{
 
   }
 
+  /**
+   * 获取未清算持仓成本及数量
+   * @return {object} {buy: {price:平均成本价，以from为单位, amount:数量，以to为单位}, sell:同buy}
+   */
+  getPositionInfo(orders) {
+    let ordersBuy = this._getBuyOrders(orders)
+    let ordersSell = this._getSellOrders(orders)
+
+    let buy = this._getPriceAndAmountOfOrders(ordersBuy)
+    let sell = this._getPriceAndAmountOfOrders(ordersSell)
+
+    return {
+      buy,
+      sell
+    }
+  }
+
+  /**
+   *
+   */
 }

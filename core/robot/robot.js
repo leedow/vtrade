@@ -11,6 +11,9 @@ module.exports = class Robot extends Core{
     this.exchanges = [] // 交易所数组
     this._policyCallback = null // 决策回调
     this._prepareCallback = null // 准备回调
+
+    // this.timers = [] // 内置定时器
+    // this.pauseTimers = false // 暂停内置定时器执行代码
   }
 
   get ex() {
@@ -59,6 +62,22 @@ module.exports = class Robot extends Core{
   registerExchange(model) {
     this.exchanges.push(model)
   }
+
+  /**
+   * 创建一个定时器
+   * @param {string} name 定时器名称
+   * @param {number} speed 定时器执行时间间隔，单位ms
+   * @param {function} callback 定时器回调
+   */
+  // createTimer(name, speed = 10000, callback) {
+  //   this.timers.push({
+  //     name,
+  //     timer: setInterval(() => {
+  //       if(!this.pauseTimers)
+  //         callback(this)
+  //     }, speed)
+  //   })
+  // }
 
 
 }

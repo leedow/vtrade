@@ -34,7 +34,10 @@ module.exports = class Ex extends Core {
    */
   removeFillOrders() {
     if(this.removeOrders) {
-      this.orders = this.orders.filter(order => !order.cleared)
+      this.orders = this.orders.filter(order =>
+        !order.cleared
+        && ![CANCELED, ERROR, LIMIT].includes(order.status)
+      )
     }
   }
 
@@ -104,6 +107,8 @@ module.exports = class Ex extends Core {
     })
     return aim
   }
+
+
 
 
 }

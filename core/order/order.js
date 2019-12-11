@@ -1,4 +1,5 @@
 let Core = require('../common/core')
+
 /**
  * 订单基础模型
  */
@@ -29,19 +30,7 @@ module.exports = class Order extends Core{
     this.createTime = 0
     this.finishTime = 0
 
-
     this.copyOptions(options)
-
-    // 订单状态
-    // this.UNACTIVE = 0
-    // this.SENDING = 1
-    // this.OPEN = 2
-    // this.PARTDONE = 3
-    // this.DONE = 4
-    // this.ARTCANCELED = 5
-    // this.CANCELED = 6
-    // this.ERROR = 7
-    // this.LIMIT = 8
     this.status = UNACTIVE
   }
 

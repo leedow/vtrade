@@ -48,6 +48,13 @@ describe('测试exchange模块',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
   })
 
+  it('获取仓位价值',function(){
+    assert.equal( exchange.getValue('usdt'), 10000 + 1*5001 )
+    assert.equal( exchange.getValue('btc').toFixed(4), (10000/5001 + 1).toFixed(4) )
+    assert.equal( exchange.getFrozenValue('usdt').toFixed(4), 499.9 )
+    assert.equal( exchange.getFrozenValue('btc').toFixed(4), (499.9/5001).toFixed(4) )
+  })
+
   it('测试获取极价订单',function(){
     assert.equal( exchange.getTopBuyOrder().price, 4999)
     assert.equal( exchange.getBottomSellOrder(), null)
@@ -319,7 +326,7 @@ describe('测试exchange模块',function(){
     exchange.clearOrders()
     //assert.equal( exchange.getAsset('btc').getFrozen(2), 0.1)
     //assert.equal( exchange.getOrdersLength(), 8)
-    assert.equal( exchange.getOrdersLength(), 4)
+    assert.equal( exchange.getOrdersLength(), 1)
   })
 
 })

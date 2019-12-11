@@ -204,19 +204,41 @@ module.exports = class Exchange extends Ex{
 
   /**
    * 获取仓位，最新价格下to资产占总资产的百分比
-   *
    */
   getPosition(fix=4) {
     try {
       let price = this.tickers.getPart('PRICE', 1)[0]
       let to = this.getAsset(this.to).getBalance()*price
-      let from = this.getAsset(this.from).getBalance()
-      return Number( (to/(to + from)).toFixed(fix) )
+      return Number( (to/this.getValue(this.from) ).toFixed(fix) )
     } catch(e) {
       this.error(e)
       return false
     }
+  }
 
+  /**
+   * 获取仓位总价值
+   * @param {string} unit 价值计价单位，from | to
+   */
+  getValue(unit, type='getBalance') {
+    let price = this.tickers.getPart('PRICE', 1)[0]
+    let total = 0
+    if(unit == this.from) {
+      total += this.getAsset(this.from)[type]()
+      total += this.getAsset(this.to)[type]()*price
+    } else if(unit == this.to) {
+      total += this.getAsset(this.from)[type]()/price
+      total += this.getAsset(this.to)[type]()
+    }
+    return total
+  }
+
+  /**
+   * 获取冻结仓位总价值
+   * @param {string} unit 价值计价单位，from | to
+   */
+  getFrozenValue(unit) {
+    return this.getValue(unit, 'getFrozen')
   }
 
 

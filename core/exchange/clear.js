@@ -19,7 +19,7 @@ module.exports = class Clear extends Core{
    */
   _getBuyOrders(orders) {
     return orders.filter(order => order.side == 'buy'
-      && (order.status == FILLED)
+      && ( [FILLED, PART_CANCELED].includes(order.status) )
       && !order.cleared
     )
   }
@@ -29,7 +29,7 @@ module.exports = class Clear extends Core{
    */
   _getSellOrders(orders) {
     return orders.filter(order => order.side == 'sell'
-      && (order.status == FILLED)
+      && ( [FILLED, PART_CANCELED].includes(order.status) )
       && !order.cleared
     )
   }
@@ -41,13 +41,6 @@ module.exports = class Clear extends Core{
     let amountBuyUnclear = helper.sum(buyOrders.map(order => order.amountUnclear))
     let amountSellUnclear = helper.sum(sellOrders.map(order => order.amountUnclear))
     return Math.min(amountBuyUnclear, amountSellUnclear)
-  }
-
-  /**
-   * 获取
-   */
-  getUnclearInfo() {
-    // TODO
   }
 
   /**

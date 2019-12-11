@@ -166,7 +166,7 @@ module.exports = class Clear extends Core{
    * 获取未清算持仓成本及数量
    * @return {object} {buy: {price:平均成本价，以from为单位, amount:数量，以to为单位}, sell:同buy}
    */
-  getPositionInfo(orders) {
+  getBothPositionInfo(orders) {
     let ordersBuy = this._getBuyOrders(orders)
     let ordersSell = this._getSellOrders(orders)
 
@@ -180,6 +180,25 @@ module.exports = class Clear extends Core{
   }
 
   /**
-   *
+   * 获取未清算仓位合计信息
+   * @return {object} {side:buy|sell, price, amount}
    */
+  getPositionInfo(orders) {
+    let res = this.getBothPositionInfo(orders)
+    let price, side, amount
+    amount = res.buy.amount - res.sell.amount
+    if(amount > 0) {
+      price = res.buy.price
+      side = 'buy'
+    } else {
+      price = res.sell.price
+      side = 'sell'
+    }
+    return {
+      side,
+      price,
+      amount: Math.abs(amount)
+    }
+  }
+
 }

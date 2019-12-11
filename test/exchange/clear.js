@@ -124,4 +124,87 @@ describe('测试clear模块',function(){
     )
   })
 
+  it('getBothPositionInfo',function(){
+    let o1 = new Order({
+      side: 'buy',
+      amountAcc: 2,
+      priceAcc: 2,
+      makerFee: -0.01,
+      takerFee: 0.01,
+      price: 100,
+      //priceFill: 100,
+
+      amount: 2
+    })
+    let o2 = new Order({
+      side: 'sell',
+      amountAcc: 2,
+      priceAcc: 2,
+      makerFee: -0.01,
+      takerFee: 0.01,
+      price: 101,
+      //priceFill: 101,
+
+      amount: 1
+    })
+    o1.create()
+    o2.create()
+
+    o1.finish(0.5)
+    o2.finish()
+
+    assert.deepEqual(
+      clear.getBothPositionInfo([o1, o2]),
+      {
+        buy: {
+          price: 100,
+          amount: 0.5
+        },
+        sell: {
+          price: 101,
+          amount: 1
+        }
+      }
+    )
+  })
+
+  it('getPositionInfo',function(){
+    let o1 = new Order({
+      side: 'buy',
+      amountAcc: 2,
+      priceAcc: 2,
+      makerFee: -0.01,
+      takerFee: 0.01,
+      price: 100,
+      //priceFill: 100,
+
+      amount: 2
+    })
+    let o2 = new Order({
+      side: 'sell',
+      amountAcc: 2,
+      priceAcc: 2,
+      makerFee: -0.01,
+      takerFee: 0.01,
+      price: 101,
+      //priceFill: 101,
+
+      amount: 1
+    })
+    o1.create()
+    o2.create()
+
+    o1.finish(0.5)
+    o2.finish()
+
+    assert.deepEqual(
+      clear.getPositionInfo([o1, o2]),
+      {
+        side: 'sell',
+        price: 101,
+        amount: 0.5
+      }
+    )
+  })
+
 })

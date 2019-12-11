@@ -118,8 +118,8 @@ describe('测试clear模块',function(){
     assert.deepEqual(
       clear._getPriceAndAmountOfOrders([orders[0], orders[1]]),
       {
-        price: (100+101*2)/3,
-        amount: 3
+        price: 0,
+        amount: 0
       }
     )
   })

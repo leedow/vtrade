@@ -122,7 +122,7 @@ module.exports = class Exchange extends Ex{
   }
 
   buy(price, amount) {
-    if(amount <= 0) return
+
     if(!this.checkOrderModel()) return
     if( this.getAsset(this.from).test(amount*price) ) {
       let order = new this.Order({
@@ -136,8 +136,14 @@ module.exports = class Exchange extends Ex{
         amount: amount,
         price: price
       })
-      this.orders.push( order )
-      return order.create()
+
+      if(order.amount > 0) {
+        this.orders.push( order )
+        return order.create()
+      } else {
+        return false
+      }
+
 
     } else {
       return {
@@ -148,8 +154,7 @@ module.exports = class Exchange extends Ex{
   }
 
   sell(price, amount) {
-    if(amount <= 0) return
-    
+
     if(!this.checkOrderModel()) return
     if( this.getAsset(this.to).test(amount) ) {
       let order = new this.Order({
@@ -164,8 +169,13 @@ module.exports = class Exchange extends Ex{
         price: price
       })
 
-      this.orders.push( order )
-      return order.create()
+      if(order.amount > 0) {
+        this.orders.push( order )
+        return order.create()
+      } else {
+        return false
+      }
+
 
     } else {
       return {

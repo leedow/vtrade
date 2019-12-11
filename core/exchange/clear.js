@@ -15,14 +15,14 @@ module.exports = class Clear extends Core{
   }
 
   /**
-   * 获取一组订单的平均价和总数量
+   * 获取一组订单未清算部分的平均价和总数量
    * @return {object} {price:平均价, amount:总数}
    */
   _getPriceAndAmountOfOrders(orders) {
     let price = 0, amount = 0, value = 0
     orders.forEach(order => {
-      value += order.priceFill*order.amountFill
-      amount += order.amountFill
+      value += order.priceFill*order.amountUnclear
+      amount += order.amountUnclear
     })
     if(amount > 0) price = value/amount
     return {

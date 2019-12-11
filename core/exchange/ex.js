@@ -30,6 +30,27 @@ module.exports = class Ex extends Core {
   }
 
   /**
+   * 获取指定状态买单
+   */
+  getBuyOrdersByStatus(status) {
+    return this.orders.filter(order => {
+      return order.status == status
+      && (order.side == 'buy')
+    })
+  }
+
+  /**
+   * 获取指定状态卖单
+   */
+  getSellOrdersByStatus(status) {
+    return this.orders.filter(order => {
+      return order.status == status
+      && (order.side == 'sell')
+    })
+  }
+
+
+  /**
    * 移除已完成订单
    */
   removeFillOrders() {

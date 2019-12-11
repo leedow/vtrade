@@ -205,6 +205,16 @@ describe('测试clear模块',function(){
         amount: 0.5
       }
     )
+
+    assert.deepEqual(
+      clear.getPositionInfo([]),
+      {
+        side: 'sell',
+        price: 0,
+        amount: 0
+      }
+    )
+
   })
 
 })

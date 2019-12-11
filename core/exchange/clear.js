@@ -24,7 +24,7 @@ module.exports = class Clear extends Core{
       value += order.priceFill*order.amountFill
       amount += order.amountFill
     })
-    price = value/amount
+    if(amount > 0) price = value/amount
     return {
       price,
       amount

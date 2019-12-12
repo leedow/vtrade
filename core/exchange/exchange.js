@@ -122,26 +122,28 @@ module.exports = class Exchange extends Ex{
   }
 
   buy(price, amount) {
-
     if(!this.checkOrderModel()) return
-    if( this.getAsset(this.from).test(amount*price) ) {
-      let order = new this.Order({
-        exchange: this.exchange,
-        pair: this.pair,
-        side: 'buy',
-        amountAcc: this.amountAcc,
-        priceAcc: this.priceAcc,
-        makerFee: this.makerFee,
-        takerFee: this.takerFee,
-        amount: amount,
-        price: price
-      })
+    let order = new this.Order({
+      exchange: this.exchange,
+      pair: this.pair,
+      side: 'buy',
+      amountAcc: this.amountAcc,
+      priceAcc: this.priceAcc,
+      makerFee: this.makerFee,
+      takerFee: this.takerFee,
+      amount: amount,
+      price: price
+    })
 
+    if( this.getAsset(this.from).test(order.amount*order.price) ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
       } else {
-        return false
+        return {
+          code: false,
+          msg: 'Exchange buy failed, amount can not be zero'
+        }
       }
 
 
@@ -154,26 +156,28 @@ module.exports = class Exchange extends Ex{
   }
 
   sell(price, amount) {
-
     if(!this.checkOrderModel()) return
-    if( this.getAsset(this.to).test(amount) ) {
-      let order = new this.Order({
-        exchange: this.exchange,
-        pair: this.pair,
-        side: 'sell',
-        amountAcc: this.amountAcc,
-        priceAcc: this.priceAcc,
-        makerFee: this.makerFee,
-        takerFee: this.takerFee,
-        amount: amount,
-        price: price
-      })
+    let order = new this.Order({
+      exchange: this.exchange,
+      pair: this.pair,
+      side: 'sell',
+      amountAcc: this.amountAcc,
+      priceAcc: this.priceAcc,
+      makerFee: this.makerFee,
+      takerFee: this.takerFee,
+      amount: amount,
+      price: price
+    })
 
+    if( this.getAsset(this.to).test(order.amount) ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
       } else {
-        return false
+        return {
+          code: false,
+          msg: 'Exchange buy failed, amount can not be zero'
+        }
       }
 
 

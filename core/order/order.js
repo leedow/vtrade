@@ -34,6 +34,7 @@ module.exports = class Order extends Core{
 
     this.copyOptions(options)
     this.status = UNACTIVE
+
   }
 
   set price(value) {
@@ -113,12 +114,20 @@ module.exports = class Order extends Core{
    * 取消订单
    */
   async cancel() {
-    if(this.amountFill > 0) {
-      this.status = PART_CANCELED
+    if([OPEN, PART_FILLED].includes(this.status)) {
+      if(this.amountFill > 0) {
+        this.status = PART_CANCELED
+      } else {
+        this.status = CANCELED
+      }
+      this.publish(`ORDER_${this.eventName}`, this)
     } else {
-      this.status = CANCELED
+      return {
+        code: false,
+        msg: `Order: cancel wrong status order!`
+      }
     }
-    this.publish(`ORDER_${this.eventName}`, this)
+
   }
 
   /**

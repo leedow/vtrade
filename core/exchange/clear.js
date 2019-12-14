@@ -27,7 +27,9 @@ module.exports = class Clear extends Core{
     if(amount > 0) price = value/amount
     return {
       price,
-      amount
+      amount,
+      maxPrice: Math.max(...orders.map(order => order.price)),
+      minPrice: Math.min(...orders.map(order => order.price))
     }
   }
 

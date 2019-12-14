@@ -119,7 +119,9 @@ describe('测试clear模块',function(){
       clear._getPriceAndAmountOfOrders([orders[0], orders[1]]),
       {
         price: 0,
-        amount: 0
+        amount: 0,
+        maxPrice: 101,
+        minPrice: 100
       }
     )
   })
@@ -158,11 +160,15 @@ describe('测试clear模块',function(){
       {
         buy: {
           price: 100,
-          amount: 0.5
+          amount: 0.5,
+          maxPrice: 100,
+          minPrice: 100
         },
         sell: {
           price: 101,
-          amount: 1
+          amount: 1,
+          maxPrice: 101,
+          minPrice: 101
         }
       }
     )

@@ -3,9 +3,9 @@ let Robot = require('../robot/robot')
 let Order = require('../order/order')
 
 module.exports = function(options) {
-  const exchangeName = options.exchange
-  const pairName = options.pair
-  const eventName = `ROBOT_TICKERS_${exchangeName}_${pairName}`
+  let exchangeName = options.exchange
+  let pairName = options.pair
+  let eventName = `ROBOT_TICKERS_${exchangeName}_${pairName}`
 
   let ex = new Exchange({
     exchange: exchangeName,

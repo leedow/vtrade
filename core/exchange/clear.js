@@ -28,8 +28,8 @@ module.exports = class Clear extends Core{
     return {
       price,
       amount,
-      maxPrice: Math.max(...orders.map(order => order.price)),
-      minPrice: Math.min(...orders.map(order => order.price))
+      maxPrice: orders.length>0?Math.max(...orders.map(order => order.price)):0,
+      minPrice: orders.length>0?Math.min(...orders.map(order => order.price)):0
     }
   }
 
@@ -190,16 +190,18 @@ module.exports = class Clear extends Core{
     let price, side, amount
     amount = res.buy.amount - res.sell.amount
     if(amount > 0) {
-      price = res.buy.price
+      price = (res.buy.price*res.buy.amount-res.sell.price*res.sell.amount)/amount
       side = 'buy'
     } else {
-      price = res.sell.price
+      price = (res.sell.price*res.sell.amount-res.buy.price*res.buy.amount)/amount
       side = 'sell'
     }
     return {
       side,
-      price,
-      amount: Math.abs(amount)
+      price: price,
+      amount: Math.abs(amount),
+      buy: res.buy,
+      sell: res.sell
     }
   }
 

@@ -135,7 +135,6 @@ describe('测试clear模块',function(){
       takerFee: 0.01,
       price: 100,
       //priceFill: 100,
-
       amount: 2
     })
     let o2 = new Order({
@@ -208,7 +207,19 @@ describe('测试clear模块',function(){
       {
         side: 'sell',
         price: 101,
-        amount: 0.5
+        amount: 0.5,
+        buy: {
+          price: 100,
+          amount: 0.5,
+          maxPrice: 100,
+          minPrice: 100
+        },
+        sell: {
+          price: 101,
+          amount: 1,
+          maxPrice: 101,
+          minPrice: 101
+        }
       }
     )
 
@@ -217,7 +228,19 @@ describe('测试clear模块',function(){
       {
         side: 'sell',
         price: 0,
-        amount: 0
+        amount: 0,
+        buy: {
+          price: 0,
+          amount: 0,
+          maxPrice: 0,
+          minPrice: 0
+        },
+        sell: {
+          price: 0,
+          amount: 0,
+          maxPrice: 0,
+          minPrice: 0
+        }
       }
     )
 

@@ -42,7 +42,7 @@ module.exports = class Exchange extends Ex{
    */
   subscribeRobotTicker() {
     this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      // console.log(data)
+      //console.log(data)
       this.tickers.remember(data)
       this.orders.forEach(order => {
         order.checkStatusByPrice(
@@ -176,7 +176,7 @@ module.exports = class Exchange extends Ex{
       } else {
         return {
           code: false,
-          msg: 'Exchange buy failed, amount can not be zero'
+          msg: 'Exchange sell failed, amount can not be zero'
         }
       }
 

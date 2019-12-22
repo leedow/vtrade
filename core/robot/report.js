@@ -7,7 +7,7 @@ module.exports = class Report extends Core{
   constructor(options) {
     super()
     this.copyOptions(options)
-    //this.x = [] // 记录时间轴
+    // this.x = [] // 记录时间轴
     this.content = {x: []} // 报告数据 {a: [], b: []}
   }
 

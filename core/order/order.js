@@ -202,9 +202,11 @@ module.exports = class Order extends Core{
    * 用于加快更新订单状态，减少API请求
    */
   checkStatusByPrice(buyPrice, sellPrice) {
+    // console.log(buyPrice, sellPrice)
     if(this.status != OPEN) return
     // console.log(buyPrice, this.price)
     if(this.side == 'buy') {
+      //console.log(sellPrice - this.price)
       if(sellPrice <= this.price) {
         this.finish()
       } else {

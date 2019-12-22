@@ -21,10 +21,10 @@ module.exports = class Robot extends Core{
   }
 
   run() {
-    this.subscribeExHeartbeat()
     if(this._prepareCallback) {
       this._prepareCallback(this)
     }
+    this.subscribeExHeartbeat()
   }
 
   /**

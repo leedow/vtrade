@@ -187,15 +187,17 @@ module.exports = class Clear extends Core{
    */
   getPositionInfo(orders) {
     let res = this.getBothPositionInfo(orders)
-    let price, side, amount
+    let price=0, side='', amount
     amount = res.buy.amount - res.sell.amount
+
     if(amount > 0) {
       price = (res.buy.price*res.buy.amount-res.sell.price*res.sell.amount)/amount
       side = 'buy'
-    } else {
+    } else if(amount<0){
       price = (res.sell.price*res.sell.amount-res.buy.price*res.buy.amount)/amount
       side = 'sell'
     }
+
     return {
       side,
       price: price,
@@ -203,6 +205,8 @@ module.exports = class Clear extends Core{
       buy: res.buy,
       sell: res.sell
     }
+    
   }
+
 
 }

@@ -181,8 +181,7 @@ describe('测试clear模块',function(){
       makerFee: -0.01,
       takerFee: 0.01,
       price: 100,
-      //priceFill: 100,
-
+      // priceFill: 100,
       amount: 2
     })
     let o2 = new Order({
@@ -192,8 +191,7 @@ describe('测试clear模块',function(){
       makerFee: -0.01,
       takerFee: 0.01,
       price: 101,
-      //priceFill: 101,
-
+      // priceFill: 101,
       amount: 1
     })
     o1.create()
@@ -206,7 +204,7 @@ describe('测试clear模块',function(){
       clear.getPositionInfo([o1, o2]),
       {
         side: 'sell',
-        price: 101,
+        price: -102,
         amount: 0.5,
         buy: {
           price: 100,

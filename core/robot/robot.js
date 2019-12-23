@@ -60,6 +60,7 @@ module.exports = class Robot extends Core{
   }
 
   registerExchange(model) {
+    model._eventId = this._id
     this.exchanges.push(model)
   }
 

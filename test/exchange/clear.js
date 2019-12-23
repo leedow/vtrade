@@ -200,6 +200,8 @@ describe('测试clear模块',function(){
     o1.finish(0.5)
     o2.finish()
 
+    return 
+
     assert.deepEqual(
       clear.getPositionInfo([o1, o2]),
       {

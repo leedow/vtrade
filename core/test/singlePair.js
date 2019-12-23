@@ -7,7 +7,6 @@ module.exports = function(options) {
   let pairName = options.pair
   let eventName = `ROBOT_TICKERS_${exchangeName}_${pairName}`
 
-
   let robot = new Robot()
 
   robot.registerPrepare((V) => {

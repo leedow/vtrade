@@ -41,17 +41,26 @@ module.exports = class Exchange extends Ex{
    * 订阅ticker数据
    */
   subscribeRobotTicker() {
-    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      //console.log(data)
-      this.tickers.remember(data)
-      this.orders.forEach(order => {
-        order.checkStatusByPrice(
-          data[2],
-          data[4]
-        )
-      })
-      this.publishHeartbeat()
+    this.subscribeGlobal(`ROBOT_TICKERS_${this.eventName}`, (data) => {
+      this._handleTicker(data)
     })
+    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
+      this._handleTicker(data)
+    })
+  }
+
+  /**
+   * 处理ticker数据
+   */
+  _handleTicker(data) {
+    this.tickers.remember(data)
+    this.orders.forEach(order => {
+      order.checkStatusByPrice(
+        data[2],
+        data[4]
+      )
+    })
+    this.publishHeartbeat()
   }
 
   /**
@@ -132,7 +141,8 @@ module.exports = class Exchange extends Ex{
       makerFee: this.makerFee,
       takerFee: this.takerFee,
       amount: amount,
-      price: price
+      price: price,
+      _eventId: this._id
     })
 
     if( this.getAsset(this.from).test(order.amount*order.price) ) {
@@ -166,7 +176,8 @@ module.exports = class Exchange extends Ex{
       makerFee: this.makerFee,
       takerFee: this.takerFee,
       amount: amount,
-      price: price
+      price: price,
+      _eventId: this._id
     })
 
     if( this.getAsset(this.to).test(order.amount) ) {
@@ -179,7 +190,6 @@ module.exports = class Exchange extends Ex{
           msg: 'Exchange sell failed, amount can not be zero'
         }
       }
-
 
     } else {
       return {

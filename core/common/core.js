@@ -4,7 +4,8 @@ require('../common/const')
 
 module.exports = class Core {
   constructor() {
-    this.id = 0
+    this._id = Date.now()
+    this._eventId = 0 // 事件广播目标对象ID，如果为0则全部广播
     this.robotId = 0
     this.events = events
     this.modelName = ''
@@ -23,11 +24,31 @@ module.exports = class Core {
     }
   }
 
+  /**
+   * 订阅
+   */
   subscribe(eventName, listener) {
+    this.events.on(`${eventName}-${this._id}`, listener)
+  }
+
+  /**
+   * 向目标对象广播事件
+   */
+  publish(eventName, data) {
+    this.events.emit(`${eventName}-${this._eventId}`, data)
+  }
+
+  /**
+   * 订阅世界事件
+   */
+  subscribeGlobal(eventName, listener) {
     this.events.on(eventName, listener)
   }
 
-  publish(eventName, data) {
+  /**
+   * 向世界广播事件
+   */
+  publishGlobal(eventName, data) {
     this.events.emit(eventName, data)
   }
 

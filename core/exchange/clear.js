@@ -189,13 +189,17 @@ module.exports = class Clear extends Core{
     let res = this.getBothPositionInfo(orders)
     let price=0, side='', amount
     amount = res.buy.amount - res.sell.amount
-
+    amount = Number(amount.toFixed(6))
     if(amount > 0) {
       price = (res.buy.price*res.buy.amount-res.sell.price*res.sell.amount)/amount
       side = 'buy'
     } else if(amount<0){
       price = (res.sell.price*res.sell.amount-res.buy.price*res.buy.amount)/amount
       side = 'sell'
+    }
+
+    if(price < 0) {
+      console.log(JSON.stringify(res))
     }
 
     return {
@@ -205,7 +209,7 @@ module.exports = class Clear extends Core{
       buy: res.buy,
       sell: res.sell
     }
-    
+
   }
 
 

@@ -198,9 +198,7 @@ module.exports = class Clear extends Core{
       side = 'sell'
     }
 
-    if(price < 0) {
-      console.log(JSON.stringify(res))
-    }
+     
 
     return {
       side,

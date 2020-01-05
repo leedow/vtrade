@@ -108,12 +108,12 @@ module.exports = class Order extends Core{
   /**
    * 重发订单
    */
-  async resend() {}
+  resend() {}
 
   /**
    * 取消订单
    */
-  async cancel() {
+  cancel() {
     if([OPEN, PART_FILLED].includes(this.status)) {
       if(this.amountFill > 0) {
         this.status = PART_CANCELED

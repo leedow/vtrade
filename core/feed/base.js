@@ -34,12 +34,15 @@ module.exports = class Base extends Core {
 
   /**
    * 获取部分数据
+   * @param {array} data
+   * @param {number} length 获取数组长度
+   * @param {number} offset 向前偏移offset个数组位置
    */
   getPart(data, length, offset=1) {
     let len = data.length
     let endindex = len - offset + 1
     let startindex = endindex - length
-    if(endindex < 0) endindex = 0
+    if(endindex < 0) endindex = 1
     if(startindex < 0) startindex = 0
 
     return data.slice(startindex, endindex)

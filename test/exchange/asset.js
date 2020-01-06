@@ -57,6 +57,14 @@ describe('测试asset模块',function(){
     assert.equal( asset.test(1000), false)
     asset.frozen(500)
     assert.equal( asset.test(100), false)
+  })
+
+  it('测试getAvailableByNumber',function(){
+    assert.equal( asset.getAvailableByNumber(1000).toFixed(1), 23.4)
+    assert.equal( asset.getAvailableByNumber(100).toFixed(1), 23.4)
+    asset.free(1000)
+    assert.equal( asset.getAvailableByNumber(100).toFixed(1), 100)
+
 
   })
 

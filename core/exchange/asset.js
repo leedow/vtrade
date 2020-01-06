@@ -25,9 +25,21 @@ module.exports = class Asset extends Core{
 
   /**
    * 获得可用资产数量
+   * @param {number} 保留小数位
    */
   getAvailable(fix) {
     return this._numberFix(this.balance - this.balanceFrozen, fix)
+  }
+
+  /**
+   * 根据给定数量获取目标可用数量，如果可用余额小于给定值，则返回可用余额
+   * @param {number} balance 期望值
+   */
+  getAvailableByNumber(balance) {
+    return Math.min(
+      balance,
+      this.getAvailable()
+    )
   }
 
   getFrozen(fix) {
@@ -90,5 +102,7 @@ module.exports = class Asset extends Core{
   increase(amount) {
     this.balance += amount
   }
+
+
 
 }

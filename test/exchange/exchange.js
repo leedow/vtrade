@@ -312,8 +312,10 @@ describe('测试exchange模块',function(){
 
     order.finish(0.02, 0.01)
     // console.log(exchange.getAsset('usdt').getFrozen(2))
+    //console.log('feeeeeeeee')
+  //  console.log(order.fee)
     assert.equal( exchange.getAsset('usdt').getFrozen(10), 0)
-    assert.equal( exchange.getAsset('usdt').getBalance(10), pre1 + 0.02*3000 - 0.01)
+    assert.equal( exchange.getAsset('usdt').getBalance(10), pre1 + 0.02*3000 - 3000*0.01/3000)
     assert.equal( exchange.getAsset('btc').getFrozen(10), 0)
     assert.equal( exchange.getAsset('btc').getBalance(10), pre2 - 0.02)
 

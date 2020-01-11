@@ -1,11 +1,11 @@
-let Ex = require('./ex')
-let Tickers = require('../feed/tickers')
+let Ex = require('../ex')
+let Tickers = require('../../feed/tickers')
 let Clear = require('./clear')
 
 /**
- * 永续合约单交易对
+ * 单交易对现货
  */
-module.exports = class ExchangeP extends Ex{
+module.exports = class Exchange extends Ex{
   constructor(options) {
     super()
 
@@ -27,14 +27,6 @@ module.exports = class ExchangeP extends Ex{
 
     this.subscribeRobotTicker()
     this.subscribeOrders()
-  }
-
-  get fullEventName() {
-    return `EX_${this.eventName}`
-  }
-
-  get eventName() {
-    return `${this.exchange}_${this.pair}`
   }
 
   /**
@@ -130,6 +122,9 @@ module.exports = class ExchangeP extends Ex{
     })
   }
 
+  /**
+   * 创建买单
+   */
   buy(price, amount) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
@@ -165,6 +160,9 @@ module.exports = class ExchangeP extends Ex{
     }
   }
 
+  /**
+   * 创建卖单
+   */
   sell(price, amount) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
@@ -202,6 +200,7 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 输出asserts状态信息
+   * @return {object}
    */
   report() {
     let from = this.getAsset(this.from)

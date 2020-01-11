@@ -1,7 +1,7 @@
 let assert = require('assert')
-let Exchange = require('../../core/exchange/exchange')
-let Order = require('../../core/order/order')
-let events = require('../../core/common/events')
+let Exchange = require('../../../core/exchange/exchange')
+let Order = require('../../../core/order/order')
+let events = require('../../../core/common/events')
 let exchange = null
 
 describe('测试exchange模块',function(){

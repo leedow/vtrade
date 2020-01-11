@@ -13,6 +13,14 @@ module.exports = class Ex extends Core {
     // super.copyOptions.call(this, options)
   }
 
+  get fullEventName() {
+    return `EX_${this.eventName}`
+  }
+
+  get eventName() {
+    return `${this.exchange}_${this.pair}`
+  }
+
   /**
    * 获取订单数量
    */

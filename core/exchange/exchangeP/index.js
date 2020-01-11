@@ -3,38 +3,36 @@ let Tickers = require('../feed/tickers')
 let Clear = require('./clear')
 
 /**
- * 单交易对现货
+ * 永续合约
  */
-module.exports = class Exchange extends Ex{
+module.exports = class ExchangeP extends Ex{
   constructor(options) {
     super()
 
     this.exchange = '' // 交易所名
     this.pair = '' // 交易对名
+
     this.from = '' // 交易对锚定资产
     this.to = '' // 交易对交易资产
+
+    this.balance = '' // 账户抵押余额
+
     this.amountAcc = 0
     this.priceAcc = 0
     this.makerFee = 0
     this.takerFee = 0
 
     this.copyOptions(options)
-    this.createAsset(this.from, 0)
-    this.createAsset(this.to, 0)
+
+    this.createAsset(this.balance, 0)
+    this.createAsset('long', 0)
+    this.createAsset('short', 0)
 
     this.tickers = new Tickers()
     this.clear = new Clear()
 
     this.subscribeRobotTicker()
     this.subscribeOrders()
-  }
-
-  get fullEventName() {
-    return `EX_${this.eventName}`
-  }
-
-  get eventName() {
-    return `${this.exchange}_${this.pair}`
   }
 
   /**
@@ -135,7 +133,7 @@ module.exports = class Exchange extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
-      side: 'buy',
+      direction: 'long',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,
       makerFee: this.makerFee,
@@ -170,7 +168,7 @@ module.exports = class Exchange extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
-      side: 'sell',
+      direction: 'short',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,
       makerFee: this.makerFee,

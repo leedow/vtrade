@@ -1,6 +1,6 @@
 var assert = require('assert')
-var Clear = require('../../core/exchange/clear')
-var Order = require('../../core/order/order')
+var Clear = require('../../../core/exchange/exchange/clear')
+var Order = require('../../../core/order/order')
 
 let clear = new Clear()
 
@@ -200,7 +200,7 @@ describe('测试clear模块',function(){
     o1.finish(0.5)
     o2.finish()
 
-    return 
+    return
 
     assert.deepEqual(
       clear.getPositionInfo([o1, o2]),

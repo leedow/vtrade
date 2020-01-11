@@ -48,4 +48,24 @@ module.exports = class Clear extends Core{
   }
 
 
+  /**
+   * 获取一组订单未清算部分的平均价和总数量
+   * @return {object} {price:平均价, amount:总数}
+   */
+  _getPriceAndAmountOfOrders(orders) {
+    let price = 0, amount = 0, value = 0
+    orders.forEach(order => {
+      value += order.priceFill*order.amountUnclear
+      amount += order.amountUnclear
+    })
+    if(amount > 0) price = value/amount
+    return {
+      price,
+      amount,
+      maxPrice: orders.length>0?Math.max(...orders.map(order => order.price)):0,
+      minPrice: orders.length>0?Math.min(...orders.map(order => order.price)):0
+    }
+  }
+
+
 }

@@ -15,25 +15,6 @@ module.exports = class Clear extends C{
   }
 
   /**
-   * 获取一组订单未清算部分的平均价和总数量
-   * @return {object} {price:平均价, amount:总数}
-   */
-  _getPriceAndAmountOfOrders(orders) {
-    let price = 0, amount = 0, value = 0
-    orders.forEach(order => {
-      value += order.priceFill*order.amountUnclear
-      amount += order.amountUnclear
-    })
-    if(amount > 0) price = value/amount
-    return {
-      price,
-      amount,
-      maxPrice: orders.length>0?Math.max(...orders.map(order => order.price)):0,
-      minPrice: orders.length>0?Math.min(...orders.map(order => order.price)):0
-    }
-  }
-
-  /**
    * 根据orders队列结对清算盈亏，完成部分标记
    * 忽略已完成清算订单部分
    */
@@ -112,6 +93,7 @@ module.exports = class Clear extends C{
 
     profit = sellTotal - buyTotal
 
+    // 以usdt为单位
     let res = {
       profit,
       fee,

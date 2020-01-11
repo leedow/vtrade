@@ -1,5 +1,4 @@
 let Ex = require('../ex')
-let Tickers = require('../../feed/tickers')
 let Clear = require('./clear')
 
 /**
@@ -9,57 +8,17 @@ module.exports = class Exchange extends Ex{
   constructor(options) {
     super()
 
-    this.exchange = '' // 交易所名
-    this.pair = '' // 交易对名
     this.from = '' // 交易对锚定资产
     this.to = '' // 交易对交易资产
-    this.amountAcc = 0
-    this.priceAcc = 0
-    this.makerFee = 0
-    this.takerFee = 0
 
     this.copyOptions(options)
     this.createAsset(this.from, 0)
     this.createAsset(this.to, 0)
 
-    this.tickers = new Tickers()
     this.clear = new Clear()
 
     this.subscribeRobotTicker()
     this.subscribeOrders()
-  }
-
-  /**
-   * 订阅ticker数据
-   */
-  subscribeRobotTicker() {
-    this.subscribeGlobal(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
-    })
-    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
-    })
-  }
-
-  /**
-   * 处理ticker数据
-   */
-  _handleTicker(data) {
-    this.tickers.remember(data)
-    this.orders.forEach(order => {
-      order.checkStatusByPrice(
-        data[2],
-        data[4]
-      )
-    })
-    this.publishHeartbeat()
-  }
-
-  /**
-   * 广播exchange策略执行心跳
-   */
-  publishHeartbeat() {
-    this.publish(this.fullEventName, this)
   }
 
   /**

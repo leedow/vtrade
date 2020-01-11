@@ -1,26 +1,17 @@
-let Ex = require('./ex')
-let Tickers = require('../feed/tickers')
+let Ex = require('../ex')
 let Clear = require('./clear')
 
 /**
- * 永续合约
+ * 单交易对现货
  */
 module.exports = class ExchangeP extends Ex{
   constructor(options) {
     super()
 
-    this.exchange = '' // 交易所名
-    this.pair = '' // 交易对名
-
+    this.balance = '' // 抵押资产
     this.from = '' // 交易对锚定资产
     this.to = '' // 交易对交易资产
-
-    this.balance = '' // 账户抵押余额
-
-    this.amountAcc = 0
-    this.priceAcc = 0
-    this.makerFee = 0
-    this.takerFee = 0
+    this.lever = 1 // 交易杠杆
 
     this.copyOptions(options)
 
@@ -28,44 +19,9 @@ module.exports = class ExchangeP extends Ex{
     this.createAsset('long', 0)
     this.createAsset('short', 0)
 
-    this.tickers = new Tickers()
     this.clear = new Clear()
-
     this.subscribeRobotTicker()
     this.subscribeOrders()
-  }
-
-  /**
-   * 订阅ticker数据
-   */
-  subscribeRobotTicker() {
-    this.subscribeGlobal(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
-    })
-    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
-    })
-  }
-
-  /**
-   * 处理ticker数据
-   */
-  _handleTicker(data) {
-    this.tickers.remember(data)
-    this.orders.forEach(order => {
-      order.checkStatusByPrice(
-        data[2],
-        data[4]
-      )
-    })
-    this.publishHeartbeat()
-  }
-
-  /**
-   * 广播exchange策略执行心跳
-   */
-  publishHeartbeat() {
-    this.publish(this.fullEventName, this)
   }
 
   /**
@@ -73,7 +29,6 @@ module.exports = class ExchangeP extends Ex{
    */
   subscribeOrders() {
     this.subscribe(`ORDER_${this.eventName}`, (order) => {
-
       switch(order.status) {
         case OPEN: {
           if(order.side == 'buy') {
@@ -128,6 +83,9 @@ module.exports = class ExchangeP extends Ex{
     })
   }
 
+  /**
+   * 创建买单
+   */
   buy(price, amount) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
@@ -140,6 +98,7 @@ module.exports = class ExchangeP extends Ex{
       takerFee: this.takerFee,
       amount: amount,
       price: price,
+      lever: this.lever,
       _eventId: this._id
     })
 
@@ -163,6 +122,9 @@ module.exports = class ExchangeP extends Ex{
     }
   }
 
+  /**
+   * 创建卖单
+   */
   sell(price, amount) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
@@ -175,6 +137,7 @@ module.exports = class ExchangeP extends Ex{
       takerFee: this.takerFee,
       amount: amount,
       price: price,
+      lever: this.lever,
       _eventId: this._id
     })
 
@@ -200,6 +163,7 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 输出asserts状态信息
+   * @return {object}
    */
   report() {
     let from = this.getAsset(this.from)

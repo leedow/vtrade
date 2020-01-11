@@ -1,16 +1,58 @@
 let Core = require('../common/core')
 let Asset = require('./asset')
+let Tickers = require('../feed/tickers')
 
 module.exports = class Ex extends Core {
   constructor() {
     super()
     super.modelName = 'Ex model'
     this.name = ''
+    this.exchange = '' // 交易所名
+    this.pair = '' // 交易对名
+    this.amountAcc = 0
+    this.priceAcc = 0
+    this.makerFee = 0
+    this.takerFee = 0
     this.assets = []
     this.orders = []
     this.Order = null
     this.removeOrders = false // 是否移除完成订单，节约内存
+
+    this.tickers = new Tickers()
     // super.copyOptions.call(this, options)
+  }
+
+  /**
+   * 订阅ticker数据
+   */
+  subscribeRobotTicker() {
+    this.subscribeGlobal(`ROBOT_TICKERS_${this.eventName}`, (data) => {
+      this._handleTicker(data)
+    })
+    this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
+      this._handleTicker(data)
+    })
+  }
+
+  /**
+   * 处理ticker数据
+   */
+  _handleTicker(data) {
+    this.tickers.remember(data)
+    this.orders.forEach(order => {
+      order.checkStatusByPrice(
+        data[2],
+        data[4]
+      )
+    })
+    this.publishHeartbeat()
+  }
+
+  /**
+   * 广播exchange策略执行心跳
+   */
+  publishHeartbeat() {
+    this.publish(this.fullEventName, this)
   }
 
   get fullEventName() {

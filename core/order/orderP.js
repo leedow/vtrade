@@ -26,8 +26,15 @@ module.exports = class OrderP extends O {
     return this._fee/this.price
   }
 
+  /**
+   * 获取保证金额，在btcusd_p中单位为btc
+   */
+  get deposit() {
+    return (this.amountFill/this.price)/this.lever
+  }
+
   finish(amount, fee) {
-    super.finish(amount, fee*this.price)  
+    super.finish(amount, fee*this.price)
   }
 
 }

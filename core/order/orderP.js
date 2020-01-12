@@ -28,9 +28,16 @@ module.exports = class OrderP extends O {
 
   /**
    * 获取保证金额，在btcusd_p中单位为btc
+   * 若订单为open状态返回开单占用保证金
+   * 若订单为成交状态返回实际占用保证金
    */
   get deposit() {
-    return (this.amountFill/this.price)/this.lever
+    if(this.amountFill > 0) {
+        return (this.amountFill/this.price)/this.lever
+    } else {
+        return (this.amount/this.price)/this.lever
+    }
+
   }
 
   finish(amount, fee) {

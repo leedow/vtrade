@@ -94,6 +94,7 @@ module.exports = class Asset extends Core{
     } else {
       this.balanceFrozen = 0
     }
+    if(this.balance < 0) this.balance = 0
   }
 
   /**

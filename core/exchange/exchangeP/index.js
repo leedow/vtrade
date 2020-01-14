@@ -28,6 +28,10 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 增加持仓，计算均价，和保证金
+   * @param {string} direction 持仓方向
+   * @param {number} price
+   * @param {number} amount
+   * @param {number} deposit 保证金
    */
   increasePosition(direction, price, amount, deposit) {
     let balance = this.getAsset(direction).getBalance()
@@ -39,20 +43,30 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 平仓
+   * @param {string} direction 平仓方向，比如买入空单时为long
+   * @param {number} deposit 释放平仓所需订单冻结保证金额度
    */
-  decreasePosition(direction, price, amount) {
+  decreasePosition(direction, price, amount, deposit) {
     let balance = this.getAsset(direction).getBalance()
+    let dep = this[direction]['deposit']
     this[direction]['deposit'] = this[direction]['deposit']*(1-amount/balance)
-    this.getAsset(this.balance).increase( this[direction]['deposit']*(amount/balance) )
+    this.getAsset(direction).decrease( amount )
+    this.getAsset(this.balance).increase(dep*(amount/balance) )
+    this.getAsset(this.balance).free( deposit )
+
+    if(amount == balance) {
+      this[direction]['avgPrice'] = 0
+    }
   }
 
   /**
    * 清除某方向仓位
    */
-  clearPosition(direction) {
+  clearPosition(direction, deposit) {
     this[direction]['avgPrice'] = 0
     this.getAsset(direction).balance = 0
     this.getAsset(this.balance).increase( this[direction]['deposit'] )
+    this.getAsset(this.balance).free( deposit )
     this[direction]['deposit'] = 0
   }
 
@@ -77,15 +91,16 @@ module.exports = class ExchangeP extends Ex{
    */
   updateProfit(direction, priceOpen, priceClose, amount) {
     let profit = this.caculateProfit(direction, priceOpen, priceClose, amount)
+  
     if(profit > 0) {
-      this.getAsset(this.balanace).increase(profit)
+      this.getAsset(this.balance).increase(profit)
     } else if(profit < 0) {
-      this.getAsset(this.balanace).decrease(profit)
+      this.getAsset(this.balance).decrease(-profit)
     }
   }
 
   /**
-   * 改变持仓
+   * 改变持仓，自动增减空多单，更新可用余额 （包括保证金及利润变化）
    * @param {string} direction long | short
    * @param {object} order 订单
    * @return {number} 仓位变化所需保证金 btcusd_p中单位为btc
@@ -102,40 +117,48 @@ module.exports = class ExchangeP extends Ex{
     if(direction == 'long') {
       if(short > 0) {
         if(amount > short) {
+          // 逻辑 A
           // 平仓空单short数量，开多amount-short
-          this.increasePosition('long', price, amount-short, deposit*(amount-short)/amount )
-          this.clearPosition('short')
           this.updateProfit('short', this.short.avgPrice, price, short)
+          this.increasePosition('long', price, amount-short, deposit*(amount-short)/amount )
+          this.clearPosition('short', deposit*(1-amount+short)/amount )
         } else {
+          // 逻辑B
           // 平仓空单amount数量
-          this.decreasePosition('short', price, amount)
           this.updateProfit('short', this.short.avgPrice, price, amount)
+          this.decreasePosition('short', price, amount, deposit)
         }
       } else {
+        // 逻辑C
         this.increasePosition('long', price, amount, deposit)
       }
     } else if(direction == 'short') {
       if(long > 0) {
         if(amount > long) {
+          // 逻辑D
           // 平仓多单long数量，开空amount-long
-          this.increasePosition('short', price, amount-long, deposit*(amount-long)/amount)
-          this.clearPosition('long')
           this.updateProfit('long', this.long.avgPrice, price, long)
+          this.increasePosition('short', price, amount-long, deposit*(amount-long)/amount)
+          this.clearPosition('long', deposit*(1-amount+long)/amount)
+
         } else {
+          // 逻辑E
           // 平仓多单amount数量
-          this.decreasePosition('long', price, amount)
           this.updateProfit('long', this.long.avgPrice, price, amount)
+          this.decreasePosition('long', price, amount, deposit)
+
         }
       } else {
+        // 逻辑F
         this.increasePosition('short', price, amount, deposit)
       }
     }
 
     let fee = order.fee
     if(fee>0) {
-      this.getAsset(this.balanace).decrease(fee)
+      this.getAsset(this.balance).decrease(fee)
     } else {
-      this.getAsset(this.balanace).increase(fee)
+      this.getAsset(this.balance).increase(-fee)
     }
   }
 

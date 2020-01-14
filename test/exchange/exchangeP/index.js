@@ -5,7 +5,221 @@ let events = require('../../../core/common/events')
 let exchange = null
 
 const LEVER = 2
-describe('测试exchangeP模块',function(){
+
+describe('测试exchangeP模块独立方法',function(){
+  ex = new Exchange({
+    exchange: 'test',
+    pair: 'btcusd_p',
+    balance : 'btc',
+    makerFee: -0.01,
+    takerFee: 0.01,
+    amountAcc: 2,
+    priceAcc: 4,
+    lever: LEVER
+  })
+
+  ex.getAsset('btc').balance = 100
+
+  it('增加多仓',function(){
+    ex.increasePosition('long', 100.123, 1.11, 1.321)
+    assert.equal( ex.getAsset('long').balance, 1.11)
+    assert.equal( ex.long.avgPrice, 100.123)
+    assert.equal( ex.long.deposit, 1.321)
+    assert.equal( ex.getAsset('btc').balance, 100-1.321)
+
+  })
+
+  it('继续增加多仓',function(){
+    ex.increasePosition('long', 99.9, 2.11, 2.321)
+    assert.equal( ex.getAsset('long').balance, 1.11+2.11)
+    assert.equal( ex.long.avgPrice.toFixed(8), ((100.123*1.11+99.9*2.11)/(1.11+2.11)).toFixed(8))
+    assert.equal( ex.long.deposit, 1.321+2.321)
+    assert.equal( ex.getAsset('btc').balance, 100-1.321-2.321)
+  })
+
+  it('平多部分',function(){
+    ex.decreasePosition('long', 99.8, 1, 0)
+    assert.equal( ex.getAsset('long').balance, 1.11+2.11-1)
+    assert.equal( ex.long.avgPrice.toFixed(8), ((100.123*1.11+99.9*2.11)/(1.11+2.11)).toFixed(8))
+    assert.equal( ex.long.deposit, (1.321+2.321)*(1.11+2.11-1)/(1.11+2.11) )
+    assert.equal( ex.getAsset('btc').balance, 100-1.321-2.321+(1.321+2.321)*(1)/(1.11+2.11)  )
+  })
+
+  it('清空多仓',function(){
+    ex.clearPosition('long', 0)
+    assert.equal( ex.getAsset('long').balance, 0)
+    assert.equal( ex.long.avgPrice, 0)
+    assert.equal( ex.long.deposit, 0)
+    assert.equal( ex.getAsset('btc').balance, 100  )
+  })
+
+  it('开空1',function(){
+    ex.increasePosition('short',100, 1, 1)
+    assert.equal( ex.getAsset('short').balance, 1)
+    assert.equal( ex.short.avgPrice, 100)
+    assert.equal( ex.short.deposit, 1)
+    assert.equal( ex.getAsset('btc').balance, 100-1)
+  })
+
+  it('继续开空1',function(){
+    ex.increasePosition('short',102, 1, 1)
+    assert.equal( ex.getAsset('short').balance, 2)
+    assert.equal( ex.short.avgPrice, 101)
+    assert.equal( ex.short.deposit, 2)
+    assert.equal( ex.getAsset('btc').balance, 100-2)
+  })
+
+  it('清空空仓',function(){
+    ex.clearPosition('short', 0)
+    assert.equal( ex.getAsset('short').balance, 0)
+    assert.equal( ex.short.avgPrice, 0)
+    assert.equal( ex.short.deposit, 0)
+    assert.equal( ex.getAsset('btc').balance, 100  )
+  })
+
+  // 测试 updateAssets 逻辑C
+  it('订单开多1',function(){
+    ex.updateAssets({
+      amountFill: 1,
+      price: 100,
+      lever: LEVER,
+      direction: 'long',
+      deposit: 1/100/LEVER,
+      fee: 1
+    })
+    assert.equal( ex.long.avgPrice, 100)
+    assert.equal( ex.long.deposit, 1/100/LEVER)
+    assert.equal( ex.short.avgPrice, 0)
+    assert.equal( ex.short.deposit, 0)
+    assert.equal( ex.getAsset('long').balance, 1)
+    assert.equal( ex.getAsset('short').balance, 0)
+    assert.equal( ex.getAsset('btc').balance, 100 -1 - 1/100/LEVER)
+  })
+
+  // 逻辑C
+  it('订单再次开多1',function(){
+    ex.updateAssets({
+      amountFill: 1,
+      price: 102,
+      lever: LEVER,
+      direction: 'long',
+      deposit: 1/102/LEVER,
+      fee: -1
+    })
+    assert.equal( ex.long.avgPrice, 101)
+    assert.equal( ex.long.deposit, 1/100/LEVER+1/102/LEVER)
+    assert.equal( ex.short.avgPrice, 0)
+    assert.equal( ex.short.deposit, 0)
+    assert.equal( ex.getAsset('long').balance, 2)
+    assert.equal( ex.getAsset('short').balance, 0)
+    assert.equal( ex.getAsset('btc').balance, 100 -1+1 - 1/100/LEVER-1/102/LEVER)
+  })
+
+  // 逻辑E
+  it('开空1',function(){
+    ex.updateAssets({
+      amountFill: 1,
+      price: 102,
+      lever: LEVER,
+      direction: 'short',
+      deposit: 1/102/LEVER,
+      fee: -1
+    })
+    assert.equal( ex.long.avgPrice, 101)
+    assert.equal( ex.long.deposit, ( 1/100/LEVER+1/102/LEVER )*0.5  )
+    assert.equal( ex.short.avgPrice, 0)
+    assert.equal( ex.short.deposit, 0)
+    assert.equal( ex.getAsset('long').balance, 1)
+    assert.equal( ex.getAsset('short').balance, 0)
+    assert.equal( ex.getAsset('btc').balance, 100 -1+1+1 - 1/100/LEVER-1/102/LEVER +( 1/100/LEVER+1/102/LEVER )*0.5 + 1/101-1/102  )
+  })
+
+  // 逻辑D
+  it('开空2',function(){
+    ex.updateAssets({
+      amountFill: 2,
+      price: 102,
+      lever: LEVER,
+      direction: 'short',
+      deposit: 1/102/LEVER,
+      fee: -1
+    })
+    assert.equal( ex.long.avgPrice, 0)
+    assert.equal( ex.long.deposit, 0  )
+    assert.equal( ex.short.avgPrice, 102)
+    assert.equal( ex.short.deposit, 1/102/LEVER/2)
+    assert.equal( ex.getAsset('long').balance, 0)
+    assert.equal( ex.getAsset('short').balance, 1)
+    assert.equal( ex.getAsset('btc').balance, 100 -1+1+1+1+ 1/101-1/102 + (1/101-1/102) - 0.5/102/LEVER )
+  })
+
+  // 逻辑F
+  it('开空1',function(){
+    ex.updateAssets({
+      amountFill: 1,
+      price: 100,
+      lever: LEVER,
+      direction: 'short',
+      deposit: 1/100/LEVER,
+      fee: 0
+    })
+    assert.equal( ex.long.avgPrice, 0)
+    assert.equal( ex.long.deposit, 0  )
+    assert.equal( ex.short.avgPrice, 101)
+    assert.equal( ex.short.deposit, 1/102/LEVER/2 + 1/100/LEVER)
+    assert.equal( ex.getAsset('long').balance, 0)
+    assert.equal( ex.getAsset('short').balance, 2)
+    assert.equal( ex.getAsset('btc').balance, 100 -1+1+1+1+ 1/101-1/102 + (1/101-1/102) - 0.5/102/LEVER- 1/100/LEVER)
+  })
+
+  // 逻辑B
+  it('开多1',function(){
+    const PRICE = 103
+    ex.updateAssets({
+      amountFill: 1,
+      price: PRICE,
+      lever: LEVER,
+      direction: 'long',
+      deposit: 1/PRICE/LEVER,
+      fee: 0
+    })
+    assert.equal( ex.long.avgPrice, 0)
+    assert.equal( ex.long.deposit, 0  )
+    assert.equal( ex.short.avgPrice, 101)
+    assert.equal( ex.short.deposit, (1/102/LEVER/2 + 1/100/LEVER)/2)
+    assert.equal( ex.getAsset('long').balance, 0)
+    assert.equal( ex.getAsset('short').balance, 1)
+    assert.equal( ex.getAsset('btc').balance, 100 -1+1+1+1+ 1/101-1/102 + (1/101-1/102) - 0.5/102/LEVER- 1/100/LEVER +(1/102/LEVER/2 + 1/100/LEVER)/2 + 1/PRICE -1/101 )
+  })
+
+  // 逻辑B
+  it('开多2',function(){
+    const PRICE = 100
+    const PRE_BALANCE = ex.getAsset('btc').balance
+    ex.updateAssets({
+      amountFill: 2,
+      price: PRICE,
+      lever: LEVER,
+      direction: 'long',
+      deposit: 2/PRICE/LEVER,
+      fee: 0
+    })
+    assert.equal( ex.long.avgPrice, 100)
+    assert.equal( ex.long.deposit,  1/PRICE/LEVER )
+    assert.equal( ex.short.avgPrice, 0)
+    assert.equal( ex.short.deposit, 0)
+    assert.equal( ex.getAsset('long').balance, 1)
+    assert.equal( ex.getAsset('short').balance, 0)
+    assert.equal( ex.getAsset('btc').balance, PRE_BALANCE+(1/102/LEVER/2 + 1/100/LEVER)/2-1/PRICE/LEVER+1/100-1/101)
+  })
+
+
+
+})
+
+
+
+describe('测试exchangeP模块仿真',function(){
 
   it('初始化exchange及资产账户',function(){
     exchange = new Exchange({
@@ -139,23 +353,37 @@ describe('测试exchangeP模块',function(){
   // 5001买 1  5001卖 2
   // 4999买 1  4999卖 1
   // 7000卖 10000
-  it('价格波动至4999-5001，taker成交4999卖单，5001买单',function() {
+  it('价格波动至4998-5001，taker成交5001买单',function() {
     //let usdt = exchange.getAsset('usdt').getBalance()
     //let btc = exchange.getAsset('btc').getBalance()
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4998, 2, 5001, 2])
+    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+    //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (1/4999/LEVER+1/4999/LEVER+2/5001/LEVER+10000/7000/LEVER).toFixed(10) )
+    assert.equal( exchange.getOrdersLength(), 5)
+    assert.equal( exchange.getOrdersByStatus(2).length, 4)
+    assert.equal( exchange.getOrdersByStatus(4).length, 1)
+  })
+
+  it('测试仓位',function(){
+    assert.equal( exchange.getPosition(), 1 )
+  })
+
+  // 5001买 1 成交  5001卖 2
+  // 4999买 1  4999卖 1
+  // 7000卖 10000
+  it('价格波动至4999-5001，taker成交4999卖单',function() {
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
-  //  events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
-
-    assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (1/4999/LEVER+2/5001/LEVER+10000/7000/LEVER).toFixed(10) )
-
-
+    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+    //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (1/4999/LEVER+1/4999/LEVER+2/5001/LEVER+10000/7000/LEVER).toFixed(10) )
     assert.equal( exchange.getOrdersLength(), 5)
     assert.equal( exchange.getOrdersByStatus(2).length, 3)
     assert.equal( exchange.getOrdersByStatus(4).length, 2)
   })
 
-  it('测试仓位',function(){
-    assert.equal( exchange.getPosition(), 0 )
+  it('测试多空仓位对消',function(){
+  //  assert.equal( exchange.getPosition(), 0 )
   })
+
   //
   // it('测试获取极价订单',function(){
   //   assert.equal( exchange.getTopBuyOrder().price, 4999)

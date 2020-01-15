@@ -220,14 +220,16 @@ describe('测试exchangeP模块独立方法',function(){
 
 
 describe('测试exchangeP模块仿真',function(){
+  const TAKER_FEE = 0.01
+  const MAKER_FEE = -0.01
 
   it('初始化exchange及资产账户',function(){
     exchange = new Exchange({
       exchange: 'test',
       pair: 'btcusd_p',
       balance : 'btc',
-      makerFee: -0.01,
-      takerFee: 0.01,
+      makerFee: MAKER_FEE,
+      takerFee: TAKER_FEE,
       amountAcc: 2,
       priceAcc: 4,
       lever: LEVER
@@ -354,14 +356,27 @@ describe('测试exchangeP模块仿真',function(){
   // 4999买 1  4999卖 1
   // 7000卖 10000
   it('价格波动至4998-5001，taker成交5001买单',function() {
-    //let usdt = exchange.getAsset('usdt').getBalance()
-    //let btc = exchange.getAsset('btc').getBalance()
+    const PRE_FROZEN = exchange.getAsset('btc').getFrozen()
+    const PRE_BALANCE = exchange.getAsset('btc').getBalance()
+    const PRICE = 5001
+    const FEE = 1/PRICE*TAKER_FEE
+
+    console.log('PRE_FROZEN', PRE_FROZEN)
+
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4998, 2, 5001, 2])
     //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
-    //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (1/4999/LEVER+1/4999/LEVER+2/5001/LEVER+10000/7000/LEVER).toFixed(10) )
     assert.equal( exchange.getOrdersLength(), 5)
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
     assert.equal( exchange.getOrdersByStatus(4).length, 1)
+
+    assert.equal( exchange.long.avgPrice, 5001)
+    assert.equal( exchange.long.deposit,  1/PRICE/LEVER )
+    assert.equal( exchange.short.avgPrice, 0)
+    assert.equal( exchange.short.deposit, 0)
+    assert.equal( exchange.getAsset('long').balance, 1)
+    assert.equal( exchange.getAsset('short').balance, 0)
+    assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), PRE_FROZEN - 1/PRICE/LEVER )
+    assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE-1/PRICE/LEVER-FEE )
   })
 
   it('测试仓位',function(){

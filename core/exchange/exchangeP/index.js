@@ -91,7 +91,7 @@ module.exports = class ExchangeP extends Ex{
    */
   updateProfit(direction, priceOpen, priceClose, amount) {
     let profit = this.caculateProfit(direction, priceOpen, priceClose, amount)
-  
+
     if(profit > 0) {
       this.getAsset(this.balance).increase(profit)
     } else if(profit < 0) {
@@ -106,6 +106,7 @@ module.exports = class ExchangeP extends Ex{
    * @return {number} 仓位变化所需保证金 btcusd_p中单位为btc
    */
   updateAssets(order) {
+
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
     let amount = order.amountFill

@@ -78,7 +78,7 @@ module.exports = class Asset extends Core{
   free(amount) {
     amount = Number(amount)
     if(amount >= this.getFrozen() ) {
-       this.balanceFrozen = 0
+      this.balanceFrozen = 0
     } else {
       this.balanceFrozen -= amount
     }
@@ -86,14 +86,17 @@ module.exports = class Asset extends Core{
 
   /**
    * 减少资产，默认优先减少冻结资产
+   * @param {boolean} frozen 是否从冻结资产中扣除
    */
-  decrease(amount) {
+  decrease(amount, frozen=true) {
     this.balance -= amount
-    if(amount <= this.balanceFrozen) {
-      this.balanceFrozen -= amount
-    } else {
-      this.balanceFrozen = 0
-    }
+    if(frozen) {
+      if(amount <= this.balanceFrozen) {
+        this.balanceFrozen -= amount
+      } else {
+        this.balanceFrozen = 0
+      }
+    }  
     if(this.balance < 0) this.balance = 0
   }
 

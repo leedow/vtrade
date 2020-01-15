@@ -37,7 +37,7 @@ module.exports = class ExchangeP extends Ex{
     let balance = this.getAsset(direction).getBalance()
     this[direction]['avgPrice'] = (this[direction]['avgPrice']*balance + price*amount)/(balance + amount)
     this[direction]['deposit'] += deposit
-    this.getAsset(this.balance).decrease(deposit)
+    // this.getAsset(this.balance).decrease(deposit)
     this.getAsset(direction).increase(amount)
   }
 
@@ -51,7 +51,7 @@ module.exports = class ExchangeP extends Ex{
     let dep = this[direction]['deposit']
     this[direction]['deposit'] = this[direction]['deposit']*(1-amount/balance)
     this.getAsset(direction).decrease( amount )
-    this.getAsset(this.balance).increase(dep*(amount/balance) )
+    this.getAsset(this.balance).free( dep*(amount/balance) )
     this.getAsset(this.balance).free( deposit )
 
     if(amount == balance) {
@@ -65,7 +65,7 @@ module.exports = class ExchangeP extends Ex{
   clearPosition(direction, deposit) {
     this[direction]['avgPrice'] = 0
     this.getAsset(direction).balance = 0
-    this.getAsset(this.balance).increase( this[direction]['deposit'] )
+    this.getAsset(this.balance).free( this[direction]['deposit'] )
     this.getAsset(this.balance).free( deposit )
     this[direction]['deposit'] = 0
   }
@@ -157,7 +157,7 @@ module.exports = class ExchangeP extends Ex{
 
     let fee = order.fee
     if(fee>0) {
-      this.getAsset(this.balance).decrease(fee)
+      this.getAsset(this.balance).decrease(fee, false)
     } else {
       this.getAsset(this.balance).increase(-fee)
     }

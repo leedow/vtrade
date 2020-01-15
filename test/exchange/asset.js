@@ -64,8 +64,14 @@ describe('测试asset模块',function(){
     assert.equal( asset.getAvailableByNumber(100).toFixed(1), 23.4)
     asset.free(1000)
     assert.equal( asset.getAvailableByNumber(100).toFixed(1), 100)
+  })
 
-
+  it('直接扣除资产（不扣除冻结）',function(){
+    asset.frozen(50)
+    assert.equal( asset.getFrozen(), 50)
+    asset.decrease(10, false)
+    assert.equal( asset.getFrozen(), 50)
+  //  assert.free(100)
   })
 
 })

@@ -9,8 +9,8 @@ module.exports = class ExchangeP extends Ex{
     super()
 
     this.balance = '' // 抵押资产
-    this.from = '' // 交易对锚定资产
-    this.to = '' // 交易对交易资产
+    //this.from = '' // 交易对锚定资产
+    //this.to = '' // 交易对交易资产
     this.lever = 1 // 交易杠杆，初始化后不可更改
 
     this.copyOptions(options)
@@ -91,11 +91,10 @@ module.exports = class ExchangeP extends Ex{
    */
   updateProfit(direction, priceOpen, priceClose, amount) {
     let profit = this.caculateProfit(direction, priceOpen, priceClose, amount)
-
     if(profit > 0) {
       this.getAsset(this.balance).increase(profit)
     } else if(profit < 0) {
-      this.getAsset(this.balance).decrease(-profit)
+      this.getAsset(this.balance).decrease(-profit, false)
     }
   }
 
@@ -115,6 +114,8 @@ module.exports = class ExchangeP extends Ex{
     let direction = order.direction
     let deposit = order.deposit
 
+    // console.log(order)
+
     if(direction == 'long') {
       if(short > 0) {
         if(amount > short) {
@@ -131,6 +132,7 @@ module.exports = class ExchangeP extends Ex{
         }
       } else {
         // 逻辑C
+        // console.log(deposit)
         this.increasePosition('long', price, amount, deposit)
       }
     } else if(direction == 'short') {
@@ -156,6 +158,7 @@ module.exports = class ExchangeP extends Ex{
     }
 
     let fee = order.fee
+
     if(fee>0) {
       this.getAsset(this.balance).decrease(fee, false)
     } else {
@@ -220,7 +223,7 @@ module.exports = class ExchangeP extends Ex{
       _eventId: this._id
     })
 
-    if( this.getAsset(this.balance).test(order.deposit) ) {
+    if( this.checkBalance(order) ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
@@ -257,7 +260,7 @@ module.exports = class ExchangeP extends Ex{
       _eventId: this._id
     })
 
-    if( this.getAsset(this.balance).test(order.deposit) ) {
+    if( this.checkBalance(order) ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
@@ -282,24 +285,56 @@ module.exports = class ExchangeP extends Ex{
    * @return {object}
    */
   report() {
-    let from = this.getAsset(this.from)
-    let to = this.getAsset(this.to)
+    let profitUnfill = 0
+    let long = this.getAsset('long').getBalance()
+    let short = this.getAsset('short').getBalance()
+    let price = this.tickers.getLast()[0]
 
     return {
       position: this.getPosition(),
-      from: {
-        balance: from.getBalance(),
-        frozen: from.getFrozen()
-      },
-      to: {
-        balance: to.getBalance(),
-        frozen: to.getFrozen()
-      }
+      balance: this.getAsset(this.balance).getBalance(), // 账户真实余额
+      profitUnfill: this.getProfitUnfill(), // 未实现盈亏
+      balanceUnfill: profitUnfill+this.getAsset(this.balance).getBalance()
+    }
+  }
+
+  /**
+   * 获取未实现盈亏
+   * @return {number} 以抵押物为单位的盈亏值
+   */
+  getProfitUnfill() {
+    let profitUnfill = 0
+    if(this.getAsset('long').getBalance() > 0) {
+      profitUnfill = (1/this.long.avgPrice-1/price)*long
+    } else if(this.getAsset('short').getBalance() > 0) {
+      profitUnfill = (-1/this.short.avgPrice+1/price)*short
+    }
+    return profitUnfill
+  }
+
+  /**
+   * 测试是否有足够保证金可下单
+   * @param {Order} 计划下单
+   * @return {Boolean} 是否可下单
+   */
+  checkBalance(order) {
+    let balanceCanuse = this.getProfitUnfill() + this.getAsset(this.balance).getBalance()
+    let dif = 0
+    if( order.direction == 'long' ) {
+      dif = order.amount - this.getAsset('short').getBalance()
+    } else if( order.direction == 'short' ) {
+      dif = order.amount - this.getAsset('long').getBalance()
+    }
+    if(dif >= 0) {
+      return order.deposit*(dif/order.amount) <= balanceCanuse
+    } else {
+      return true
     }
   }
 
   /**
    * 清算订单
+   * 不同于现货交易，合约交易中清算手续费，不包含交易差价利润
    */
   clearOrders() {
     let res = this.clear.clear(this.orders)
@@ -313,7 +348,7 @@ module.exports = class ExchangeP extends Ex{
   getPosition() {
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
-    return long + short
+    return long - short
   }
 
   /**
@@ -321,16 +356,7 @@ module.exports = class ExchangeP extends Ex{
    * @param {string} unit 价值计价单位，from | to
    */
   getValue(unit, type='getBalance') {
-    let price = this.tickers.getPart('PRICE', 1)[0]
-    let total = 0
-    if(unit == this.from) {
-      total += this.getAsset(this.from)[type]()
-      total += this.getAsset(this.to)[type]()*price
-    } else if(unit == this.to) {
-      total += this.getAsset(this.from)[type]()/price
-      total += this.getAsset(this.to)[type]()
-    }
-    return total
+
   }
 
   /**

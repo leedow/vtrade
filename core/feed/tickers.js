@@ -82,6 +82,9 @@ module.exports = class Tickers extends Base{
     super.remember(data)
     Object.keys(this.keys).forEach(key => {
       this._pushDif(`LIVE_${key}`, data[ this.keys[key] ])
+      if(this[`LIVE_${key}`].length > this.memorySize){
+        this[`LIVE_${key}`].shift()
+      }
     })
     this.publish(`TICKERS_${this.exchange}`, this)
   }

@@ -40,6 +40,7 @@ module.exports = class Base extends Core {
    */
   getPart(data, length, offset=1) {
     let len = data.length
+    console.log(len)
     let endindex = len - offset + 1
     let startindex = endindex - length
     if(endindex < 0) endindex = 1

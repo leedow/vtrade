@@ -18,8 +18,8 @@ module.exports = class ExchangeP extends Ex{
     this.createAsset(this.balance, 0)
     this.createAsset('long', 0)
     this.createAsset('short', 0)
-    this.long = {avgPrice: 0, deposit:0}
-    this.short = {avgPrice: 0, deposit:0}
+    this.long = {avgPrice: 0, deposit:0, minPrice:0, maxPrice:0}
+    this.short = {avgPrice: 0, deposit:0, minPrice:0, maxPrice:0}
 
     this.clear = new Clear()
     this.subscribeRobotTicker()
@@ -39,6 +39,7 @@ module.exports = class ExchangeP extends Ex{
     this[direction]['deposit'] += deposit
     // this.getAsset(this.balance).decrease(deposit)
     this.getAsset(direction).increase(amount)
+    this.updatePositionPrice(direction, price)
   }
 
   /**
@@ -56,7 +57,12 @@ module.exports = class ExchangeP extends Ex{
 
     if(amount == balance) {
       this[direction]['avgPrice'] = 0
+      this[direction]['maxPrice'] = 0
+      this[direction]['minPrice'] = 0
     }
+
+    this.updatePositionPrice(direction, price)
+
   }
 
   /**
@@ -68,6 +74,22 @@ module.exports = class ExchangeP extends Ex{
     this.getAsset(this.balance).free( this[direction]['deposit'] )
     this.getAsset(this.balance).free( deposit )
     this[direction]['deposit'] = 0
+    this[direction]['maxPrice'] = 0
+    this[direction]['minPrice'] = 0
+  }
+
+  /**
+   * 更新仓位的最低高价
+   */
+  updatePositionPrice(direction, price) {
+    if(price > this[direction].maxPrice) {
+      this[direction].maxPrice = price
+    }
+    if(price < this[direction].minPrice
+      || (this[direction].minPrice == 0)
+    ) {
+      this[direction].minPrice = price
+    }
   }
 
   /**
@@ -286,9 +308,6 @@ module.exports = class ExchangeP extends Ex{
    */
   report() {
     let profitUnfill = 0
-    let long = this.getAsset('long').getBalance()
-    let short = this.getAsset('short').getBalance()
-    let price = this.tickers.getLast()[0]
 
     return {
       position: this.getPosition(),
@@ -304,9 +323,13 @@ module.exports = class ExchangeP extends Ex{
    */
   getProfitUnfill() {
     let profitUnfill = 0
-    if(this.getAsset('long').getBalance() > 0) {
+    let price = this.tickers.getLast()[0]
+    let long = this.getAsset('long').getBalance()
+    let short = this.getAsset('short').getBalance()
+
+    if(long > 0) {
       profitUnfill = (1/this.long.avgPrice-1/price)*long
-    } else if(this.getAsset('short').getBalance() > 0) {
+    } else if(short > 0) {
       profitUnfill = (-1/this.short.avgPrice+1/price)*short
     }
     return profitUnfill
@@ -318,7 +341,7 @@ module.exports = class ExchangeP extends Ex{
    * @return {Boolean} 是否可下单
    */
   checkBalance(order) {
-    let balanceCanuse = this.getProfitUnfill() + this.getAsset(this.balance).getBalance()
+    let balanceCanuse = this.getAsset(this.balance).getAvailable() + this.getProfitUnfill()
     let dif = 0
     if( order.direction == 'long' ) {
       dif = order.amount - this.getAsset('short').getBalance()
@@ -326,7 +349,7 @@ module.exports = class ExchangeP extends Ex{
       dif = order.amount - this.getAsset('long').getBalance()
     }
     if(dif >= 0) {
-      return order.deposit*(dif/order.amount) <= balanceCanuse
+      return balanceCanuse - order.deposit*(dif/order.amount) > 0
     } else {
       return true
     }

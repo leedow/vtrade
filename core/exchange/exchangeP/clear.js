@@ -36,6 +36,9 @@ module.exports = class Clear extends C{
     })
 
     this.history.push(res)
+    if(this.history.length > 100) {
+      this.history.shift()
+    }
     return res
   }
 

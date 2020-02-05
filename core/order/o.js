@@ -32,6 +32,8 @@ module.exports = class O extends Core{
     this.createTime = 0
     this.finishTime = 0
 
+    this.postOnly = false // 仅maker下单
+
     this.copyOptions(options)
     this.status = UNACTIVE
 

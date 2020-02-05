@@ -270,6 +270,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getBottomSellOrder(), null)
   })
 
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 0)
+    assert.equal( exchange.getBuyAmountByStatus(2), 1)
+  })
+
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), 0 )
   })
@@ -280,6 +285,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER+1/5001/LEVER).toFixed(10))
     assert.equal( exchange.getOrdersLength(), 2)
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
+  })
+
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 0)
+    assert.equal( exchange.getBuyAmountByStatus(2), 2)
   })
 
   it('测试仓位',function(){
@@ -299,6 +309,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
   })
 
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 0)
+    assert.equal( exchange.getBuyAmountByStatus(2), 2)
+  })
+
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), 0  )
   })
@@ -308,6 +323,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('btc').getFrozen(10),  (1/4999/LEVER+1/5001/LEVER+1/4999/LEVER).toFixed(10) )
     assert.equal( exchange.getOrdersLength(), 3)
     assert.equal( exchange.getOrdersByStatus(2).length, 3)
+  })
+
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 1)
+    assert.equal( exchange.getBuyAmountByStatus(2), 2)
   })
 
   it('测试仓位',function(){
@@ -324,6 +344,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER+1/5001/LEVER+1/4999/LEVER+2/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getOrdersLength(), 4)
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
+  })
+
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 3)
+    assert.equal( exchange.getBuyAmountByStatus(2), 2)
   })
 
   it('测试仓位',function(){
@@ -380,6 +405,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getPosition(), 1 )
   })
 
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 3+10000)
+    assert.equal( exchange.getBuyAmountByStatus(2), 1)
+  })
+
   // 5001买 1 已成交  5001卖 2
   // 4999买 1  4999卖 1
   // 7000卖 10000
@@ -402,6 +432,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('short').balance, 0)
     //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (PRE_FROZEN-1/PRICE/LEVER-1/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE+FEE+(1/5001-1/4999) )
+  })
+
+  it('测试获取下单数量',function(){
+    assert.equal( exchange.getSellAmountByStatus(2), 3+10000-1)
+    assert.equal( exchange.getBuyAmountByStatus(2), 1)
   })
 
   it('测试多空仓位对消',function(){

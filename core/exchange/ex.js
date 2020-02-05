@@ -99,6 +99,35 @@ module.exports = class Ex extends Core {
     })
   }
 
+  /**
+   * 获取订单的总数
+   */
+  _getAmountOfOrders(orders) {
+    let total = 0
+    orders.forEach(order => {
+      total += order.amount
+    })
+    return total
+  }
+
+  /**
+   * 获取指定状态卖（空）单的下单总数
+   */
+  getSellAmountByStatus(status) {
+    return this._getAmountOfOrders(
+      this.getSellOrdersByStatus(status)
+    )
+  }
+
+  /**
+   * 获取指定状态买（多）单的下单总数
+   */
+  getBuyAmountByStatus(status) {
+    return this._getAmountOfOrders(
+      this.getBuyOrdersByStatus(status)
+    )
+  }
+
 
   /**
    * 移除已完成订单

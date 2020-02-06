@@ -228,8 +228,11 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 创建买单
+   * @param {number} price 价格
+   * @param {number} amount 数量
+   * @param {object} params 订单额外参数
    */
-  buy(price, amount, postOnly) {
+  buy(price, amount, params) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -243,7 +246,7 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly: postOnly=='postOnly'?true:false
+      postOnly: this.getValue(params, 'postOnly', false)
     })
 
     if( this.checkBalance(order) ) {
@@ -266,8 +269,11 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 创建卖单
+   * @param {number} price 价格
+   * @param {number} amount 数量
+   * @param {object} params 订单额外参数
    */
-  sell(price, amount, postOnly) {
+  sell(price, amount, params) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -281,7 +287,7 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly: postOnly=='postOnly'?true:false
+      postOnly: this.getValue(params, 'postOnly', false)
     })
 
     if( this.checkBalance(order) ) {

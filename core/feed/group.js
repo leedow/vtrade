@@ -2,25 +2,29 @@ let Base = require('./base')
 let helper = require('../tools/helper')
 
 /**
- * data为[number...]的数据队列处理器
+ * data为[{value,count}...]的数据队列统计器
  */
-module.exports = class Queue extends Base{
+module.exports = class Group extends Base{
   constructor(options) {
     super()
-    super.name = 'QUEUE MODEL'
+    super.name = 'GROUP MODEL'
     this.id = null
     this.copyOptions(options)
+    this.memorySize = 9999
   }
 
   /**
-   * 指定位置数据变化幅度
-   * @param {number} step 对比数据大小步长
-   * @param {number} offset 从后往前的偏移量
+   * 记录一项数组，不存在插入新data，已存在则自增count
+   * @param {number} value 数据值
+   * @param {number} count 数据数量
    */
-  getTrend(step, offset=1) {
-    let last = this.getLast(offset)
-    let pre = this.getLast(offset+step)
-    return (last - pre)/pre
+  remember(value, count) {
+    let index = this.data.findIndex(item => item.value == value)
+    if(index >= 0) {
+      this.data[index]['count'] += count
+    } else {
+      this.remember
+    }
   }
 
   /**

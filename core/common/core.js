@@ -17,6 +17,9 @@ module.exports = class Core {
     this.clock = clock
   }
 
+  /**
+   * 初始化参数
+   */
   copyOptions(options) {
     if(typeof options == 'object') {
       for(let key in options) {
@@ -24,6 +27,19 @@ module.exports = class Core {
       }
     }
   }
+
+  /**
+   * 从一个对象中获取指定参数，如果不存在则返回res
+   */
+  getValue(aim, key, res=null) {
+    try {
+      return aim[key]?aim[key]:res
+    } catch(e) {
+      console.error(e)
+      return res
+    }
+  }
+
 
   /**
    * 订阅

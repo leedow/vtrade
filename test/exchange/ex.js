@@ -15,4 +15,19 @@ describe('测试ex模块',function(){
     assert.equal( ex.getAsset('usdt').balance, 200)
   })
 
+  it('添加queue',function(){
+    ex.createQueue('q1')
+
+    assert.equal( ex.queues.length, 1)
+    assert.equal( ex.getQueue('q1').id, 'q1')
+
+    ex.createQueue('q2')
+    assert.equal( ex.queues.length, 2)
+
+    let res= ex.removeQueue('q1')
+    assert.equal( res, true)
+    assert.equal( ex.queues.length, 1)
+    assert.equal( ex.getQueue('q1'), false)
+  })
+
 })

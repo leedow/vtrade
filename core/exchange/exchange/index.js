@@ -84,7 +84,7 @@ module.exports = class Exchange extends Ex{
   /**
    * 创建买单
    */
-  buy(price, amount, postOnly=false) {
+  buy(price, amount, postOnly) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -97,7 +97,8 @@ module.exports = class Exchange extends Ex{
       amount: amount,
       price: price,
       _eventId: this._id,
-      postOnly
+      postOnly: postOnly=='postOnly'?true:false
+
 
     })
 
@@ -124,7 +125,7 @@ module.exports = class Exchange extends Ex{
   /**
    * 创建卖单
    */
-  sell(price, amount, postOnly=false) {
+  sell(price, amount, postOnly) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -137,8 +138,9 @@ module.exports = class Exchange extends Ex{
       amount: amount,
       price: price,
       _eventId: this._id,
-      postOnly
-      
+      postOnly: postOnly=='postOnly'?true:false
+
+
     })
 
     if( this.getAsset(this.to).test(order.amount) ) {

@@ -5,9 +5,11 @@ let helper = require('../tools/helper')
  * data为[number...]的数据队列处理器
  */
 module.exports = class Queue extends Base{
-  constructor() {
+  constructor(options) {
     super()
     super.name = 'QUEUE MODEL'
+    this.id = null
+    this.copyOptions(options)
   }
 
   /**

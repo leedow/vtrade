@@ -33,7 +33,7 @@ module.exports = class Robot extends Core{
   subscribeExHeartbeat() {
     this.exchanges.forEach(ex => {
         this.subscribe(ex.fullEventName, () => {
-          this._policyCallback(this)
+          this._policyCallback(this, ex)
         })
     })
   }

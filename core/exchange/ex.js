@@ -1,6 +1,7 @@
 let Core = require('../common/core')
 let Asset = require('./asset')
 let Tickers = require('../feed/tickers')
+let Queue = require('../feed/queue')
 
 module.exports = class Ex extends Core {
   constructor() {
@@ -19,6 +20,8 @@ module.exports = class Ex extends Core {
     this.removeOrders = false // 是否移除完成订单，节约内存
 
     this.tickers = new Tickers()
+
+    this.queues = []
     // super.copyOptions.call(this, options)
   }
 
@@ -208,7 +211,49 @@ module.exports = class Ex extends Core {
     return aim
   }
 
+  /**
+   * 生成一个新的数据队列
+   * @param {string} id 队列ID
+   */
+  createQueue(id) {
+    if(!id) return false
+    let queue = new Queue({
+      id
+    })
+    this.queues.push(queue)
+    return queue
+  }
 
+  /**
+   * 删除一个数据队列
+   * @param {string} id 队列ID
+   */
+  removeQueue(id) {
+    let index = this.queues.findIndex(queue => queue.id == id)
+    try {
+      if(index >= 0) {
+        this.queues.splice(index, 1)
+        return true
+      } else {
+        return false
+      }
+    } catch(e) {
+      return false
+    }
+  }
+
+  /**
+   * 根据ID获取一个数据队列
+   * @param {string} id 队列ID
+   */
+  getQueue(id) {
+    let index = this.queues.findIndex(queue => queue.id == id)
+    if(index >= 0) {
+      return this.queues[index]
+    } else {
+      return false
+    }
+  }
 
 
 }

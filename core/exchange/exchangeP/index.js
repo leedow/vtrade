@@ -229,7 +229,7 @@ module.exports = class ExchangeP extends Ex{
   /**
    * 创建买单
    */
-  buy(price, amount, postOnly=false) {
+  buy(price, amount, postOnly) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -243,7 +243,7 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly
+      postOnly: postOnly=='postOnly'?true:false
     })
 
     if( this.checkBalance(order) ) {
@@ -267,7 +267,7 @@ module.exports = class ExchangeP extends Ex{
   /**
    * 创建卖单
    */
-  sell(price, amount, postOnly=false) {
+  sell(price, amount, postOnly) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -281,7 +281,7 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly
+      postOnly: postOnly=='postOnly'?true:false
     })
 
     if( this.checkBalance(order) ) {

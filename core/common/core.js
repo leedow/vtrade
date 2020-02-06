@@ -35,7 +35,7 @@ module.exports = class Core {
     try {
       return aim[key]?aim[key]:res
     } catch(e) {
-      console.error(e)
+      // console.error(e)
       return res
     }
   }

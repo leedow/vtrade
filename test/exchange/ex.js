@@ -15,7 +15,7 @@ describe('测试ex模块',function(){
     assert.equal( ex.getAsset('usdt').balance, 200)
   })
 
-  it('添加queue',function(){
+  it('测试queue',function(){
     ex.createQueue('q1')
 
     assert.equal( ex.queues.length, 1)
@@ -28,6 +28,21 @@ describe('测试ex模块',function(){
     assert.equal( res, true)
     assert.equal( ex.queues.length, 1)
     assert.equal( ex.getQueue('q1'), false)
+  })
+
+  it('测试group',function(){
+    ex.createGroup('g1')
+
+    assert.equal( ex.groups.length, 1)
+    assert.equal( ex.getGroup('g1').id, 'g1')
+
+    ex.createGroup('g2')
+    assert.equal( ex.groups.length, 2)
+
+    let res= ex.removeGroup('g1')
+    assert.equal( res, true)
+    assert.equal( ex.groups.length, 1)
+    assert.equal( ex.getGroup('g1'), false)
   })
 
 })

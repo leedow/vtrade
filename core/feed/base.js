@@ -5,7 +5,7 @@ module.exports = class Base extends Core {
     super()
     this.name = ''
     this.data = []
-    this.memorySize = 100 // 最大记忆长度
+    this.memorySize = 999 // 最大记忆长度
   }
 
   remember(onedata) {

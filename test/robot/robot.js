@@ -58,4 +58,34 @@ describe('测试robot模块',function(){
     events.emit(`ROBOT_TICKERS_${exchangeName}_btcusdt`, [2, 2, 2, 2, 1, 1])
   })
 
+  it('测试queue',function(){
+    robot.createQueue('q1')
+
+    assert.equal( robot.queues.length, 1)
+    assert.equal( robot.getQueue('q1').id, 'q1')
+
+    robot.createQueue('q2')
+    assert.equal( robot.queues.length, 2)
+
+    let res= robot.removeQueue('q1')
+    assert.equal( res, true)
+    assert.equal( robot.queues.length, 1)
+    assert.equal( robot.getQueue('q1'), false)
+  })
+
+  it('测试group',function(){
+    robot.createGroup('g1')
+
+    assert.equal( robot.groups.length, 1)
+    assert.equal( robot.getGroup('g1').id, 'g1')
+
+    robot.createGroup('g2')
+    assert.equal( robot.groups.length, 2)
+
+    let res= robot.removeGroup('g1')
+    assert.equal( res, true)
+    assert.equal( robot.groups.length, 1)
+    assert.equal( robot.getGroup('g1'), false)
+  })
+
 })

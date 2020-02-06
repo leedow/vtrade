@@ -246,7 +246,8 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly: this.getValue(params, 'postOnly', false)
+      postOnly: this._getValue(params, 'postOnly', false),
+      params: this._getValue(params, 'params', null)
     })
 
     if( this.checkBalance(order) ) {
@@ -287,7 +288,8 @@ module.exports = class ExchangeP extends Ex{
       price: price,
       lever: this.lever,
       _eventId: this._id,
-      postOnly: this.getValue(params, 'postOnly', false)
+      postOnly: this._getValue(params, 'postOnly', false),
+      params: this._getValue(params, 'params', null)
     })
 
     if( this.checkBalance(order) ) {

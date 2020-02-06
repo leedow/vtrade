@@ -259,10 +259,15 @@ describe('测试exchangeP模块仿真',function(){
 
   it('4999买入1USD，成功下单，冻结1/4999btc',function(){
     exchange.registerOrder(Order)
-    exchange.buy(4999, 1)
+    exchange.buy(4999, 1, {
+      params: {test:1}
+    })
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER).toFixed(10))
     assert.equal( exchange.getOrdersLength(), 1)
     assert.equal( exchange.getOrdersByStatus(2).length, 1)
+    //console.log(exchange.orders[exchange.orders.length-1].params)
+    assert.deepEqual( exchange.orders[exchange.orders.length-1].params, {test:1})
+
   })
 
   it('测试获取极价订单',function(){

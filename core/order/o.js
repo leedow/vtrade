@@ -34,6 +34,8 @@ module.exports = class O extends Core{
 
     this.postOnly = false // 仅maker下单
 
+    this.params = null // 附带参数
+
     this.copyOptions(options)
     this.status = UNACTIVE
 

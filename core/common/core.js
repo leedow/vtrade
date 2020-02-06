@@ -31,7 +31,7 @@ module.exports = class Core {
   /**
    * 从一个对象中获取指定参数，如果不存在则返回res
    */
-  getValue(aim, key, res=null) {
+  _getValue(aim, key, res=null) {
     try {
       return aim[key]?aim[key]:res
     } catch(e) {

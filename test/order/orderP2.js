@@ -4,7 +4,8 @@ var e = require('../../core/common/events')
 
 let order1 = new Order()
 let eventName = 'ORDER_TEST_btcusdt'
-describe('测试orderP模块，币本位模式',function(){
+
+describe('测试orderP模块，usdt本位模式',function(){
 
   it('创建一个买单',function(){
     order1.id = 1
@@ -18,6 +19,7 @@ describe('测试orderP模块，币本位模式',function(){
     order1.direction = 'long'
     order1.exchange = 'TEST'
     order1.lever = 5
+    order1.marginType = 'usd'
 
     assert.equal( order1.price, 4321.12)
     assert.equal( order1.amount, 100.1234)
@@ -61,11 +63,11 @@ describe('测试orderP模块，币本位模式',function(){
     assert.equal( order1.amountUnfill, 0)
     assert.equal( order1.status, FILLED)
     assert.equal( order1.isMaker, true)
-    assert.equal( order1.fee, order1.amount*-0.001/order1.price)
+    assert.equal( order1.fee, order1.amount*-0.001*order1.price)
   })
 
   it('测试占用保证金',function(){
-    assert.equal( order1.deposit.toFixed(5), ((100.123456/4321.123)/5).toFixed(5) )
+    assert.equal( order1.deposit.toFixed(5), ((100.1234*4321.12)/5).toFixed(5) )
   })
 
   let order2 = null
@@ -82,6 +84,7 @@ describe('测试orderP模块，币本位模式',function(){
       takerFee: 0.001,
       direction: 'short',
       exchange: 'TEST',
+      marginType: 'usd',
       lever: 10
     })
 
@@ -90,7 +93,6 @@ describe('测试orderP模块，币本位模式',function(){
     // assert.deepEqual( order.status, 2)
   })
 
-
   it('以taker形式成交',function(){
     order2.create()
 
@@ -98,20 +100,23 @@ describe('测试orderP模块，币本位模式',function(){
       if(o.status == FILLED && o.id ==2) {
         assert.equal( o.status, 4)
         assert.equal( o.isMaker, false)
-        assert.equal( o.fee, o.amount*0.001/o.price)
+        assert.equal( o.fee, o.amount*0.001*o.price)
       }
     })
 
     order2.checkStatusByPrice(4321.123, 5000)
     assert.equal( order2.status, 4)
     assert.equal( order2.isMaker, false)
-    assert.equal( order2.fee, order2.amount*0.001/order2.price)
+    assert.equal( order2.fee, order2.amount*0.001*order2.price)
     // assert.deepEqual( order.status, 2)
   })
 
+
   it('测试占用保证金',function(){
-    assert.equal( order2.deposit.toFixed(5), ((100.123456/4321.123)/10).toFixed(5) )
+    assert.equal( order2.deposit.toFixed(5), ((100.1234*4321.12)/10).toFixed(5) )
   })
+
+
 
   it('测试清算标记及待清算数量',function(){
     order2.amountClear = order2.amountFill
@@ -119,6 +124,8 @@ describe('测试orderP模块，币本位模式',function(){
     assert.equal( order2.amountUnclear, 0)
     assert.equal( order2.cleared, true)
   })
+
+
 
   let order3 = new Order({
     id: 3,
@@ -130,7 +137,8 @@ describe('测试orderP模块，币本位模式',function(){
     makerFee: -0.001,
     takerFee: 0.001,
     side: 'sell',
-    exchange: 'TEST'
+    exchange: 'TEST',
+    marginType: 'usd'
   })
 
   order3.create()

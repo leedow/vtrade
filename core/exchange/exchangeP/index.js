@@ -12,12 +12,14 @@ module.exports = class ExchangeP extends Ex{
     //this.from = '' // 交易对锚定资产
     //this.to = '' // 交易对交易资产
     this.lever = 1 // 交易杠杆，初始化后不可更改
+    this.marginType = 'coin' // 保证金模式 coin 币本位 | usd本位
 
     this.copyOptions(options)
 
     this.createAsset(this.balance, 0)
     this.createAsset('long', 0)
     this.createAsset('short', 0)
+
     this.long = {avgPrice: 0, deposit:0, minPrice:0, maxPrice:0}
     this.short = {avgPrice: 0, deposit:0, minPrice:0, maxPrice:0}
 
@@ -44,7 +46,7 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 平仓
-   * @param {string} direction 平仓方向，比如买入空单时为long
+   * @param {string} direction 平仓方向，比如买入空单时，平多单，为long
    * @param {number} deposit 释放平仓所需订单冻结保证金额度
    */
   decreasePosition(direction, price, amount, deposit) {
@@ -122,7 +124,6 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 改变持仓，自动增减空多单，更新可用余额 （包括保证金及利润变化）
-   * @param {string} direction long | short
    * @param {object} order 订单
    * @return {number} 仓位变化所需保证金 btcusd_p中单位为btc
    */
@@ -190,6 +191,27 @@ module.exports = class ExchangeP extends Ex{
 
 
   /**
+   * 单向开仓或平仓，用于可多空同时持仓，用于支持单独开仓和平仓的交易所
+   * @param {object} order 订单
+   */
+  updateAssetsOneDirection(order) {
+    if(order.direction == 'long') {
+      if(order.orderType == 'open') { // 多单开仓
+        this.increasePosition('long', order.price, order.amount, order.deposit)
+      } else if(order.orderType == 'close') { // 空单平仓
+        this.decreasePosition('short', order.price, order.amount, order.deposit)
+      }
+    } else if(order.direction == 'short') {
+      if(order.orderType == 'open') { // 空单开仓
+        this.increasePosition('short', order.price, order.amount, order.deposit)
+      } else if(order.orderType == 'close') { // 多单平仓
+        this.increasePosition('long', order.price, order.amount, order.deposit)
+      }
+    }
+  }
+
+
+  /**
    * 订阅订单消息
    */
   subscribeOrders() {
@@ -231,8 +253,9 @@ module.exports = class ExchangeP extends Ex{
    * @param {number} price 价格
    * @param {number} amount 数量
    * @param {object} params 订单额外参数
+   * @param {object} orderType 下单模式，open开仓，close平仓，''自动平开仓
    */
-  buy(price, amount, params) {
+  buy(price, amount, params, orderType) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -247,6 +270,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      marginType: this.marginType,
       params: this._getValue(params, 'params', null)
     })
 
@@ -273,8 +297,9 @@ module.exports = class ExchangeP extends Ex{
    * @param {number} price 价格
    * @param {number} amount 数量
    * @param {object} params 订单额外参数
+   * @param {object} orderType 下单模式，open开仓，close平仓，''自动平开仓
    */
-  sell(price, amount, params) {
+  sell(price, amount, params, orderType) {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -289,6 +314,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      marginType: this.marginType,
       params: this._getValue(params, 'params', null)
     })
 
@@ -310,6 +336,11 @@ module.exports = class ExchangeP extends Ex{
       }
     }
   }
+
+  /**
+   * 单向开仓平仓
+   */
+
 
 
   /**
@@ -351,6 +382,11 @@ module.exports = class ExchangeP extends Ex{
    * @return {Boolean} 是否可下单
    */
   checkBalance(order) {
+    // 如果是仅开仓或者平仓
+    if(['open', 'close'].includes(order.orderType)) {
+      return this._checkBalance(order)
+    }
+
     let balanceCanuse = this.getAsset(this.balance).getAvailable() + this.getProfitUnfill()
     let dif = 0
     if( order.direction == 'long' ) {
@@ -362,6 +398,22 @@ module.exports = class ExchangeP extends Ex{
       return balanceCanuse - order.deposit*(dif/order.amount) > 0
     } else {
       return true
+    }
+  }
+
+  /**
+   * 仅开仓或平仓时检查保证金是否充足
+   * @param {Order} 计划下单
+   * @return {Boolean} 是否可下单
+   */
+  _checkBalance(order) {
+    if(order.orderType == 'open') {
+      let balanceCanuse = this.getAsset(this.balance).getAvailable()
+      return balanceCanuse - order.deposit > 0
+    } else if(order.orderType == 'close'){
+      return true
+    } else {
+      return false
     }
   }
 

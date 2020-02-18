@@ -15,6 +15,8 @@ module.exports = class Core {
     this.enableError = true
 
     this.clock = clock
+
+    this.events.setMaxListeners(100)
   }
 
   /**

@@ -179,14 +179,7 @@ module.exports = class ExchangeP extends Ex{
         this.increasePosition('short', price, amount, deposit)
       }
     }
-
-    let fee = order.fee
-
-    if(fee>0) {
-      this.getAsset(this.balance).decrease(fee, false)
-    } else {
-      this.getAsset(this.balance).increase(-fee)
-    }
+    this.updateFee(order.fee)
   }
 
 
@@ -195,18 +188,33 @@ module.exports = class ExchangeP extends Ex{
    * @param {object} order 订单
    */
   updateAssetsOneDirection(order) {
+    let amount = order.amountFill
+    let deposit = order.deposit*(order.amountFill/order.amount)
     if(order.direction == 'long') {
       if(order.orderType == 'open') { // 多单开仓
-        this.increasePosition('long', order.price, order.amount, order.deposit)
+        this.increasePosition('long', order.priceFill, amount, deposit)
       } else if(order.orderType == 'close') { // 空单平仓
-        this.decreasePosition('short', order.price, order.amount, order.deposit)
+        this.decreasePosition('short', order.priceFill, amount, deposit)
       }
     } else if(order.direction == 'short') {
       if(order.orderType == 'open') { // 空单开仓
-        this.increasePosition('short', order.price, order.amount, order.deposit)
+        this.increasePosition('short', order.priceFill, amount, deposit)
       } else if(order.orderType == 'close') { // 多单平仓
-        this.increasePosition('long', order.price, order.amount, order.deposit)
+        this.decreasePosition('long', order.priceFill, amount, deposit)
       }
+    }
+    this.updateFee(order.fee)
+    
+  }
+
+  /**
+   * 更新fee收入
+   */
+  updateFee(fee) {
+    if(fee>0) {
+      this.getAsset(this.balance).decrease(fee, false)
+    } else {
+      this.getAsset(this.balance).increase(-fee)
     }
   }
 
@@ -222,7 +230,8 @@ module.exports = class ExchangeP extends Ex{
           break
         }
         case FILLED: {
-          this.updateAssets(order)
+          if(order.orderType == '') this.updateAssets(order)
+          if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
           break
         }
         case CANCELED: {
@@ -234,7 +243,8 @@ module.exports = class ExchangeP extends Ex{
           break
         }
         case PART_CANCELED: {
-          this.updateAssets(order)
+          if(order.orderType == '') this.updateAssets(order)
+          if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
           break
         }
         case LIMIT: {
@@ -255,7 +265,7 @@ module.exports = class ExchangeP extends Ex{
    * @param {object} params 订单额外参数
    * @param {object} orderType 下单模式，open开仓，close平仓，''自动平开仓
    */
-  buy(price, amount, params, orderType) {
+  buy(price, amount, params, orderType='') {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -271,6 +281,7 @@ module.exports = class ExchangeP extends Ex{
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
       marginType: this.marginType,
+      orderType,
       params: this._getValue(params, 'params', null)
     })
 
@@ -299,7 +310,7 @@ module.exports = class ExchangeP extends Ex{
    * @param {object} params 订单额外参数
    * @param {object} orderType 下单模式，open开仓，close平仓，''自动平开仓
    */
-  sell(price, amount, params, orderType) {
+  sell(price, amount, params, orderType='') {
     if(!this.checkOrderModel()) return
     let order = new this.Order({
       exchange: this.exchange,
@@ -315,6 +326,7 @@ module.exports = class ExchangeP extends Ex{
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
       marginType: this.marginType,
+      orderType,
       params: this._getValue(params, 'params', null)
     })
 
@@ -338,10 +350,32 @@ module.exports = class ExchangeP extends Ex{
   }
 
   /**
-   * 单向开仓平仓
+   * 开多
    */
+  openLong(price, amount, params) {
+    return this.buy(price, amount, params, 'open')
+  }
 
+  /**
+   * 平多
+   */
+  closeLong(price, amount, params) {
+    return this.sell(price, amount, params, 'close')
+  }
 
+  /**
+   * 开空
+   */
+  openShort(price, amount, params) {
+    return this.sell(price, amount, params, 'open')
+  }
+
+  /**
+   * 平空
+   */
+  closeShort(price, amount, params) {
+    return this.buy(price, amount, params, 'close')
+  }
 
   /**
    * 输出asserts状态信息
@@ -403,15 +437,20 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 仅开仓或平仓时检查保证金是否充足
+   * 如果可平仓数量小于计划平仓数量，返回false
    * @param {Order} 计划下单
    * @return {Boolean} 是否可下单
    */
   _checkBalance(order) {
+
     if(order.orderType == 'open') {
       let balanceCanuse = this.getAsset(this.balance).getAvailable()
       return balanceCanuse - order.deposit > 0
     } else if(order.orderType == 'close'){
-      return true
+      let short = this.getAsset('short').getBalance()
+      let long = this.getAsset('long').getBalance()
+      if(order.direction == 'long') return order.amount <= short
+      if(order.direction == 'short') return order.amount <= long
     } else {
       return false
     }

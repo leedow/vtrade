@@ -152,10 +152,10 @@ module.exports = class O extends Core{
   /**
    * 完成全部订单
    */
-  _finishAll() {
+  _finishAll(fee) {
     this.status = FILLED
     this.amountFill = this.amount
-    this._setFee()
+    this._setFee(fee)
     this.publish(`ORDER_${this.eventName}`, this)
   }
 
@@ -166,7 +166,7 @@ module.exports = class O extends Core{
    */
   _finishPart(amount, fee) {
     if(amount >= this.amount) {
-      this._finishAll()
+      this._finishAll(fee)
     } else {
       this._update(amount, fee)
       this.status = PART_CANCELED

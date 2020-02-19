@@ -52,6 +52,9 @@ module.exports = class OrderP extends O {
     }
   }
 
+  /**
+   * @param {number} fee coin时fee为coin单位计价，usd时fee为usd计价
+   */
   finish(amount, fee) {
     if( this.marginType == 'coin' ) {
       super.finish(amount, fee*this.price)

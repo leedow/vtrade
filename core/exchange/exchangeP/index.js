@@ -204,7 +204,7 @@ module.exports = class ExchangeP extends Ex{
       }
     }
     this.updateFee(order.fee)
-    
+
   }
 
   /**
@@ -282,6 +282,7 @@ module.exports = class ExchangeP extends Ex{
       postOnly: this._getValue(params, 'postOnly', false),
       marginType: this.marginType,
       orderType,
+      robotId: this.robotId,
       params: this._getValue(params, 'params', null)
     })
 
@@ -327,6 +328,7 @@ module.exports = class ExchangeP extends Ex{
       postOnly: this._getValue(params, 'postOnly', false),
       marginType: this.marginType,
       orderType,
+      robotId: this.robotId,
       params: this._getValue(params, 'params', null)
     })
 

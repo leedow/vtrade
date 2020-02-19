@@ -100,6 +100,7 @@ module.exports = class Exchange extends Ex{
       amount: amount,
       price: price,
       _eventId: this._id,
+      robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
       params: this._getValue(params, 'params', null)
 
@@ -144,6 +145,7 @@ module.exports = class Exchange extends Ex{
       amount: amount,
       price: price,
       _eventId: this._id,
+      robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
       params: this._getValue(params, 'params', null)
 

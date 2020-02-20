@@ -99,11 +99,20 @@ module.exports = class ExchangeP extends Ex{
    * @param {string} direction 平仓方向
    */
   caculateProfit(direction, priceOpen, priceClose, amount) {
-    if(direction == 'long') {
-      return amount*(1/priceOpen-1/priceClose)
-    } else if(direction == 'short') {
-      return amount*(1/priceClose-1/priceOpen)
+    if( this.marginType == 'coin' ) {
+      if(direction == 'long') {
+        return amount*(1/priceOpen-1/priceClose)
+      } else if(direction == 'short') {
+        return amount*(1/priceClose-1/priceOpen)
+      }
+    } else if( this.marginType == 'usd' ) {
+      if(direction == 'long') {
+        return amount*(priceClose-priceOpen)
+      } else if(direction == 'short') {
+        return amount*(priceOpen-priceClose)
+      }
     }
+
   }
 
   /**

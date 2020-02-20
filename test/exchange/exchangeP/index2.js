@@ -142,7 +142,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
     assert.equal( ex.short.deposit, 0)
     assert.equal( ex.getAsset('long').balance, 1)
     assert.equal( ex.getAsset('short').balance, 0)
-    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1  + 1/101-1/102  )
+    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1  + 1  )
   })
 
   // 逻辑D
@@ -161,7 +161,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
     assert.equal( ex.short.deposit, 1/102/LEVER/2)
     assert.equal( ex.getAsset('long').balance, 0)
     assert.equal( ex.getAsset('short').balance, 1)
-    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 1/101-1/102 + (1/101-1/102)  )
+    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 1 + 1  )
   })
 
   // 逻辑F
@@ -180,7 +180,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
     assert.equal( ex.short.deposit, 1/102/LEVER/2 + 1/100/LEVER)
     assert.equal( ex.getAsset('long').balance, 0)
     assert.equal( ex.getAsset('short').balance, 2)
-    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 1/101-1/102 + (1/101-1/102) )
+    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 2 )
   })
 
 
@@ -202,7 +202,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
     assert.equal( ex.short.deposit, (1/102/LEVER/2 + 1/100/LEVER)/2)
     assert.equal( ex.getAsset('long').balance, 0)
     assert.equal( ex.getAsset('short').balance, 1)
-    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 1/101-1/102 + (1/101-1/102)  + (1/PRICE -1/101) )
+    assert.equal( ex.getAsset('usd').balance, 1000 -1+1+1+1+ 2  -2 )
   })
 
   // 逻辑B
@@ -223,7 +223,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
     assert.equal( ex.short.deposit, 0)
     assert.equal( ex.getAsset('long').balance, 1)
     assert.equal( ex.getAsset('short').balance, 0)
-    assert.equal( ex.getAsset('usd').balance, PRE_BALANCE+1/100-1/101)
+    assert.equal( ex.getAsset('usd').balance, PRE_BALANCE+101-100)
   })
 
 

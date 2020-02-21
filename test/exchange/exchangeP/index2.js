@@ -447,6 +447,7 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE+FEE )
   })
 
+
   it('5002平多0.5',function(){
     exchange.closeLong(5002, 0.5)
     assert.equal( exchange.getAsset('usd').getFrozen(10), (4999/LEVER+5001/LEVER+4999/LEVER+0.5*5002/LEVER).toFixed(10) )
@@ -454,7 +455,8 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     //assert.equal( exchange.getOrdersByStatus(2).length, 3)
   })
 
-  it('价格波动至5002-5003，taker成交5002空单',function() {
+
+  it('价格波动至5002-5003，taker成交5002空单0.5',function() {
     const PRE_BALANCE = exchange.getAsset('usd').getBalance()
 
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
@@ -466,9 +468,10 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.short.deposit, 4999/LEVER)
     assert.equal( exchange.getAsset('long').balance, 0.5)
     assert.equal( exchange.getAsset('short').balance, 1)
-    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*TAKER_FEE )
+    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*TAKER_FEE + 0.5*(5002-5001) )
 
   })
+
 
   it('5002平多1.5，下单失败',function(){
     exchange.closeLong(5002, 1.5)
@@ -491,8 +494,9 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.short.deposit, 4999/LEVER)
     assert.equal( exchange.getAsset('long').balance, 0)
     assert.equal( exchange.getAsset('short').balance, 1)
-    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*TAKER_FEE )
+    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*TAKER_FEE+0.5*(5002-5001) )
   })
+
 
 
   it('5002平空0.5',function(){
@@ -508,8 +512,9 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.short.deposit, 0.5*4999/LEVER)
     assert.equal( exchange.getAsset('long').balance, 0)
     assert.equal( exchange.getAsset('short').balance, 0.5)
-    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*MAKER_FEE )
+    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*MAKER_FEE-0.5*(5002-4999) )
   })
+
 
   it('5002平空1.5，下单失败',function(){
     exchange.closeLong(5002, 1.5)
@@ -535,8 +540,10 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.short.deposit, 0)
     assert.equal( exchange.getAsset('long').balance, 0)
     assert.equal( exchange.getAsset('short').balance, 0)
-    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*MAKER_FEE )
+    assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*MAKER_FEE-0.5*(5002-4999) )
   })
+
+
 
 
 

@@ -203,12 +203,14 @@ module.exports = class ExchangeP extends Ex{
       if(order.orderType == 'open') { // 多单开仓
         this.increasePosition('long', order.priceFill, amount, deposit)
       } else if(order.orderType == 'close') { // 空单平仓
+        this.updateProfit('short', this.short.avgPrice, order.priceFill, amount)
         this.decreasePosition('short', order.priceFill, amount, deposit)
       }
     } else if(order.direction == 'short') {
       if(order.orderType == 'open') { // 空单开仓
         this.increasePosition('short', order.priceFill, amount, deposit)
       } else if(order.orderType == 'close') { // 多单平仓
+        this.updateProfit('long', this.long.avgPrice, order.priceFill, amount)
         this.decreasePosition('long', order.priceFill, amount, deposit)
       }
     }

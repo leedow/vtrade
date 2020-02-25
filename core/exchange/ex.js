@@ -191,7 +191,7 @@ module.exports = class Ex extends Core {
     let orders = this.orders.filter(order => order.status == status && order.side == 'buy')
     let aim = null, price = 0
     orders.forEach(order => {
-      if(order.price >= price) {
+      if(order.price - price >= 0) {
         price = order.price
         aim = order
       }
@@ -206,7 +206,7 @@ module.exports = class Ex extends Core {
     let orders = this.orders.filter(order => order.status == status && order.side == 'sell')
     let aim = null, price = 99999999999
     orders.forEach(order => {
-      if(order.price <= price) {
+      if(order.price - price <= 0) {
         price = order.price
         aim = order
       }

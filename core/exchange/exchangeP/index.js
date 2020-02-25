@@ -308,6 +308,8 @@ module.exports = class ExchangeP extends Ex{
         }
       }
     } else {
+      // console.log(order)
+      // console.log(this.getAsset(this.balance).getAvailable())
       return {
         code: false,
         msg: `Exchange buy failed, test asset failed!`
@@ -458,6 +460,7 @@ module.exports = class ExchangeP extends Ex{
 
     if(order.orderType == 'open') {
       let balanceCanuse = this.getAsset(this.balance).getAvailable()
+
       return balanceCanuse - order.deposit > 0
     } else if(order.orderType == 'close'){
       let short = this.getAsset('short').getBalance()

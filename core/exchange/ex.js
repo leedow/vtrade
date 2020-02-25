@@ -18,6 +18,8 @@ module.exports = class Ex extends Core {
     this.Order = null
     this.removeOrders = false // 是否移除完成订单，节约内存
 
+    this.autoCheckOrders = true // 是否开启订单状态判定，实盘中可通过该设置项关闭检测避免误差
+
     this.tickers = new Tickers()
 
     // super.copyOptions.call(this, options)
@@ -40,12 +42,15 @@ module.exports = class Ex extends Core {
    */
   _handleTicker(data) {
     this.tickers.remember(data)
-    this.orders.forEach(order => {
-      order.checkStatusByPrice(
-        data[2],
-        data[4]
-      )
-    })
+    if( this.autoCheckOrders ) {
+      this.orders.forEach(order => {
+        order.checkStatusByPrice(
+          data[2],
+          data[4]
+        )
+      })
+    }
+
     this.publishHeartbeat()
   }
 

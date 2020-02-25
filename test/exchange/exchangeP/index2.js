@@ -545,11 +545,4 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
 
 
 
-
-
-
-
-
-
-
 })

@@ -85,7 +85,7 @@ module.exports = class O extends Core{
   }
 
   _formatPrice(price) {
-    return price.toFixed(this.priceAcc)
+    return Number(price.toFixed(this.priceAcc))
   }
 
   _formatAmount(amount) {

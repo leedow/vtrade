@@ -529,9 +529,10 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
   it('5002平空0.5',function(){
     const PRE_BALANCE = exchange.getAsset('usd').getBalance()
     exchange.closeShort(5002, 0.5)
+    exchange.closeShort(5002, 0.5)
+    
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5001, 2, 5003, 2])
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5001, 2, 5003, 2])
-
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5000, 2, 5002, 2])
 
     assert.equal( exchange.long.avgPrice, 0)

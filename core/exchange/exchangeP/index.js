@@ -16,7 +16,7 @@ module.exports = class ExchangeP extends Ex{
 
     this.copyOptions(options)
 
-    this.createAsset(this.balance, 0)
+    this.createAsset(this.balance, 0)  // 账户资金=账户原始资金+已实现盈亏，计算账户权益资金=账户资金+未实现盈亏
     this.createAsset('long', 0)
     this.createAsset('short', 0)
 
@@ -460,13 +460,21 @@ module.exports = class ExchangeP extends Ex{
 
     if(order.orderType == 'open') {
       let balanceCanuse = this.getAsset(this.balance).getAvailable()
-
+      // console.log(balanceCanuse)
       return balanceCanuse - order.deposit > 0
     } else if(order.orderType == 'close'){
       let short = this.getAsset('short').getBalance()
       let long = this.getAsset('long').getBalance()
-      if(order.direction == 'long') return order.amount <= short
-      if(order.direction == 'short') return order.amount <= long
+
+      let shortAmount = this._getAmountOfOrders(this.orders.filter(
+        order => order.status == OPEN && (order.side == 'sell') && (order.orderType == 'close')
+      ))
+      let longAmount = this._getAmountOfOrders(this.orders.filter(
+        order => order.status == OPEN && (order.side == 'buy') && (order.orderType == 'close')
+      ))
+
+      if(order.direction == 'long') return order.amount <= short - longAmount
+      if(order.direction == 'short') return order.amount <= long - shortAmount
     } else {
       return false
     }

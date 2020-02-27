@@ -2,12 +2,20 @@ let Base = require('./base')
 let helper = require('../tools/helper')
 /**
  * Ticker data 数据结构
- [["最新成交价",
-  "最近一笔成交的成交量",
-  "最大买一价",
-  "最大买一量",
-  "最小卖一价",
-  "最小卖一量"]]
+  [
+  0  "最新成交价",
+  1  "最近一笔成交的成交量",
+  2  "最大买一价",
+  3  "最大买一量",
+  4  "最小卖一价",
+  5  "最小卖一量",
+  6  "24小时前成交价",
+  7  "24小时内最高价",
+  8  "24小时内最低价",
+  9  "24小时内基准货币成交量, 如 btcusdt 中 btc 的量",
+  10  "24小时内计价货币成交量, 如 btcusdt 中 usdt 的量",
+  11  "时间戳"
+   ]
  */
 module.exports = class Tickers extends Base{
   constructor() {
@@ -57,9 +65,19 @@ module.exports = class Tickers extends Base{
     return helper.ma(d, length)
   }
 
-  // getMA(name) {
-  //
-  // }
+  /**
+   * 获取时间戳，单位MS
+   * 若ticker数据不存在时间戳则返回0
+   * @param {number} offset 获取倒数第index个数据
+   */
+  getTime(offset) {
+    let ticker = this.getLast(offset)
+    try{
+        return ticker[11]||0
+    } catch(e) {
+        return 0
+    }
+  }
 
   /**
    * 记录变化数据

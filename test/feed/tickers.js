@@ -11,6 +11,12 @@ describe('测试tickers模块',function(){
     assert.equal( tickers.data.length, 2)
   })
 
+  it('测试获取时间戳',function(){
+
+    assert.equal( tickers.getTime(), 0)
+
+  })
+
   it('遗忘数据',function(){
     tickers.forget()
     assert.equal( tickers.data.length, 0)
@@ -70,6 +76,12 @@ describe('测试tickers模块',function(){
 
   })
 
+  //
+  it('测试获取时间戳',function(){
+    tickers.remember([9170,0.003,9169.9,1.07564736,9170,4.6480859,9546.9,9673,9100,42473.00848722,398965954.561891,1582695763305])
+    assert.equal( tickers.getTime(), 1582695763305)
+
+  })
 
 
 })

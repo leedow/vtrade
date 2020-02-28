@@ -18,10 +18,10 @@ module.exports = class Group extends Base{
    * @param {number} count 数据数量
    */
   remember(value, count) {
-    let index = this.data.findIndex(item => item.value == value)
+    let index = this.getData().findIndex(item => item.value == value)
 
     if(index >= 0) {
-      this.data[index]['count'] += count
+      this.data[index]['d']['count'] += count
     } else {
       super.remember({
         value: value,
@@ -35,7 +35,7 @@ module.exports = class Group extends Base{
    */
   getAvg() {
     let value = 0, count = 0
-    this.data.forEach(data => {
+    this.getData().forEach(data => {
       value += data.value*data.count
       count += data.count
     })
@@ -46,14 +46,14 @@ module.exports = class Group extends Base{
    * 获取value最大
    */
   getMax() {
-    return Math.max(...this.data.map(item => item.value) )
+    return Math.max(...this.getData().map(item => item.value) )
   }
 
   /**
    * 获取value最小值
    */
   getMin() {
-    return Math.min(...this.data.map(item => item.value) )
+    return Math.min(...this.getData().map(item => item.value) )
   }
 
   /**
@@ -61,7 +61,7 @@ module.exports = class Group extends Base{
    */
   getTotalCount() {
     let total = 0
-    this.data.forEach(item => {
+    this.getData().forEach(item => {
       total += item.count
     })
     return total

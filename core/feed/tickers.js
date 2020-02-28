@@ -66,20 +66,6 @@ module.exports = class Tickers extends Base{
   }
 
   /**
-   * 获取时间戳，单位MS
-   * 若ticker数据不存在时间戳则返回0
-   * @param {number} offset 获取倒数第index个数据
-   */
-  getTime(offset) {
-    let ticker = this.getLast(offset)
-    try{
-        return ticker[11]||0
-    } catch(e) {
-        return 0
-    }
-  }
-
-  /**
    * 记录变化数据
    */
   _pushDif(name, value) {
@@ -97,7 +83,7 @@ module.exports = class Tickers extends Base{
   }
 
   remember(data) {
-    super.remember(data)
+    super.remember(data, data[11]||0)
     Object.keys(this.keys).forEach(key => {
       this._pushDif(`LIVE_${key}`, data[ this.keys[key] ])
       if(this[`LIVE_${key}`].length > this.memorySize){

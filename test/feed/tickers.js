@@ -66,20 +66,41 @@ describe('测试tickers模块',function(){
     assert.equal( tickers.getEMA('BUY_PRICE', 5), helper.ema( [3,4,5,5,4], 5) )
     assert.equal( tickers.getEMA('SELL_PRICE', 5), helper.ema( tickers.getPart('SELL_PRICE', 5), 5) )
 
-
   })
 
   it('getMA',function(){
     assert.equal( tickers.getMA('PRICE', 5), helper.ma( tickers.getPart('PRICE', 5), 5) )
     assert.equal( tickers.getMA('BUY_PRICE', 5), helper.ma( [3,4,5,5,4], 5) )
     assert.equal( tickers.getMA('SELL_PRICE', 5), helper.ma( tickers.getPart('SELL_PRICE', 5), 5) )
-
   })
 
-  //
+  let time = Date.now()
+  let tickers2 = new Tickers()
+
+
   it('测试获取时间戳',function(){
-    tickers.remember([9170,0.003,9169.9,1.07564736,9170,4.6480859,9546.9,9673,9100,42473.00848722,398965954.561891,1582695763305])
-    assert.equal( tickers.getTime(), 1582695763305)
+    tickers2.memorySize = 4
+    tickers2.memoryTimeLimit = 4000
+
+    tickers2.remember([1,2,3,4,5,6,7,8,9,10,11,time])
+    assert.equal( tickers2.getTime(), time)
+    assert.equal( tickers2.getTimeSpan(), 0)
+    tickers2.remember([2,2,3,4,5,6,7,8,9,10,11,time+1000])
+    assert.equal( tickers2._hasTime(), true)
+    assert.equal( tickers2.getTimeSpan(), 1000)
+    tickers2.remember([3,2,3,4,5,6,7,8,9,10,11,time+2000])
+    assert.deepEqual( tickers2.getTimeBefore(1000), [2,2,3,4,5,6,7,8,9,10,11,time+1000])
+
+    tickers2.remember([4,2,3,4,5,6,7,8,9,10,11,time+3000])
+    assert.equal( tickers2.getData().length, 4)
+
+    tickers2.remember([5,2,3,4,5,6,7,8,9,10,11,time+4000])
+    assert.equal( tickers2.getData().length, 5)
+
+    tickers2.remember([6,2,3,4,5,6,7,8,9,10,11,time+5000])
+    assert.deepEqual( tickers2.getTimeBefore(1000), [5,2,3,4,5,6,7,8,9,10,11,time+4000])
+    assert.equal( tickers2.getData().length, 5)
+
 
   })
 

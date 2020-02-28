@@ -28,7 +28,7 @@ module.exports = class Queue extends Base{
    */
   getAvg() {
     let avg = 0
-    this.data.forEach(data => {
+    this.getData().forEach(data => {
       avg += data/this.data.length
     })
     return avg
@@ -38,13 +38,13 @@ module.exports = class Queue extends Base{
    * 获取最大值
    */
   getMax() {
-    return Math.max(...this.data)
+    return Math.max(...this.getData())
   }
 
   /**
    * 获取最小值
    */
   getMin() {
-    return Math.min(...this.data)
+    return Math.min(...this.getData())
   }
 }

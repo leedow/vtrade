@@ -530,7 +530,7 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     const PRE_BALANCE = exchange.getAsset('usd').getBalance()
     exchange.closeShort(5002, 0.5)
     exchange.closeShort(5002, 0.5)
-    
+
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5001, 2, 5003, 2])
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5001, 2, 5003, 2])
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5000, 2, 5002, 2])
@@ -543,6 +543,67 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     assert.equal( exchange.getAsset('short').balance, 0)
     assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE - 5002*0.5*MAKER_FEE-0.5*(5002-4999) )
   })
+
+  it('测试postOnly long订单成交',function(){
+    const PRE_BALANCE = exchange.getAsset('usd').getBalance()
+    let order = exchange.openLong(5002, 0.5, {
+      postOnly: true
+    }).order
+
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5000, 2, 5002, 2])
+    assert.equal( exchange.getAsset('long').balance, 0.5)
+    assert.equal( order.status, FILLED)
+    assert.equal( order.amountFill, 0.5)
+
+  })
+
+  it('测试postOnly long订单不成交',function(){
+    const PRE_BALANCE = exchange.getAsset('usd').getBalance()
+    let order = exchange.openLong(5002, 0.5, {
+      postOnly: true
+    }).order
+
+    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5000, 2, 5002, 2])
+    assert.equal( exchange.getAsset('long').balance, 0.5)
+    assert.equal( order.status, CANCELED)
+    assert.equal( order.amountFill, 0)
+  })
+
+
+  it('测试postOnly short订单成交',function(){
+    const PRE_BALANCE = exchange.getAsset('usd').getBalance()
+    let order = exchange.openShort(5003, 0.5, {
+      postOnly: true
+    }).order
+
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5003, 2, 5004, 2])
+
+    assert.equal( exchange.getAsset('short').balance, 0.5)
+    assert.equal( order.status, FILLED)
+    assert.equal( order.amountFill, 0.5)
+
+  })
+
+  it('测试postOnly short订单不成交',function(){
+    const PRE_BALANCE = exchange.getAsset('usd').getBalance()
+    let order = exchange.openShort(5003, 0.5, {
+      postOnly: true
+    }).order
+
+    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5002, 2, 5003, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 5003, 2, 5004, 2])
+
+    assert.equal( exchange.getAsset('short').balance, 0.5)
+    assert.equal( order.status, CANCELED)
+    assert.equal( order.amountFill, 0)
+
+  })
+
 
 
 

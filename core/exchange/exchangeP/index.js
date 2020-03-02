@@ -304,6 +304,7 @@ module.exports = class ExchangeP extends Ex{
       } else {
         return {
           code: false,
+          order,
           msg: 'Exchange buy failed, amount can not be zero'
         }
       }
@@ -312,6 +313,7 @@ module.exports = class ExchangeP extends Ex{
       // console.log(this.getAsset(this.balance).getAvailable())
       return {
         code: false,
+        order,
         msg: `Exchange buy failed, test asset failed!`
       }
     }
@@ -352,6 +354,7 @@ module.exports = class ExchangeP extends Ex{
       } else {
         return {
           code: false,
+          order,
           msg: 'Exchange sell failed, amount can not be zero'
         }
       }
@@ -359,6 +362,7 @@ module.exports = class ExchangeP extends Ex{
     } else {
       return {
         code: false,
+        order,
         msg: `Exchange sell failed, test asset failed!`
       }
     }

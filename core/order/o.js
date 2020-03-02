@@ -105,6 +105,7 @@ module.exports = class O extends Core{
     this.publish(`ORDER_${this.eventName}`, this)
     return {
       code: true,
+      order: this,
       msg: 'Order: create order success!'
     }
   }
@@ -208,22 +209,31 @@ module.exports = class O extends Core{
    * 用于加快更新订单状态，减少API请求
    */
   checkStatusByPrice(buyPrice, sellPrice) {
-    // console.log(buyPrice, sellPrice)
     if(this.status != OPEN) return
-    // console.log(buyPrice, this.price)
+
     if(this.side == 'buy') {
-      //console.log(sellPrice - this.price)
       if(sellPrice <= this.price) {
-        this.finish()
+        this.postOnly?this._finishByPostOnly():this.finish()
       } else {
         this.isMaker = true
       }
     } else if(this.side == 'sell') {
       if(buyPrice >= this.price) {
-        this.finish()
+        this.postOnly?this._finishByPostOnly():this.finish()
       } else {
         this.isMaker = true
       }
+    }
+  }
+
+  /**
+   * 完成订单时判断postOnly条件，失败时取消订单
+   */
+  _finishByPostOnly() {
+    if( this.postOnly ){
+        this.isMaker?this.finish():this.cancel()
+    } else {
+        this.finish()
     }
   }
 

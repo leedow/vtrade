@@ -32,17 +32,19 @@ module.exports = class Group extends Base{
 
   /**
    * 获取所有数据的value加权平均
-   * @param {number} value 临时变量数据值
-   * @param {number} count 临时变量数据数量
+   * @param {number} temp [{value, count}] 临时变量数据值
    */
-  getAvg(value=0, count=0) {
+  getAvg(temp=[]) {
     let v = 0, c = 0
     this.getData().forEach(data => {
       v += data.value*data.count
       c += data.count
     })
-    v += value*count
-    c += count
+    temp.forEach(item => {
+      v += item.value*item.count
+      c += item.count
+    })
+
     return v/c
   }
 

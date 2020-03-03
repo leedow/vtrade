@@ -44,8 +44,8 @@ describe('测试group模块',function(){
   })
 
   it('getAvg 加入临时变量',function(){
-    assert.equal( group.getAvg(20, -1).toFixed(5),  ((10+10+16-1-5-20)/(21-1)).toFixed(5) )
-    assert.equal( group.getAvg(20, 2).toFixed(5),  ((10+10+16-1-5+40)/(21+2)).toFixed(5) )
+    assert.equal( group.getAvg([{value:20, count:-1}]).toFixed(5),  ((10+10+16-1-5-20)/(21-1)).toFixed(5) )
+    assert.equal( group.getAvg([{value:20, count:2}]).toFixed(5),  ((10+10+16-1-5+40)/(21+2)).toFixed(5) )
 
   })
 

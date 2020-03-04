@@ -75,7 +75,6 @@ module.exports = class Base extends Core {
     return withTime?this.data:this.data.map(item => item.d)
   }
 
-
   /**
    * 获取记忆数据的时间长度
    * @return 单位ms
@@ -86,11 +85,22 @@ module.exports = class Base extends Core {
   }
 
   /**
+   * 获取第一个数据，若不存在返回false
+   */
+  getFirst(offset=1, withTime=false){
+    offset = offset<1?1:offset
+    let i = offset>=this.data.length?this.data.length-1:offset-1
+    if(this.data.length == 0) return false
+    return withTime?this.data[i]:this.data[i]['d']
+  }
+
+  /**
    * 获取倒数第index个数据
    */
   getLast(offset=1, withTime=false) {
     let i = this.data.length-offset
-    if(i<0) i = 0
+    i = i<0?0:i
+    if(this.data.length == 0) return false
     return withTime?this.data[i]:this.data[i]['d']
   }
 

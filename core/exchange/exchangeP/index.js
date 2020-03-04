@@ -421,11 +421,20 @@ module.exports = class ExchangeP extends Ex{
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
 
-    if(long > 0) {
-      profitUnfill = (1/this.long.avgPrice-1/price)*long
-    } else if(short > 0) {
-      profitUnfill = (-1/this.short.avgPrice+1/price)*short
+    if( this.marginType == "coin" ) {
+      if(long > 0) {
+        profitUnfill = (1/this.long.avgPrice-1/price)*long
+      } else if(short > 0) {
+        profitUnfill = (-1/this.short.avgPrice+1/price)*short
+      }
+    } else if( this.marginType == "usd" ) {
+      if(long > 0) {
+        profitUnfill = (price - this.long.avgPrice)*long
+      } else if(short > 0) {
+        profitUnfill = (this.short.avgPrice-price)*short
+      }
     }
+
     return profitUnfill
   }
 

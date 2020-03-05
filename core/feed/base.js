@@ -115,6 +115,15 @@ module.exports = class Base extends Core {
   }
 
   /**
+   * 获取多少时间内的数据
+   */
+  getWithinTime(time, withTime=false) {
+    let aims = this.data.filter(item => item.t - (this.getTime()-time) >= 0)
+    if(aims.length == 0) return null
+    return withTime?aims:aims.map(item => item.d)
+  }
+
+  /**
    * 获取部分数据
    * @param {array} data 不包含时间戳的data
    * @param {number} length 获取数组长度

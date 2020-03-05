@@ -101,6 +101,14 @@ describe('测试tickers模块',function(){
     assert.deepEqual( tickers2.getTimeBefore(1000), [5,2,3,4,5,6,7,8,9,10,11,time+4000])
     assert.equal( tickers2.getData().length, 5)
 
+    assert.equal( tickers2.getWithinTime(2000).length, 3)
+    assert.deepEqual( tickers2.getWithinTime(1000), [
+      [5,2,3,4,5,6,7,8,9,10,11,time+4000],
+      [6,2,3,4,5,6,7,8,9,10,11,time+5000]
+    ])
+
+
+
 
   })
 

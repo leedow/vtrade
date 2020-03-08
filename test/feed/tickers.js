@@ -107,9 +107,26 @@ describe('测试tickers模块',function(){
       [6,2,3,4,5,6,7,8,9,10,11,time+5000]
     ])
 
+  })
+
+  it('测试getDataByTimeStep',function(){
+    assert.deepEqual( tickers2.getDataByTimeStep(1000, 1000), [
+      [5,2,3,4,5,6,7,8,9,10,11,time+4000],
+      [6,2,3,4,5,6,7,8,9,10,11,time+5000]
+    ])
+
+    tickers2.remember([6,2,3,4,5,6,7,8,9,10,11,time+5500])
 
 
+    assert.deepEqual( tickers2.getDataByTimeStep(1000, 500), [
+      [6,2,3,4,5,6,7,8,9,10,11,time+5000],
+      [6,2,3,4,5,6,7,8,9,10,11,time+5500]
+    ])
 
+    assert.deepEqual( tickers2.getDataByTimeStep(2000, 1000), [
+      [5,2,3,4,5,6,7,8,9,10,11,time+4000],
+      [6,2,3,4,5,6,7,8,9,10,11,time+5500]
+    ])
   })
 
 

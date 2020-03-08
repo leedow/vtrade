@@ -76,6 +76,31 @@ module.exports = class Base extends Core {
   }
 
   /**
+   * 根据时间间隔抽样获取数据队列
+   * @param {numeber} times 单位毫秒的时间范围内
+   * @param {number} timeStep 单位毫秒的时间间隔
+   */
+  getDataByTimeStep(times, timeStep=0, withTime=false) {
+    let datas = this.getWithinTime(times, true).reverse()
+    let results = []
+    let lastTime = 0
+    datas.forEach(data => {
+      if(results.length == 0) {
+        results.unshift(data)
+        lastTime = data.t
+      }
+      if(
+        results.length > 0
+        && ( lastTime - data.t >= timeStep )
+      ) {
+        results.unshift(data)
+        lastTime = data.t
+      }
+    })
+    return withTime?results:results.map(item => item.d)
+  }
+
+  /**
    * 获取记忆数据的时间长度
    * @return 单位ms
    */

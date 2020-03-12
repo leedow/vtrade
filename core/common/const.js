@@ -8,3 +8,9 @@ global.PART_CANCELED = 5
 global.CANCELED = 6
 global.ERROR = 7
 global.LIMIT = 8
+
+// TRADES模块
+global.TRADE_PRICE = 0
+global.TRADE_SIZE = 1
+global.TRADE_SIDE = 2
+global.TRADE_TIME = 3

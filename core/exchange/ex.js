@@ -1,6 +1,8 @@
 let Core = require('../common/core')
 let Asset = require('./asset')
 let Tickers = require('../feed/tickers')
+let Trades = require('../feed/trades')
+let Depth = require('../feed/depth')
 
 module.exports = class Ex extends Core {
   constructor() {
@@ -21,6 +23,8 @@ module.exports = class Ex extends Core {
     this.autoCheckOrders = true // 是否开启订单状态判定，实盘中可通过该设置项关闭检测避免误差
 
     this.tickers = new Tickers()
+    this.trades = new Trades()
+    this.depth = new Depth()
 
     // super.copyOptions.call(this, options)
   }
@@ -30,17 +34,41 @@ module.exports = class Ex extends Core {
    */
   subscribeRobotTicker() {
     this.subscribeGlobal(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
+      this._handleTickers(data)
     })
     this.subscribe(`ROBOT_TICKERS_${this.eventName}`, (data) => {
-      this._handleTicker(data)
+      this._handleTickers(data)
+    })
+  }
+
+  /**
+   * 订阅depth数据
+   */
+  subscribeRobotDepth() {
+    this.subscribeGlobal(`ROBOT_DEPTH_${this.eventName}`, (data) => {
+      this._handleDepth(data)
+    })
+    this.subscribe(`ROBOT_DEPTH_${this.eventName}`, (data) => {
+      this._handleDepth(data)
+    })
+  }
+
+  /**
+   * 订阅trades数据
+   */
+  subscribeRobotTrade() {
+    this.subscribeGlobal(`ROBOT_TRADES_${this.eventName}`, (data) => {
+      this._handleTrades(data)
+    })
+    this.subscribe(`ROBOT_TRADES_${this.eventName}`, (data) => {
+      this._handleTrades(data)
     })
   }
 
   /**
    * 处理ticker数据
    */
-  _handleTicker(data) {
+  _handleTickers(data) {
     this.tickers.remember(data)
     if( this.autoCheckOrders ) {
       this.orders.forEach(order => {
@@ -51,14 +79,33 @@ module.exports = class Ex extends Core {
       })
     }
 
-    this.publishHeartbeat()
+    this.publishHeartbeat('TICKERS_UPDATE')
+  }
+
+  /**
+   * 处理trade数据
+   */
+  _handleTrades(data) {
+    this.trades.remember(data)
+    this.publishHeartbeat('TRADES_UPDATE')
+  }
+
+  /**
+   * 处理depth数据
+   */
+  _handleDepth(data) {
+    this.depth.remember(data)
+    this.publishHeartbeat('DEPTH_UPDATE')
   }
 
   /**
    * 广播exchange策略执行心跳
    */
-  publishHeartbeat() {
-    this.publish(this.fullEventName, this)
+  publishHeartbeat(eventName) {
+    this.publish(this.fullEventName, {
+      event: eventName,
+      ex: this
+    })
   }
 
   get fullEventName() {

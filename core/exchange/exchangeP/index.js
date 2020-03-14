@@ -418,26 +418,28 @@ module.exports = class ExchangeP extends Ex{
    * @return {number} 以抵押物为单位的盈亏值
    */
   getProfitUnfill() {
-    let profitUnfill = 0
+    let profitUnfill = 0, profitUnfillLong = 0, profitUnfillShort = 0
     let price = this.tickers.getLast()[0]
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
 
     if( this.marginType == "coin" ) {
       if(long > 0) {
-        profitUnfill = (1/this.long.avgPrice-1/price)*long
-      } else if(short > 0) {
-        profitUnfill = (-1/this.short.avgPrice+1/price)*short
+        profitUnfillLong = (1/this.long.avgPrice-1/price)*long
+      }
+      if(short > 0) {
+        profitUnfillShort = (-1/this.short.avgPrice+1/price)*short
       }
     } else if( this.marginType == "usd" ) {
       if(long > 0) {
-        profitUnfill = (price - this.long.avgPrice)*long
-      } else if(short > 0) {
-        profitUnfill = (this.short.avgPrice-price)*short
+        profitUnfillLong = (price - this.long.avgPrice)*long
+      }
+      if(short > 0) {
+        profitUnfillShort = (this.short.avgPrice-price)*short
       }
     }
 
-    return profitUnfill
+    return profitUnfillLong + profitUnfillShort
   }
 
   /**

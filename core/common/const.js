@@ -9,6 +9,15 @@ global.CANCELED = 6
 global.ERROR = 7
 global.LIMIT = 8
 
+// TICKERS模块
+global.TICKER_PRICE = 0
+global.TICKER_SIZE = 1
+global.TICKER_BID_PRICE = 2
+global.TICKER_BID_SIZE = 3
+global.TICKER_ASK_PRICE = 4
+global.TICKER_ASK_SIZE = 5
+global.TICKER_TIME = 11
+
 // TRADES模块
 global.TRADE_PRICE = 0
 global.TRADE_SIZE = 1

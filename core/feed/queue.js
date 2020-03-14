@@ -47,4 +47,16 @@ module.exports = class Queue extends Base{
   getMin() {
     return Math.min(...this.getData())
   }
+
+  /**
+   * 获取总和
+   */
+  getSum() {
+    let data = this.getData()
+    let sum = 0
+    data.forEach(item => {
+      sum += item
+    })
+    return sum
+  }
 }

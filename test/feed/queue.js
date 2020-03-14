@@ -30,4 +30,8 @@ describe('测试queue模块',function(){
   it('getMin',function(){
     assert.equal( queue.getMin(2),  0.001 )
   })
+
+  it('getSum',function(){
+    assert.equal( queue.getSum(),  0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )
+  })
 })

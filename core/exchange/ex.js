@@ -110,7 +110,7 @@ module.exports = class Ex extends Core {
   publishHeartbeat(eventName) {
     this.publish(this.fullEventName, {
       event: eventName,
-      ex: this
+      from: this
     })
   }
 

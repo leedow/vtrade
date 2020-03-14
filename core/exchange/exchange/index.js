@@ -18,6 +18,8 @@ module.exports = class Exchange extends Ex{
     this.clear = new Clear()
 
     this.subscribeRobotTicker()
+    this.subscribeRobotTrade()
+    this.subscribeRobotDepth()
     this.subscribeOrders()
   }
 

@@ -14,3 +14,7 @@ global.TRADE_PRICE = 0
 global.TRADE_SIZE = 1
 global.TRADE_SIDE = 2
 global.TRADE_TIME = 3
+
+// DEPTH模块
+global.DEPTH_PRICE = 0
+global.DEPTH_SIZE = 1

@@ -1,7 +1,17 @@
 var assert = require('assert')
 var Ex = require('../../core/exchange/ex')
+let events = require('../../core/common/events')
 
-let ex = new Ex()
+
+let ex = new Ex({
+  exchange: 'test',
+  pair: 'btcusd_p'
+})
+
+//ex.exchange = 'test'
+//ex.pair = 'btcusd_p'
+
+
 
 describe('测试ex模块',function(){
 
@@ -14,6 +24,19 @@ describe('测试ex模块',function(){
     assert.equal( ex.getAsset('btc').balance, 100)
     assert.equal( ex.getAsset('usdt').balance, 200)
   })
+
+  // it('测试tickers数据订阅',function(){
+  //   events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+  //   assert.deepEqual( ex.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
+  //   events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2])
+  //   assert.deepEqual( ex.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
+  //   assert.deepEqual( ex.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
+  // })
+  //
+  // it('测试trades数据订阅',function(){
+  //   events.emit('ROBOT_TRADES_test_btcusd_p', [5864,3000,"buy",1584020145972])
+  //   assert.deepEqual( ex.trades.getLast(1), [5864,3000,"buy",1584020145972])
+  // })
 
   // it('测试queue',function(){
   //   ex.createQueue('q1')

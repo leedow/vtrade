@@ -76,15 +76,7 @@ module.exports = class Ex extends Core {
    */
   _handleTickers(data) {
     this.tickers.remember(data)
-    if( this.autoCheckOrders ) {
-      this.orders.forEach(order => {
-        order.checkStatusByPrice(
-          data[2],
-          data[4]
-        )
-      })
-    }
-
+    this._checkOrderStatus()
     this.publishHeartbeat('TICKERS_UPDATE')
   }
 
@@ -101,7 +93,39 @@ module.exports = class Ex extends Core {
    */
   _handleDepth(data) {
     this.depth.remember(data)
+    this._checkOrderStatus()
     this.publishHeartbeat('DEPTH_UPDATE')
+  }
+
+  /**
+   * 订单成交判定
+   */
+  _checkOrderStatus() {
+    if(!this.autoCheckOrders) return
+
+    let hasTickers = this.tickers.data.length>0
+    let hasDepth = this.depth.data.length>0
+
+    let priceBuy = 0, priceSell = 0
+
+    if(hasTickers) {
+      let tickers = this.tickers.getLast()
+      priceBuy = tickers[TICKER_BID_PRICE]
+      priceSell = tickers[TICKER_ASK_PRICE]
+    } else if(
+      hasDepth
+    ) {
+      priceBuy = this.depth.getBidPrice()
+      priceSell = this.depth.getAskPrice()
+    }
+
+    this.orders.forEach(order => {
+      order.checkStatusByPrice(
+        priceBuy,
+        priceSell
+      )
+    })
+
   }
 
   /**

@@ -112,13 +112,15 @@ module.exports = class Ex extends Core {
       let tickers = this.tickers.getLast()
       priceBuy = tickers[TICKER_BID_PRICE]
       priceSell = tickers[TICKER_ASK_PRICE]
-    } else if(
+    }
+
+    if(
       hasDepth
     ) {
       priceBuy = this.depth.getBidPrice()
       priceSell = this.depth.getAskPrice()
     }
-
+    //console.log('ehcking....')
     this.orders.forEach(order => {
       order.checkStatusByPrice(
         priceBuy,

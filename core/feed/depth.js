@@ -26,12 +26,22 @@ module.exports = class Depth extends Base{
     return Number( last['bids'][level-1][DEPTH_PRICE] )
   }
 
+  getBidSize(level=1) {
+    let last = this.getLast()
+    return Number( last['bids'][level-1][DEPTH_SIZE] )
+  }
+
   /**
    * 获取指定档位卖价
    */
   getAskPrice(level=1) {
     let last = this.getLast()
     return Number( last['asks'][level-1][DEPTH_PRICE] )
+  }
+
+  getAskSize(level=1) {
+    let last = this.getLast()
+    return Number( last['asks'][level-1][DEPTH_SIZE] )
   }
 
 }

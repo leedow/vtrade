@@ -264,16 +264,6 @@ describe('测试exchangeP模块仿真',function(){
     assert.deepEqual( exchange.trades.getLast(1), [5864,4000,"buy",1584020145973])
   })
 
-  it('测试depth数据订阅',function(){
-    let depth = {"asks":[["5806.6","200","0","1"],["5807.8","4","0","1"],["5808.1","2","0","1"],["5808.8","58500","0","2"],["5810","6","0","6"]],"bids":[["5806.5","13055","0","11"],["5805.2","8","0","2"],["5800","101780","0","8"],["5790.9","55900","0","1"],["5790","1000","0","1"]],"time":1584020608264}
-
-
-    events.emit('ROBOT_DEPTH_test_btcusd_p', depth)
-    assert.deepEqual( exchange.depth.getLast(1), depth)
-    //events.emit('ROBOT_DEPTH_test_btcusd_p', [5864,4000,"buy",1584020145973])
-    //assert.deepEqual( exchange.depth.getLast(1), [5864,4000,"buy",1584020145973])
-  })
-
   it('4999买入1USD，成功下单，冻结1/4999btc',function(){
     exchange.registerOrder(Order)
     exchange.buy(4999, 1, {
@@ -468,6 +458,16 @@ describe('测试exchangeP模块仿真',function(){
   it('测试获取极价订单',function(){
     assert.equal( exchange.getTopBuyOrder().price, 4999)
     assert.equal( exchange.getBottomSellOrder().price, 5001)
+  })
+
+  it('测试depth数据订阅',function(){
+    let depth = {"asks":[["5806.6","200","0","1"],["5807.8","4","0","1"],["5808.1","2","0","1"],["5808.8","58500","0","2"],["5810","6","0","6"]],"bids":[["5806.5","13055","0","11"],["5805.2","8","0","2"],["5800","101780","0","8"],["5790.9","55900","0","1"],["5790","1000","0","1"]],"time":1584020608264}
+
+
+    events.emit('ROBOT_DEPTH_test_btcusd_p', depth)
+    assert.deepEqual( exchange.depth.getLast(1), depth)
+    //events.emit('ROBOT_DEPTH_test_btcusd_p', [5864,4000,"buy",1584020145973])
+    //assert.deepEqual( exchange.depth.getLast(1), [5864,4000,"buy",1584020145973])
   })
 
 

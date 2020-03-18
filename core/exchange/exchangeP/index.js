@@ -293,6 +293,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
       orderType,
       robotId: this.robotId,
@@ -343,6 +344,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
       orderType,
       robotId: this.robotId,
@@ -403,7 +405,7 @@ module.exports = class ExchangeP extends Ex{
    * @return {object}
    */
   report() {
-    let profitUnfill = 0
+    let profitUnfill = this.getProfitUnfill()
 
     return {
       position: this.getPosition(),

@@ -28,9 +28,10 @@ module.exports = class Base extends Core {
         d: onedata
       })
       if( this._hasTime() ) {
+
         if(
-          this.data.length > this.memorySize
-          && ( time - this.data[0]['t'] > this.memoryTimeLimit )
+          //this.data.length > this.memorySize
+          ( time - this.data[0]['t'] > this.memoryTimeLimit )
         ){
           this.data.shift()
         }
@@ -151,6 +152,19 @@ module.exports = class Base extends Core {
    */
   getWithinTime(time, withTime=false) {
     let aims = this.data.filter(item => item.t - (this.getTime()-time) >= 0)
+    if(aims.length == 0) return null
+    return withTime?aims:aims.map(item => item.d)
+  }
+
+  /**
+   * 获取多少时间前的多少时间内的数据
+   * @param {number} beforeTime 单位ms，多少时间前开始取数
+   */
+  getWithinTimeBefore(time, beforeTime=0, withTime=false) {
+    let aims = this.data.filter(item => {
+        return ( item.t - (this.getTime()-time-beforeTime) >= 0 )
+      && ( item.t - (this.getTime()-beforeTime) <= 0 )
+    })
     if(aims.length == 0) return null
     return withTime?aims:aims.map(item => item.d)
   }

@@ -80,7 +80,7 @@ module.exports = class Base extends Core {
    * 返回无时间戳数据队列
    */
   getData(withTime=false) {
-    return withTime?this.data:this.data.map(item => item.d)
+    return withTime?this.data:this._mapData(this.data) //this.data.map(item => item.d)
   }
 
   /**
@@ -105,7 +105,7 @@ module.exports = class Base extends Core {
         lastTime = data.t
       }
     })
-    return withTime?results:results.map(item => item.d)
+    return withTime?results:this._mapData(results)//results.map(item => item.d)
   }
 
   /**
@@ -153,7 +153,7 @@ module.exports = class Base extends Core {
   getWithinTime(time, withTime=false) {
     let aims = this.data.filter(item => item.t - (this.getTime()-time) >= 0)
     if(aims.length == 0) return null
-    return withTime?aims:aims.map(item => item.d)
+    return withTime?aims:this._mapData(aims)//aims.map(item => item.d)
   }
 
   /**
@@ -166,7 +166,7 @@ module.exports = class Base extends Core {
       && ( item.t - (this.getTime()-beforeTime) <= 0 )
     })
     if(aims.length == 0) return null
-    return withTime?aims:aims.map(item => item.d)
+    return withTime?aims:this._mapData(aims)//aims.map(item => item.d)
   }
 
   /**
@@ -183,6 +183,17 @@ module.exports = class Base extends Core {
     if(startindex < 0) startindex = 0
 
     return data.slice(startindex, endindex)
+  }
+
+  /**
+   * 去除数组中的t项
+   */
+  _mapData(data) {
+    let res = []
+    for (var i = 0; i < data.length; i++) {
+      res.push(data[i]['d'])
+    }
+    return res
   }
 
   log(content) {

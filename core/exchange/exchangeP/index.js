@@ -479,7 +479,8 @@ module.exports = class ExchangeP extends Ex{
 
     if(order.orderType == 'open') {
       let balanceCanuse = this.getAsset(this.balance).getAvailable()
-      // console.log(balanceCanuse)
+      //console.log(balanceCanuse)
+      //console.log(order.deposit)
       return balanceCanuse - order.deposit > 0
     } else if(order.orderType == 'close'){
       let short = this.getAsset('short').getBalance()

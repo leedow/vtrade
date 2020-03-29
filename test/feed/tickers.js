@@ -3,6 +3,7 @@ var Tickers = require('../../core/feed/tickers')
 var helper = require('../../core/tools/helper')
 
 let tickers = new Tickers()
+tickers.filterSame = false
 describe('测试tickers模块',function(){
   it('添加新数据',function(){
     tickers.remember([1,2,3,4,5,6])

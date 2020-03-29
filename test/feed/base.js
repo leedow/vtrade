@@ -3,6 +3,7 @@ var Base = require('../../core/feed/base')
 var helper = require('../../core/tools/helper')
 
 let base = new Base()
+base.filterSame = false
 describe('测试feed/base模块',function(){
   it('添加新数据',function(){
     base.remember(0.001)
@@ -23,6 +24,11 @@ describe('测试feed/base模块',function(){
     base.filterSame = true
     base.remember(0.0012)
     assert.equal( base.data.length, 3)
+    base.remember([1,2,3])
+    assert.equal( base.data.length, 4)
+    base.remember([1,2,3])
+    assert.equal( base.data.length, 4)
+
   })
 
   it('getFirst',function(){

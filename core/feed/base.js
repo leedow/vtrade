@@ -7,7 +7,7 @@ module.exports = class Base extends Core {
     this.data = []
     this.memorySize = 999 // 最大记忆长度
     this.memoryTimeLimit = 3600*1000 // 单位为MS的最长记忆时间
-    this.filterSame = false // 是否开启去重，开启后与当前最后数据相同数据将被忽略
+    this.filterSame = true // 是否开启去重，开启后与当前最后数据相同数据将被忽略
   }
 
   /**

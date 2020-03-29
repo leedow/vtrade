@@ -3,6 +3,8 @@ var Queue = require('../../core/feed/queue')
 var helper = require('../../core/tools/helper')
 
 let queue = new Queue()
+queue.filterSame = false
+
 describe('测试queue模块',function(){
   it('添加新数据',function(){
     queue.remember(0.001)

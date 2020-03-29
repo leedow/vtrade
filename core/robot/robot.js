@@ -25,9 +25,9 @@ module.exports = class Robot extends Core{
     return this.exchanges[0]
   }
 
-  run() {
+  async run() {
     if(this._prepareCallback) {
-      this._prepareCallback(this)
+      await this._prepareCallback(this)
     }
     this.subscribeExHeartbeat()
   }

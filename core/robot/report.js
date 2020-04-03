@@ -18,7 +18,7 @@ module.exports = class Report extends Core{
    */
   record(x, data) {
     this.content.x.push(x)
-
+    //console.log(data)
     Object.keys(data).forEach(key => {
       if(this.content[key]) {
         this.content[key].push(data[key])

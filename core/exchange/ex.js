@@ -29,6 +29,12 @@ module.exports = class Ex extends Core {
     this.subTickers = true
     this.subTrades = false
     this.subDepth = false
+    this.subOrders = false
+    this.subAccount = false
+    this.subPosition = false
+
+
+
 
     // this.copyOptions(options)
     // this.subscribeRobotTicker()

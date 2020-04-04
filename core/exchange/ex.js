@@ -119,25 +119,30 @@ module.exports = class Ex extends Core {
    */
   _handleOrders(data) {
     data.forEach(order => {
-
-      if(order.status == FILLED) {
-        this.fillTime = parseInt(new Date().getTime()/1000)
-        this.finish(Number(order.amountFill), order.fee)
-        this.status = order.status
-      } else if(
-        (order.status == CANCELED && order.amountFill>0)
-        || (res.data.status == PART_CANCELED && res.data.amountFill>0)
-      ) {
-        this.fillTime = parseInt(new Date().getTime()/1000)
-        this.finish(Number(res.data.amountFill), res.data.fee)
-        this.status = res.data.status
-      } else if(order.status == CANCELED && order.amountFill == 0) {
-        this.status = res.data.status
-      } else if(order.status == OPEN){
-        this.status = res.data.status
-        // TODO
-      } else {
-        // TODO
+      let aimOrder = this.getOrderByNumber(order.orderNumber)
+      if(aimOrder) {
+        if(order.status == FILLED) {
+          aimOrder.fillTime = parseInt(this.tickers.getTime()/1000)
+          aimOrder.priceFill = order.priceFill
+          aimOrder.finish(Number(order.amountFill), order.fee)
+          aimOrder.status = order.status
+        } else if(
+          (order.status == CANCELED && order.amountFill>0)
+          || ( order.status == PART_CANCELED && order.amountFill>0)
+        ) {
+          aimOrder.fillTime = parseInt(this.tickers.getTime()/1000)
+          aimOrder.priceFill = order.priceFill
+          aimOrder.finish(Number(order.amountFill), order.fee)
+          aimOrder.status = order.status
+        } else if(order.status == CANCELED && order.amountFill == 0) {
+          aimOrder.cancel()
+          aimOrder.status = order.status
+        } else if(order.status == OPEN){
+          aimOrder.status = order.status
+          // TODO
+        } else {
+          // TODO
+        }
       }
     })
   }
@@ -150,7 +155,6 @@ module.exports = class Ex extends Core {
 
     let hasTickers = this.tickers.data.length>0
     let hasDepth = this.depth.data.length>0
-
     let priceBuy = 0, priceSell = 0
 
     if(hasTickers) {

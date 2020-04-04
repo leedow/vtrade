@@ -27,6 +27,11 @@ module.exports = class ExchangeP extends Ex{
     this.subscribeRobotTicker()
     this.subscribeRobotTrade()
     this.subscribeRobotDepth()
+    this.subscribeRobotOrders()
+    this.subscribeRobotAccount()
+    this.subscribeRobotPosition()
+
+
     this.subscribeOrders()
   }
 

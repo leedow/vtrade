@@ -430,7 +430,7 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     const PRE_FROZEN = exchange.getAsset('usd').getFrozen()
     const PRE_BALANCE = exchange.getAsset('usd').getBalance()
     const PRICE = 4999
-    const FEE = PRICE*TAKER_FEE
+    const FEE = -PRICE*MAKER_FEE
 
     events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
     assert.equal( exchange.getOrdersLength(), 3)

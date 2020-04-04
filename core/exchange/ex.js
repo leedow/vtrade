@@ -74,6 +74,20 @@ module.exports = class Ex extends Core {
   }
 
   /**
+   * 订阅私人orders成交数据
+   */
+  subscribeRobotOrders() {
+    this.subscribeGlobal(`ROBOT_ORDERS_${this.eventName}`, (data) => {
+      this._handleOrders(data)
+    })
+    this.subscribe(`ROBOT_ORDERS_${this.eventName}`, (data) => {
+      this._handleOrders(data)
+    })
+  }
+
+
+
+  /**
    * 处理ticker数据
    */
   _handleTickers(data) {
@@ -97,6 +111,35 @@ module.exports = class Ex extends Core {
     this.depth.remember(data)
     this._checkOrderStatus()
     this.publishHeartbeat('DEPTH_UPDATE')
+  }
+
+  /**
+   * 处理私人orders成交事件
+   * @param {array} data [order]
+   */
+  _handleOrders(data) {
+    data.forEach(order => {
+
+      if(order.status == FILLED) {
+        this.fillTime = parseInt(new Date().getTime()/1000)
+        this.finish(Number(order.amountFill), order.fee)
+        this.status = order.status
+      } else if(
+        (order.status == CANCELED && order.amountFill>0)
+        || (res.data.status == PART_CANCELED && res.data.amountFill>0)
+      ) {
+        this.fillTime = parseInt(new Date().getTime()/1000)
+        this.finish(Number(res.data.amountFill), res.data.fee)
+        this.status = res.data.status
+      } else if(order.status == CANCELED && order.amountFill == 0) {
+        this.status = res.data.status
+      } else if(order.status == OPEN){
+        this.status = res.data.status
+        // TODO
+      } else {
+        // TODO
+      }
+    })
   }
 
   /**
@@ -155,6 +198,14 @@ module.exports = class Ex extends Core {
    */
   getOrdersLength() {
     return this.orders.length
+  }
+
+  /**
+   * 获取指定订单号的订单
+   */
+  getOrderByNumber(orderNumber) {
+    let res = this.orders.filter(order => order.orderNumber == orderNumber)
+    if(res.length > 0) return res[0]
   }
 
   /**

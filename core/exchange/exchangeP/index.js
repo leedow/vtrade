@@ -540,4 +540,46 @@ module.exports = class ExchangeP extends Ex{
   }
 
 
+  /**
+   * 订阅私人account数据
+   */
+  subscribeRobotAccount() {
+    this.subscribeGlobal(`ROBOT_ACCOUNT_${this.eventName}`, (data) => {
+      this._handleAccount(data)
+    })
+    this.subscribe(`ROBOT_ACCOUNT_${this.eventName}`, (data) => {
+      this._handleAccount(data)
+    })
+  }
+
+  /**
+   * 订阅私人position
+   */
+  subscribeRobotPosition() {
+    this.subscribeGlobal(`ROBOT_POSITION_${this.eventName}`, (data) => {
+      this._handlePosition(data)
+    })
+    this.subscribe(`ROBOT_POSITION_${this.eventName}`, (data) => {
+      this._handlePosition(data)
+    })
+  }
+
+
+  /**
+   * 处理account数据
+   * @param {object} data {balance, margin}
+   */
+  _handleAccount(data) {
+
+  }
+
+  /**
+   * 处理position数据
+   * @param {array} data [postion]
+   */
+  _handlePosition(data) {
+
+  }
+
+
 }

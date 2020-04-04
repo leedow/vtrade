@@ -574,8 +574,9 @@ module.exports = class ExchangeP extends Ex{
    * 处理account数据
    * @param {object} data {balance, margin}
    */
-  _handleAccount(data) {
-
+  _handleAccount(account) {
+      this.getAsset(this.balance).balance = account.balance
+      this.getAsset(this.balance).balanceFrozen = account.margin
   }
 
   /**

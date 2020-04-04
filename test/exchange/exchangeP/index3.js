@@ -260,6 +260,22 @@ describe('测试exchangeP模块仿真，在ws事件驱动下',function(){
   })
 
 
+  it('测试account变更事件',function(){
+    events.emit('ROBOT_ACCOUNT_test_btcusd_p', {
+      balance: 1000,
+      margin: 100
+    })
+    assert.equal( exchange.getAsset('usd').balance, 1000)
+    assert.equal( exchange.getAsset('usd').getFrozen(), 100)
+
+
+  })
+
+  it('测试position变更事件',function(){
+
+  })
+
+
 
 
 

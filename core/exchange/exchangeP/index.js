@@ -31,7 +31,6 @@ module.exports = class ExchangeP extends Ex{
     this.subscribeRobotAccount()
     this.subscribeRobotPosition()
 
-
     this.subscribeOrders()
   }
 
@@ -583,8 +582,24 @@ module.exports = class ExchangeP extends Ex{
    * 处理position数据
    * @param {array} data [postion]
    */
-  _handlePosition(data) {
+  _handlePosition(positions) {
+    this.getAsset('long').balance =  Number(positions.long.amount)
+    this.long.avgPrice =positions.long.avgPrice
+    this.long.deposit = positions.long.margin
 
+    if(positions.long.amount == 0) {
+      this.long.maxPrice = 0
+      this.long.minPrice = 0
+    }
+
+    this.getAsset('short').balance =  Number(positions.short.amount)
+    this.short.avgPrice = positions.short.avgPrice
+    this.short.deposit = positions.short.margin
+
+    if(positions.short.amount == 0) {
+      this.short.maxPrice = 0
+      this.short.minPrice = 0
+    }
   }
 
 

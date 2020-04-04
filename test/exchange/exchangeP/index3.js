@@ -272,6 +272,31 @@ describe('测试exchangeP模块仿真，在ws事件驱动下',function(){
   })
 
   it('测试position变更事件',function(){
+    events.emit('ROBOT_POSITION_test_btcusd_p', {
+      long: {
+        amount: 10,
+        avgPrice: 100,
+        margin: 10
+      },
+      short: {
+        amount: 20,
+        avgPrice: 200,
+        margin: 20
+      }
+    })
+
+    assert.equal( exchange.getAsset('long').balance, 10)
+    assert.equal( exchange.getAsset('short').balance, 20)
+
+    assert.equal( exchange.long.avgPrice, 100)
+    assert.equal( exchange.long.deposit, 10)
+
+    assert.equal( exchange.short.avgPrice, 200)
+    assert.equal( exchange.short.deposit, 20)
+
+
+
+
 
   })
 

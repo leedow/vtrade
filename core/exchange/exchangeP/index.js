@@ -421,9 +421,10 @@ module.exports = class ExchangeP extends Ex{
 
   /**
    * 获取未实现盈亏
+   * @params {string} directions  all|long|short
    * @return {number} 以抵押物为单位的盈亏值
    */
-  getProfitUnfill() {
+  getProfitUnfill(directions='all') {
     let profitUnfill = 0, profitUnfillLong = 0, profitUnfillShort = 0
     let price = this.tickers.getLast()[0]
     let long = this.getAsset('long').getBalance()
@@ -445,7 +446,18 @@ module.exports = class ExchangeP extends Ex{
       }
     }
 
-    return profitUnfillLong + profitUnfillShort
+    if(directions == 'all') {
+      return profitUnfillLong + profitUnfillShort
+    }
+
+    if(directions == 'long') {
+      return profitUnfillLong
+    }
+
+    if(directions == 'short') {
+      return profitUnfillShort
+    }
+
   }
 
   /**

@@ -10,9 +10,6 @@ let ex = new Ex({
 
 //ex.exchange = 'test'
 //ex.pair = 'btcusd_p'
-
-
-
 describe('测试ex模块',function(){
 
   it('添加获取asset',function(){

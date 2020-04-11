@@ -48,6 +48,11 @@ module.exports = class Queue extends Base{
     return Math.min(...this.getData())
   }
 
+
+  getSD() {
+    return helper.SD(this.getData())
+  }
+
   /**
    * 获取总和
    */

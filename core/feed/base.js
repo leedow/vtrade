@@ -165,7 +165,7 @@ module.exports = class Base extends Core {
         return ( item.t - (this.getTime()-time-beforeTime) >= 0 )
       && ( item.t - (this.getTime()-beforeTime) <= 0 )
     })
-    if(aims.length == 0) return null
+    if(aims.length == 0) return []
     return withTime?aims:this._mapData(aims)//aims.map(item => item.d)
   }
 

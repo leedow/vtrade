@@ -32,10 +32,6 @@ module.exports = class Ex extends Core {
     this.subOrders = false
     this.subAccount = false
     this.subPosition = false
-
-
-
-
     // this.copyOptions(options)
     // this.subscribeRobotTicker()
     // this.subscribeRobotTrade()
@@ -90,8 +86,6 @@ module.exports = class Ex extends Core {
       this._handleOrders(data)
     })
   }
-
-
 
   /**
    * 处理ticker数据

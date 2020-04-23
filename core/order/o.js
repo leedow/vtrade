@@ -126,6 +126,9 @@ module.exports = class O extends Core{
         this.status = CANCELED
       }
       this.publish(`ORDER_${this.eventName}`, this)
+      return {
+        code: true
+      }
     } else {
       this.status = ERROR
       return {

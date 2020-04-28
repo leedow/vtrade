@@ -35,6 +35,20 @@ module.exports = class Queue extends Base{
   }
 
   /**
+   * 获取所有数据的均值
+   * @param {numeber} times 单位毫秒的时间范围内
+   * @param {number} timeStep 单位毫秒的时间间隔
+   */
+  getAvgByTimeStep(times, timeStep) {
+    let avg = 0
+    let aims = this.getDataByTimeStep(times, timeStep)
+    aims.forEach(data => {
+      avg += data/aims.length
+    })
+    return avg
+  }
+
+  /**
    * 获取最大值
    */
   getMax() {

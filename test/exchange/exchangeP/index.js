@@ -8,6 +8,7 @@ const LEVER = 2
 
 describe('测试exchangeP模块独立方法',function(){
   let ex = new Exchange({
+    name: 'test',
     exchange: 'test',
     pair: 'btcusd_p',
     balance : 'btc',
@@ -19,6 +20,7 @@ describe('测试exchangeP模块独立方法',function(){
   })
 
   ex.getAsset('btc').balance = 100
+
 
   it('增加多仓',function(){
     ex.increasePosition('long', 100.123, 1.11, 1.321)

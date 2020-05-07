@@ -113,6 +113,15 @@ module.exports = class Robot extends Core{
   }
 
   /**
+   * 根据名字获取交易所对象
+   * @param {string} alias 别名
+   */
+  getEx(name) {
+    let index = this.exchanges.findIndex(ex => ex.name == name)
+    return index>=0?this.exchanges[index]:null
+  }
+
+  /**
    * 根据ID获取一个数据队列
    * @param {string} id 队列ID
    */

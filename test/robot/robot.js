@@ -6,8 +6,10 @@ var events = require('../../core/common/events')
 let robot = null
 let exchangeName = Date.now()
 describe('测试robot模块',function(){
+  let ex
   it('创建robot，注册exchange，policy, prepare',function(){
-    let ex = new Exchange({
+    ex = new Exchange({
+      name: 'test',
       exchange: exchangeName,
       pair: 'btcusdt',
       from : 'usdt',
@@ -47,8 +49,11 @@ describe('测试robot模块',function(){
 
     robot.registerPrepare(prepare)
     robot.registerPolicy(policy)
+  })
 
 
+  it('getEx',function(){
+    assert.deepEqual( robot.getEx('test'), ex)
   })
 
   //events.emit('rROBOT_TICKERS_test_btcusdt', [1, 1, 1, 1, 1, 1])

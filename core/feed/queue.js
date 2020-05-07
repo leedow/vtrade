@@ -78,4 +78,26 @@ module.exports = class Queue extends Base{
     })
     return sum
   }
+
+  /**
+   * 获取某个时间段内的数据变化的百分比
+   * @param {number} time 计算多少时间内的数据，单位ms
+   * @param {number} beforeTime 向前偏移多少时间，单位ms
+   */
+  getPercentageByTime(time, beforeTime=0) {
+    let data = this.getWithinTimeBefore(time, beforeTime)
+    return data[0]>0?(data[data.length-1]-data[0])/data[0]:0
+  }
+
+  /**
+   * 获取某个时间段范围内数据回撤的最大百分比
+   * @param {number} time 计算多少时间内的数据，单位ms
+   * @param {number} beforeTime 向前偏移多少时间，单位ms
+   */
+  getRetracementByTime(time, beforeTime=0) {
+    return helper.maxRetracement(
+      this.getWithinTimeBefore(time, beforeTime)
+    )
+  }
+
 }

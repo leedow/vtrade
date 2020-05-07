@@ -239,5 +239,20 @@ module.exports = {
       if(aim.length > 0 && item <= Math.min(...aim)) count++
     })
     return count/(data.length-1)
+  },
+  /**
+   * 获取数字数组的最大回撤
+   * @param {array[number]}
+   */
+  maxRetracement(data) {
+    let drawdown = []
+    data.forEach((item, index) => {
+      const after = data.slice(index, data.length-1)
+      const min = Math.min(...after)
+      if(min<item) {
+        drawdown.push( Math.abs(  (min-item)/(item)  ) )
+      }
+    })
+    return Math.max(...drawdown)
   }
 }

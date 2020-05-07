@@ -37,3 +37,34 @@ describe('测试queue模块',function(){
     assert.equal( queue.getSum(),  0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )
   })
 })
+
+
+let queue2 = new Queue()
+queue2.filterSame = false
+
+describe('测试queue模块，时间模式',function(){
+  let t = Date.now()
+  it('添加新数据',function(){
+    queue2.remember(0.001, t)
+    assert.equal( queue2.data.length, 1)
+    queue2.remember(0.001, t+11000)
+    assert.equal( queue2.data.length, 2)
+    queue2.remember(0.002, t+12000)
+    assert.equal( queue2.data.length, 3)
+    queue2.remember(0.001, t+13000)
+    assert.equal( queue2.data.length, 4)
+    queue2.remember(0.002, t+14000)
+    assert.equal( queue2.data.length, 5)
+  })
+
+  it('getPercentageByTime',function(){
+    assert.equal( queue2.getPercentageByTime(10000, 0), 1)
+  })
+
+  it('getRetracementByTime',function(){
+    assert.equal( queue2.getRetracementByTime(10000, 0), 0.5)
+  })
+
+
+
+})

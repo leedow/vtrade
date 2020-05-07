@@ -20,7 +20,7 @@ Vtrade是一个基于Nodejs编写的量化交易回测框架，它也是量化�
 
 ### 快速开始
 ```javascript
-// 基本使用伪代码
+// 伪代码
 let ex = new Exchange({
   exchange: 'exchangeName',
   pair: 'pairName',
@@ -35,24 +35,26 @@ let ex = new Exchange({
 ex.registerOrder(Order) // 注册一个订单模型（现货、合约等）
 
 let robot = new Robot()
-robot.registerExchange(ex)
+robot.registerExchange(ex) // 注册一个交易所
 
 robot.registerPrepare((V) => {
   // 机器人初始化准备工作
 })
 
-robot.registerPolicy((V) => {
+// 策略主函数，当事件发生时被回调
+robot.registerPolicy((V, e) => {
   // 策略执行
   V.ex.buy(...)
   V.ex.sell(...)
 })
 
-events.emit('事件名', '事件数据') // 发出一个事件
+// 事件驱动策略执行
+events.emit('事件名', '事件数据') // 发出一个事件，回调执行policy逻辑
 
 // 通过robot对象方法采集任何你想要的数据
 ...
 
 ```
 
-### 其他
+### 补充说明
 本项目暂无推广计划，所以无法提供详细文档

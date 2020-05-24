@@ -8,6 +8,7 @@ module.exports = class Base extends Core {
     this.memorySize = 999 // 最大记忆长度
     this.memoryTimeLimit = 3600*1000 // 单位为MS的最长记忆时间
     this.filterSame = true // 是否开启去重，开启后与当前最后数据相同数据将被忽略
+    this.now = 0 // 当前时间戳基准，如果不存在则以最后的data.t为准
   }
 
   /**
@@ -67,10 +68,11 @@ module.exports = class Base extends Core {
   }
 
   /**
-   * 获取时间戳，单位MS
+   * 获取最新时间戳，单位MS
    * @param {number} offset 获取倒数第index个数据
    */
   getTime(offset) {
+    if(this.now > 0) return this.now
     let data = this.getLast(offset, true)
     try{
         return data['t']||0

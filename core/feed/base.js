@@ -23,10 +23,13 @@ module.exports = class Base extends Core {
         if( JSON.stringify(last) == JSON.stringify(onedata) ) return
       }
 
-      this.data.push({
-        t: time,
-        d: onedata
-      })
+      if(onedata) {
+        this.data.push({
+          t: time,
+          d: onedata
+        })
+      }
+
       if( this._hasTime() ) {
 
         if(
@@ -80,7 +83,11 @@ module.exports = class Base extends Core {
    * 返回无时间戳数据队列
    */
   getData(withTime=false) {
-    return withTime?this.data:this._mapData(this.data) //this.data.map(item => item.d)
+    if( this._hasTime() ) {
+      return this.getWithinTime(this.memoryTimeLimit, withTime)
+    } else {
+      return withTime?this.data:this._mapData(this.data) //this.data.map(item => item.d)
+    }
   }
 
   /**

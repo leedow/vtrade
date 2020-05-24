@@ -19,7 +19,7 @@ module.exports = class Clear extends Core{
    */
   _getUnclearOrders(orders) {
     return orders.filter(order =>
-      ( [FILLED, PART_CANCELED].includes(order.status) )
+      ( [FILLED, PART_CANCELED, CANCELED].includes(order.status) )
       && !order.cleared
     )
   }

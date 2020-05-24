@@ -249,7 +249,7 @@ module.exports = {
     data.forEach((item, index) => {
       const after = data.slice(index, data.length-1)
       const min = Math.min(...after)
-      if(min<item) {
+      if(min-item < 0) {
         drawdown.push( Math.abs(  (min-item)/(item)  ) )
       }
     })

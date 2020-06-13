@@ -161,7 +161,7 @@ module.exports = class Base extends Core {
    */
   getWithinTime(time, withTime=false) {
     let aims = this.data.filter(item => item.t - (this.getTime()-time) >= 0)
-    if(aims.length == 0) return null
+    if(aims.length == 0) return []
     return withTime?aims:this._mapData(aims)//aims.map(item => item.d)
   }
 

@@ -25,12 +25,17 @@ module.exports = class Queue extends Base{
 
   /**
    * 获取所有数据的均值
+   * @param len 计算倒数最大个数长度
    */
-  getAvg() {
+  getAvg(len) {
     let avg = 0
-    this.getData().forEach(data => {
-      avg += data/this.data.length
-    })
+    let tmp = this.getData()
+    if(len && (len<tmp.length) ) {
+      tmp = tmp.slice(tmp.length-len)
+    }
+    for (var i = 0; i < tmp.length; i++) {
+      avg += tmp[i]/tmp.length
+    }
     return avg
   }
 

@@ -22,7 +22,11 @@ describe('测试queue模块',function(){
   })
 
   it('getAvg',function(){
-    assert.equal( queue.getAvg(2).toFixed(10),  (( 0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )/6).toFixed(10) )
+    assert.equal( queue.getAvg().toFixed(10),  (( 0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )/6).toFixed(10) )
+  })
+
+  it('getAvg 2',function(){
+    assert.equal( queue.getAvg(2).toFixed(10),  (( 0.0013+0.0014 )/2).toFixed(10) )
   })
 
   it('getMax',function(){

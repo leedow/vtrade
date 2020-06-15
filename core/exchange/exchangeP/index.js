@@ -63,11 +63,14 @@ module.exports = class ExchangeP extends Ex{
     this.getAsset(this.balance).free( dep*(amount/balance) )
     this.getAsset(this.balance).free( deposit )
 
-    if(amount == balance) {
+    if(
+      amount.toFixed(this.amountAcc) == balance.toFixed(this.amountAcc)
+    ) {
       this[direction]['avgPrice'] = 0
       this[direction]['maxPrice'] = 0
       this[direction]['minPrice'] = 0
     }
+
 
     this.updatePositionPrice(direction, price)
 

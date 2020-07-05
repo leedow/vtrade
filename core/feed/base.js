@@ -22,6 +22,11 @@ module.exports = class Base extends Core {
       if( this.filterSame ) {
         let last = this.getLast()
         if( JSON.stringify(last) == JSON.stringify(onedata) ) return
+
+        if(
+          time > 0
+          && (time == this.getTime())
+        ) return
       }
 
       if(onedata) {

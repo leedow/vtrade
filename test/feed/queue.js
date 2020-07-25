@@ -18,10 +18,11 @@ describe('测试queue模块',function(){
     queue.remember(0.00121)
     queue.remember(0.0013)
     queue.remember(0.0014)
-    assert.equal( queue.getTrend(2).toFixed(10),  ((0.0014-0.00121)/0.00121).toFixed(10) )
-    assert.equal( queue.getTrend(3).toFixed(10),  ((0.0014-0.0012)/0.0012).toFixed(10) )
-
+    assert.equal( queue.getTrend(2).toFixed(10),  ((0.0014-0.00121)).toFixed(10) )
+    assert.equal( queue.getTrend(3).toFixed(10),  ((0.0014-0.0012)).toFixed(10) )
   })
+
+
 
   it('getAvg',function(){
     assert.equal( queue.getAvg().toFixed(10),  (( 0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )/6).toFixed(10) )
@@ -42,6 +43,16 @@ describe('测试queue模块',function(){
   it('getSum',function(){
     assert.equal( queue.getSum(),  0.001+0.0012+0.0012+0.00121+0.0013+0.0014 )
   })
+
+  it('getTrend 负数',function(){
+    queue.remember(-0.0012)
+    queue.remember(-0.00121)
+    queue.remember(-0.0013)
+    queue.remember(-0.0014)
+    assert.equal( queue.getTrend(2).toFixed(10),  ((-0.0014+0.00121)).toFixed(10) )
+    assert.equal( queue.getTrend(3).toFixed(10),  ((-0.0014+0.0012)).toFixed(10) )
+  })
+
 })
 
 

@@ -25,7 +25,7 @@ describe('测试ma模块',function(){
     let pre = (0.0012+0.00121)/2
 
     assert.equal( ma.self.getLast().toFixed(10),  last.toFixed(10) )
-    assert.equal( ma.getTrend(2).toFixed(10),  (( last - pre)/pre).toFixed(10) )
+    assert.equal( ma.getTrend(2).toFixed(10),  (( last - pre)).toFixed(10) )
   })
 
   it('getTrend 2',function(){
@@ -33,7 +33,7 @@ describe('测试ma模块',function(){
     let pre = (0.0012+0.00121+0.0013)/3
 
     assert.equal( ma.self.getLast().toFixed(10),  last.toFixed(10) )
-    assert.equal( ma.getTrend(1).toFixed(10),  (( last - pre)/pre).toFixed(10) )
+    assert.equal( ma.getTrend(1).toFixed(10),  (( last - pre)).toFixed(10) )
   })
 
 })
@@ -57,7 +57,7 @@ describe('测试ma模块,时间模式',function(){
 
     assert.equal( ma.self.getLast().toFixed(10),  last.toFixed(10) )
     assert.equal( ma.self.getLast(3).toFixed(10),  pre.toFixed(10) )
-    assert.equal( ma.getTrend(2).toFixed(10),  (( last - pre)/pre).toFixed(10) )
+    assert.equal( ma.getTrend(2).toFixed(10),  (( last - pre)).toFixed(10) )
   })
 
   it('getTrend 2',function(){
@@ -66,7 +66,7 @@ describe('测试ma模块,时间模式',function(){
 
     assert.equal( ma.self.getLast().toFixed(10),  last.toFixed(10) )
     assert.equal( ma.self.getLast(2).toFixed(10),  pre.toFixed(10) )
-    assert.equal( ma.getTrend(1).toFixed(10),  (( last - pre)/pre).toFixed(10) )
+    assert.equal( ma.getTrend(1).toFixed(10),  (( last - pre)).toFixed(10) )
   })
 
 })

@@ -20,7 +20,7 @@ module.exports = class Queue extends Base{
   getTrend(step, offset=1) {
     let last = this.getLast(offset)
     let pre = this.getLast(offset+step)
-    return (last - pre)/pre
+    return (last - pre) ///pre
   }
 
   /**

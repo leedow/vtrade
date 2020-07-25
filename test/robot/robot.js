@@ -93,4 +93,19 @@ describe('测试robot模块',function(){
     assert.equal( robot.getGroup('g1'), false)
   })
 
+  it('测试ma',function(){
+    robot.createMa('m1')
+
+    assert.equal( robot.ma.length, 1)
+    assert.equal( robot.getMa('m1').id, 'm1')
+
+    robot.createMa('m2')
+    assert.equal( robot.ma.length, 2)
+
+    let res= robot.removeMa('m1')
+    assert.equal( res, true)
+    assert.equal( robot.ma.length, 1)
+    assert.equal( robot.getMa('m1'), false)
+  })
+
 })

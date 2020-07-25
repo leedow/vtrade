@@ -21,12 +21,12 @@ module.exports = class Base extends Core {
 
       if( this.filterSame ) {
         let last = this.getLast()
-        if( JSON.stringify(last) == JSON.stringify(onedata) ) return
+        if( JSON.stringify(last) == JSON.stringify(onedata) ) return false
 
         if(
           time > 0
           && (time == this.getTime())
-        ) return
+        ) return false
       }
 
       if(onedata) {
@@ -51,6 +51,8 @@ module.exports = class Base extends Core {
           this.data.shift()
         }
       }
+
+      return true
   }
 
   forget() {
@@ -106,7 +108,7 @@ module.exports = class Base extends Core {
     let datas = this.getWithinTime(times, true).reverse()
     let results = []
     let lastTime = 0
-    datas.forEach(data => {
+    datas.forEach((data, index) => {
       if(results.length == 0) {
         results.unshift(data)
         lastTime = data.t
@@ -114,6 +116,7 @@ module.exports = class Base extends Core {
       if(
         results.length > 0
         && ( lastTime - data.t >= timeStep )
+        && ( index > 0 )
       ) {
         results.unshift(data)
         lastTime = data.t

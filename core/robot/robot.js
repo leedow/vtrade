@@ -1,6 +1,7 @@
 let Core = require('../common/core')
 let Queue = require('../feed/queue')
 let Group = require('../feed/group')
+let Ma = require('../feed/ma')
 
 /**
  * 交易机器人
@@ -16,6 +17,7 @@ module.exports = class Robot extends Core{
 
     this.queues = []
     this.groups = []
+    this.ma = []
 
     // this.timers = [] // 内置定时器
     // this.pauseTimers = false // 暂停内置定时器执行代码
@@ -97,6 +99,19 @@ module.exports = class Robot extends Core{
   }
 
   /**
+   * 生成一个新的数据均值器
+   * @param {string} id ID
+   */
+  createMa(id) {
+    if(!id) return false
+    let ma = new Ma({
+      id
+    })
+    this.ma.push(ma)
+    return ma
+  }
+
+  /**
    * 删除一个数据队列
    * @param {string} id 队列ID
    */
@@ -110,6 +125,14 @@ module.exports = class Robot extends Core{
    */
   removeGroup(id) {
     return this._removeModel(id, 'groups')
+  }
+
+  /**
+   * 删除一个均值器
+   * @param {string} id ID
+   */
+  removeMa(id) {
+    return this._removeModel(id, 'ma')
   }
 
   /**
@@ -135,6 +158,14 @@ module.exports = class Robot extends Core{
    */
   getGroup(id) {
     return this._getModel(id, 'groups')
+  }
+
+  /**
+   * 根据ID获取一个均值器
+   * @param {string} id ID
+   */
+  getMa(id) {
+    return this._getModel(id, 'ma')
   }
 
   /**

@@ -24,6 +24,7 @@ module.exports = class ExchangeP extends Ex{
     this.short = {avgPrice: 0, deposit:0, minPrice:0, maxPrice:0}
 
     this.clear = new Clear()
+
     this.subscribeRobotTicker()
     this.subscribeRobotTrade()
     this.subscribeRobotDepth()

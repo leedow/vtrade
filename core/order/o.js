@@ -33,6 +33,7 @@ module.exports = class O extends Core{
     this.finishTime = 0
 
     this.postOnly = false // 仅maker下单
+    this.cancelReason = '' // 取消原因 ‘’|postonly
 
     this.params = null // 附带参数
 
@@ -117,14 +118,16 @@ module.exports = class O extends Core{
 
   /**
    * 取消订单
+   * @param cancelReason 取消原因
    */
-  cancel() {
+  cancel(cancelReason = '') {
     if([OPEN, PART_FILLED].includes(this.status)) {
       if(this.amountFill > 0) {
         this.status = PART_CANCELED
       } else {
         this.status = CANCELED
       }
+      this.cancelReason = cancelReason
       this.publish(`ORDER_${this.eventName}`, this)
       return {
         code: true
@@ -235,7 +238,7 @@ module.exports = class O extends Core{
    */
   _finishByPostOnly() {
     if( this.postOnly ){
-        this.isMaker?this.finish():this.cancel()
+        this.isMaker?this.finish():this.cancel('postOnly')
     } else {
         this.finish()
     }

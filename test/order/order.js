@@ -64,6 +64,29 @@ describe('测试order模块',function(){
   })
 
 
+  let order_post = new Order()
+  order_post.id = 1
+  order_post.pair = 'btcusdt'
+  order_post.amountAcc = 4
+  order_post.priceAcc = 2
+  order_post.amount = 100.123456
+  order_post.price = 4321.123
+  order_post.makerFee = -0.001
+  order_post.takerFee = 0.001
+  order_post.side = 'buy'
+  order_post.exchange = 'TEST'
+  order_post.postOnly = true
+
+  it('测试postOnly下自动取消',function(){
+
+    order_post.create()
+    order_post.checkStatusByPrice(2000, 3000)
+    assert.deepEqual( order_post.status, CANCELED)
+    assert.deepEqual( order_post.cancelReason, 'postOnly')
+
+  })
+
+
 
   let order2 = null
 

@@ -10,7 +10,7 @@ module.exports = class Ma{
     this.id = null
     this.type = 'ma' // ma | ema
     this.step = 0 // 均值计算参数
-    this.mode = 'tickersNumber'  // tickersNumber | timestep
+    this.mode = 'timestep'  // tickersNumber | timestep
     this.timestepFilter = 0 // mode为timestep时数据采样间隔
 
     this.origin = new Queue() //  原始数据队列

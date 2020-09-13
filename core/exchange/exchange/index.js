@@ -104,8 +104,8 @@ module.exports = class Exchange extends Ex{
       _eventId: this._id,
       robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
-      params: this._getValue(params, 'params', null)
-
+      params: this._getValue(params, 'params', null),
+      father: this
     })
 
     if( this.getAsset(this.from).test(order.amount*order.price) ) {
@@ -149,8 +149,8 @@ module.exports = class Exchange extends Ex{
       _eventId: this._id,
       robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
-      params: this._getValue(params, 'params', null)
-
+      params: this._getValue(params, 'params', null),
+      father: this
     })
 
     if( this.getAsset(this.to).test(order.amount) ) {

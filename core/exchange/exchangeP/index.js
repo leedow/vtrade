@@ -301,11 +301,13 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      timeInForce: this._getValue(params, 'timeInForce', 'GoodTillCancel'),
       type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
       orderType,
       robotId: this.robotId,
-      params: this._getValue(params, 'params', null)
+      params: this._getValue(params, 'params', null),
+      father: this
     })
 
     if( this.checkBalance(order) ) {
@@ -352,11 +354,13 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
+      timeInForce: this._getValue(params, 'timeInForce', 'GoodTillCancel'),
       type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
       orderType,
       robotId: this.robotId,
-      params: this._getValue(params, 'params', null)
+      params: this._getValue(params, 'params', null),
+      father: this
     })
 
     if( this.checkBalance(order) ) {
@@ -472,9 +476,25 @@ module.exports = class ExchangeP extends Ex{
   checkBalance(order) {
     // 如果是仅开仓或者平仓
     if(['open', 'close'].includes(order.orderType)) {
-      return this._checkBalance(order)
+      return this._checkBalanceTwoSides(order)
     }
 
+    return this._checkBalanceOneSide(order)
+
+
+  }
+
+  // _checkBalanceReduceOnly(order) {
+  //   let short = this.getAsset('short').getBalance()
+  //   let long = this.getAsset('long').getBalance()
+  // }
+
+  /**
+   * 单向合约检查是否可下单
+   * @param {Order} 计划下单
+   * @return {Boolean} 是否可下单
+   */
+  _checkBalanceOneSide(order) {
     let balanceCanuse = this.getAsset(this.balance).getAvailable() + this.getProfitUnfill()
     let dif = 0
     if( order.direction == 'long' ) {
@@ -495,7 +515,7 @@ module.exports = class ExchangeP extends Ex{
    * @param {Order} 计划下单
    * @return {Boolean} 是否可下单
    */
-  _checkBalance(order) {
+  _checkBalanceTwoSides(order) {
 
     if(order.orderType == 'open') {
       let balanceCanuse = this.getAsset(this.balance).getAvailable()

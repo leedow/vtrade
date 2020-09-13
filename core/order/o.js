@@ -33,7 +33,15 @@ module.exports = class O extends Core{
     this.finishTime = 0
 
     this.postOnly = false // 仅maker下单
+
+    // GoodTillCancel 一直有效至取消
+    // ImmediateOrCancel 立即成交或取消
+    // FillOrKill 完全成交或取消
+    // PostOnly 被动委托
+    this.timeInForce = 'GoodTillCancel' // 下单逻辑，代替postOnly
     this.cancelReason = '' // 取消原因 ‘’|postonly
+
+    this.reduceOnly = false // 是否只减仓，只针对单向持仓的合约有效
 
     this.params = null // 附带参数
 

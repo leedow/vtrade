@@ -9,6 +9,11 @@ global.CANCELED = 6
 global.ERROR = 7
 global.LIMIT = 8
 
+// timeInForce下单类型
+global.GOOD_TILL_CANCEL = 'GoodTillCancel'
+global.POST_ONLY = 'PostOnly'
+
+
 // TICKERS模块
 global.TICKER_PRICE = 0
 global.TICKER_SIZE = 1
@@ -27,3 +32,5 @@ global.TRADE_TIME = 3
 // DEPTH模块
 global.DEPTH_PRICE = 0
 global.DEPTH_SIZE = 1
+
+

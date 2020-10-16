@@ -251,12 +251,23 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('btc').balance, 1)
   })
 
-  it('测试tickers数据订阅',function(){
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
-    assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2])
-    assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
-    assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
+  it('测试tickers数据订阅时间一',function(){
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
+    assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
+  })
+
+  it('测试ex时钟',function(){
+    assert.deepEqual( exchange.clock.time, 1584020145972)
+  })
+
+  it('测试tickers数据订阅时间二',function(){
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145976])
+    assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145976])
+    assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
+  })
+
+  it('测试ex时钟更新',function(){
+    assert.deepEqual( exchange.clock.time, 1584020145976)
   })
 
   it('测试trades数据订阅',function(){
@@ -267,6 +278,7 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('4999买入1USD，成功下单，冻结1/4999btc',function(){
+
     exchange.registerOrder(Order)
     exchange.buy(4999, 1, {
       params: {test:1}
@@ -277,6 +289,10 @@ describe('测试exchangeP模块仿真',function(){
     //console.log(exchange.orders[exchange.orders.length-1].params)
     assert.deepEqual( exchange.orders[exchange.orders.length-1].params, {test:1})
 
+  })
+
+  it('测试order createTime',function(){
+    assert.deepEqual( exchange.orders[exchange.orders.length-1].createTime, 1584020145976)
   })
 
   it('测试获取极价订单',function(){
@@ -294,11 +310,17 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('继续5001买入1usd多单，成功下单，冻结1/5001btc',function(){
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145977])
     exchange.buy(5001, 1)
     assert.equal( exchange.getAsset('btc').getAvailable(10), (1-1/4999/LEVER-1/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER+1/5001/LEVER).toFixed(10))
     assert.equal( exchange.getOrdersLength(), 2)
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
+  })
+
+  it('测试order createTime',function(){
+    assert.deepEqual( exchange.orders[exchange.orders.length-2].createTime, 1584020145976)
+    assert.deepEqual( exchange.orders[exchange.orders.length-1].createTime, 1584020145977)
   })
 
   it('测试获取下单数量',function(){
@@ -399,7 +421,7 @@ describe('测试exchangeP模块仿真',function(){
     const PRICE = 5001
     const FEE = 1/PRICE*TAKER_FEE
 
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4998, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4998, 2, 5001, 2, 0,0,0,0,0, 1584020145982])
     //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
     assert.equal( exchange.getOrdersLength(), 5)
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
@@ -413,6 +435,10 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('short').balance, 0)
     assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (PRE_FROZEN).toFixed(10) )
     assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE-FEE )
+  })
+
+  it('测试order finishTime',function(){
+    assert.deepEqual( exchange.orders[1].finishTime, 1584020145982)
   })
 
   it('测试仓位',function(){

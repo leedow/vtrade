@@ -111,6 +111,8 @@ module.exports = class O extends Core{
       this.orderNumber = `${Date.now()}-${(Math.random()*100).toFixed(0)}`
     }
 
+    this.createTime = this.clock.time // 以ticker时间为准的创建时间
+
     this.publish(`ORDER_${this.eventName}`, this)
     return {
       code: true,
@@ -162,6 +164,8 @@ module.exports = class O extends Core{
     } else {
       this._finishAll()
     }
+    this.finishTime = this.clock.time // 以ticker时间为准的时间
+
   }
 
 

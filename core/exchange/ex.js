@@ -91,6 +91,9 @@ module.exports = class Ex extends Core {
    * 处理ticker数据
    */
   _handleTickers(data) {
+    // 更新内部时间
+    this.clock.time = data[TICKER_TIME]
+
     this.tickers.remember(data)
     this._checkOrderStatus()
     this.publishHeartbeat('TICKERS_UPDATE')

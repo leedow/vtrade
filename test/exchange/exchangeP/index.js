@@ -338,11 +338,13 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('继续5001买入20000usd，资金不足，买入失败',function(){
-    exchange.buy(5001, 20000)
+    let res = exchange.buy(5001, 20000)
     assert.equal( exchange.getAsset('btc').getAvailable(10), (1-1/4999/LEVER-1/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER+1/5001/LEVER).toFixed(10))
     assert.equal( exchange.getOrdersLength(), 2)
     assert.equal( exchange.getOrdersByStatus(2).length, 2)
+    assert.equal( res.errCode, NO_BALANCE)
+
   })
 
   it('测试获取下单数量',function(){

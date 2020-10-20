@@ -33,4 +33,12 @@ global.TRADE_TIME = 3
 global.DEPTH_PRICE = 0
 global.DEPTH_SIZE = 1
 
+// 错误代码
+global.PARAMS_ERROR = 10001 // 入参错误
+global.NO_BALANCE = 10002 // 账户余额不足,无法开单
+global.REQUEST_LIMIT = 10003 // 超出访问频率
+global.ORDERS_LIMIT = 10004 // 超出下单数量
+
+global.OTHER_ERROR = 99999 // 其他错误
+
 

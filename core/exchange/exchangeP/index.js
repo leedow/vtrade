@@ -317,6 +317,7 @@ module.exports = class ExchangeP extends Ex{
       } else {
         return {
           code: false,
+          errCode: PARAMS_ERROR,
           order,
           msg: 'Exchange buy failed, amount can not be zero'
         }
@@ -326,6 +327,7 @@ module.exports = class ExchangeP extends Ex{
       // console.log(this.getAsset(this.balance).getAvailable())
       return {
         code: false,
+        errCode: NO_BALANCE,
         order,
         msg: `Exchange buy failed, test asset failed!`
       }
@@ -370,6 +372,7 @@ module.exports = class ExchangeP extends Ex{
       } else {
         return {
           code: false,
+          errCode: PARAMS_ERROR,
           order,
           msg: 'Exchange sell failed, amount can not be zero'
         }
@@ -378,6 +381,7 @@ module.exports = class ExchangeP extends Ex{
     } else {
       return {
         code: false,
+        errCode: NO_BALANCE,
         order,
         msg: `Exchange sell failed, test asset failed!`
       }

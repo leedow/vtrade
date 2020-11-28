@@ -500,6 +500,30 @@ describe('测试exchangeP模块仿真',function(){
     //assert.deepEqual( exchange.depth.getLast(1), [5864,4000,"buy",1584020145973])
   })
 
+  it('测试reduceOnly赋值',function(){
+    let order1 = exchange.buy(5001, 20000, {
+      reduceOnly: true
+    })
+    let order2 = exchange.buy(5001, 20000, {
+      
+    })
+
+    assert.deepEqual( order1.order.reduceOnly, true)
+    assert.deepEqual( order2.order.reduceOnly, false)
+
+  })
+
+  it('测试timeInForce赋值',function(){
+    let order1 = exchange.buy(5001, 20000, {
+      timeInForce: 'test'
+    })
+    
+
+    assert.deepEqual( order1.order.timeInForce, 'test')
+  
+
+  })
+
 
 
 

@@ -291,6 +291,7 @@ module.exports = class ExchangeP extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
+      product: this.product,
       direction: 'long',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,
@@ -347,6 +348,7 @@ module.exports = class ExchangeP extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
+      product: this.product,
       direction: 'short',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,

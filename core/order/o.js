@@ -11,6 +11,7 @@ module.exports = class O extends Core{
     this.orderNumber = '' // 交易所订单号
     this.pair = '' // 交易对
     this.side = '' // buy|sell 买单卖单，多单，空单
+    this.product = '' 
 
     this.makerFee = 0 // maker费率，千分之一设 0.001
     this.takerFee = 0 // taker费率
@@ -75,8 +76,12 @@ module.exports = class O extends Core{
     return `ORDER_${this.eventName}`
   }
 
+  // get eventName() {
+  //   return `${this.exchange}_${this.pair}`
+  // }
+
   get eventName() {
-    return `${this.exchange}_${this.pair}`
+    return this.product != '' ?  `${this.exchange}_${this.pair}_${this.product}` : `${this.exchange}_${this.pair}`
   }
 
   /**

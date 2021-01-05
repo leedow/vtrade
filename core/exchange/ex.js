@@ -11,6 +11,7 @@ module.exports = class Ex extends Core {
     this.name = ''
     this.exchange = '' // 交易所名
     this.pair = '' // 交易对名
+    this.product = '' // 产品名，如spot
     this.amountAcc = 0
     this.priceAcc = 0
     this.makerFee = 0
@@ -197,7 +198,7 @@ module.exports = class Ex extends Core {
   }
 
   get eventName() {
-    return `${this.exchange}_${this.pair}`
+    return this.product != '' ?  `${this.exchange}_${this.pair}_${this.product}` : `${this.exchange}_${this.pair}`
   }
 
   /**

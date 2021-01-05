@@ -229,6 +229,7 @@ describe('测试exchangeP模块仿真',function(){
       exchange: 'test',
       pair: 'btcusd_p',
       balance : 'btc',
+      product: 'spot',
       makerFee: MAKER_FEE,
       takerFee: TAKER_FEE,
       amountAcc: 2,
@@ -252,7 +253,7 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('测试tickers数据订阅时间一',function(){
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
+    events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
     assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
   })
 
@@ -261,7 +262,7 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('测试tickers数据订阅时间二',function(){
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145976])
+    events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145976])
     assert.deepEqual( exchange.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145976])
     assert.deepEqual( exchange.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
   })
@@ -271,9 +272,9 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('测试trades数据订阅',function(){
-    events.emit('ROBOT_TRADES_test_btcusd_p', [5864,3000,"buy",1584020145972])
+    events.emit('ROBOT_TRADES_test_btcusd_p_spot', [5864,3000,"buy",1584020145972])
     assert.deepEqual( exchange.trades.getLast(1), [5864,3000,"buy",1584020145972])
-    events.emit('ROBOT_TRADES_test_btcusd_p', [5864,4000,"buy",1584020145973])
+    events.emit('ROBOT_TRADES_test_btcusd_p_spot', [5864,4000,"buy",1584020145973])
     assert.deepEqual( exchange.trades.getLast(1), [5864,4000,"buy",1584020145973])
   })
 
@@ -310,7 +311,7 @@ describe('测试exchangeP模块仿真',function(){
   })
 
   it('继续5001买入1usd多单，成功下单，冻结1/5001btc',function(){
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145977])
+    events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5001, 1, 4999.5, 2, 5001.2, 2, 0,0,0,0,0, 1584020145977])
     exchange.buy(5001, 1)
     assert.equal( exchange.getAsset('btc').getAvailable(10), (1-1/4999/LEVER-1/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getAsset('btc').getFrozen(10), (1/4999/LEVER+1/5001/LEVER).toFixed(10))
@@ -423,8 +424,8 @@ describe('测试exchangeP模块仿真',function(){
     const PRICE = 5001
     const FEE = 1/PRICE*TAKER_FEE
 
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4998, 2, 5001, 2, 0,0,0,0,0, 1584020145982])
-    //events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4998, 2, 5001, 2, 0,0,0,0,0, 1584020145982])
+    //events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4999, 2, 5001, 2])
     assert.equal( exchange.getOrdersLength(), 5)
     assert.equal( exchange.getOrdersByStatus(2).length, 4)
     assert.equal( exchange.getOrdersByStatus(4).length, 1)
@@ -461,7 +462,7 @@ describe('测试exchangeP模块仿真',function(){
     const PRICE = 4999
     const FEE = 1/PRICE*TAKER_FEE
 
-    events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+    events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4999, 2, 5001, 2])
     assert.equal( exchange.getOrdersLength(), 5)
     assert.equal( exchange.getOrdersByStatus(2).length, 3)
     assert.equal( exchange.getOrdersByStatus(4).length, 2)
@@ -494,9 +495,9 @@ describe('测试exchangeP模块仿真',function(){
     let depth = {"asks":[["5806.6","200","0","1"],["5807.8","4","0","1"],["5808.1","2","0","1"],["5808.8","58500","0","2"],["5810","6","0","6"]],"bids":[["5806.5","13055","0","11"],["5805.2","8","0","2"],["5800","101780","0","8"],["5790.9","55900","0","1"],["5790","1000","0","1"]],"time":1584020608264}
 
 
-    events.emit('ROBOT_DEPTH_test_btcusd_p', depth)
+    events.emit('ROBOT_DEPTH_test_btcusd_p_spot', depth)
     assert.deepEqual( exchange.depth.getLast(1), depth)
-    //events.emit('ROBOT_DEPTH_test_btcusd_p', [5864,4000,"buy",1584020145973])
+    //events.emit('ROBOT_DEPTH_test_btcusd_p_spot', [5864,4000,"buy",1584020145973])
     //assert.deepEqual( exchange.depth.getLast(1), [5864,4000,"buy",1584020145973])
   })
 

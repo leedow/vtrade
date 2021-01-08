@@ -459,6 +459,9 @@ module.exports = class ExchangeP extends Ex{
   getProfitUnfill(directions='all') {
     let profitUnfill = 0, profitUnfillLong = 0, profitUnfillShort = 0
     let price = this.tickers.getLast()[0]
+
+    if(!price ) return 0
+      
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
 

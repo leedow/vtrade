@@ -231,7 +231,7 @@ describe('测试exchangeP模块独立方法，usd本位',function(){
 
 
 
-describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
+describe('测试exchangeP模块仿真，usd本位，单向开仓,双向持仓',function(){
   const TAKER_FEE = 0.01
   const MAKER_FEE = -0.01
 
@@ -279,7 +279,7 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓',function(){
     let res = exchange.openLong(4999, 1, {
       params: {test:1}
     })
-    console.log(res)
+    //console.log(res)
     assert.equal( exchange.getAsset('usd').getFrozen(10), (4999/LEVER).toFixed(10))
     assert.equal( exchange.getOrdersLength(), 1)
     assert.equal( exchange.getOrdersByStatus(2).length, 1)

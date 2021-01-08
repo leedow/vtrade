@@ -14,6 +14,8 @@ module.exports = class ExchangeP extends Ex{
     this.lever = 1 // 交易杠杆，初始化后不可更改
     this.marginType = 'coin' // 保证金模式 coin 币本位 | usd本位
 
+    this.dualSidePosition = options.marginType == 'usd'? true:false // 是否双向持仓
+
     this.copyOptions(options)
 
     this.createAsset(this.balance, 0)  // 账户资金=账户原始资金+已实现盈亏，计算账户权益资金=账户资金+未实现盈亏
@@ -251,8 +253,15 @@ module.exports = class ExchangeP extends Ex{
           break
         }
         case FILLED: {
-          if(order.orderType == '') this.updateAssets(order)
-          if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
+          //if(order.orderType == '') this.updateAssets(order)
+          //if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
+
+          if(this.dualSidePosition) {
+            this.updateAssetsOneDirection(order)
+          } else {
+            this.updateAssets(order)
+          }
+
           break
         }
         case CANCELED: {
@@ -264,8 +273,14 @@ module.exports = class ExchangeP extends Ex{
           break
         }
         case PART_CANCELED: {
-          if(order.orderType == '') this.updateAssets(order)
-          if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
+          //if(order.orderType == '') this.updateAssets(order)
+          //if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
+          if(this.dualSidePosition) {
+            this.updateAssetsOneDirection(order)
+          } else {
+            this.updateAssets(order)
+          }
+
           break
         }
         case LIMIT: {
@@ -302,7 +317,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
-      timeInForce: this._getValue(params, 'timeInForce', 'GoodTillCancel'),
+      timeInForce: this._getValue(params, 'timeInForce', 'GTC'),
       reduceOnly: this._getValue(params, 'reduceOnly', false),
       type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
@@ -312,7 +327,8 @@ module.exports = class ExchangeP extends Ex{
       father: this
     })
 
-    if( this.checkBalance(order) ) {
+    let check = this.checkBalance(order)
+    if( check.code ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
@@ -331,7 +347,7 @@ module.exports = class ExchangeP extends Ex{
         code: false,
         errCode: NO_BALANCE,
         order,
-        msg: `Exchange buy failed, test asset failed!`
+        msg: check.msg
       }
     }
   }
@@ -359,7 +375,7 @@ module.exports = class ExchangeP extends Ex{
       lever: this.lever,
       _eventId: this._id,
       postOnly: this._getValue(params, 'postOnly', false),
-      timeInForce: this._getValue(params, 'timeInForce', 'GoodTillCancel'),
+      timeInForce: this._getValue(params, 'timeInForce', 'GTC'),
       reduceOnly: this._getValue(params, 'reduceOnly', false),
       type: this._getValue(params, 'type', 'limit'),
       marginType: this.marginType,
@@ -368,8 +384,8 @@ module.exports = class ExchangeP extends Ex{
       params: this._getValue(params, 'params', null),
       father: this
     })
-
-    if( this.checkBalance(order) ) {
+    let check = this.checkBalance(order)
+    if( check.code ) {
       if(order.amount > 0) {
         this.orders.push( order )
         return order.create()
@@ -387,7 +403,7 @@ module.exports = class ExchangeP extends Ex{
         code: false,
         errCode: NO_BALANCE,
         order,
-        msg: `Exchange sell failed, test asset failed!`
+        msg: check.msg
       }
     }
   }
@@ -510,10 +526,19 @@ module.exports = class ExchangeP extends Ex{
     } else if( order.direction == 'short' ) {
       dif = order.amount - this.getAsset('long').getBalance()
     }
+
+    let deposit = order.deposit*(dif/order.amount)
+
     if(dif >= 0) {
-      return balanceCanuse - order.deposit*(dif/order.amount) > 0
+      return {
+        code: balanceCanuse - deposit > 0,
+        msg: `checkBalanceOneSide info: balance ${balanceCanuse}, deposit ${deposit}`
+      } 
     } else {
-      return true
+      return {
+        code: true,
+        msg: `checkBalanceOneSide info: balance ${balanceCanuse}, deposit ${deposit}`
+      }
     }
   }
 
@@ -529,7 +554,10 @@ module.exports = class ExchangeP extends Ex{
       let balanceCanuse = this.getAsset(this.balance).getAvailable()
       //console.log(balanceCanuse)
       //console.log(order.deposit)
-      return balanceCanuse - order.deposit > 0
+      return {
+        code: balanceCanuse - order.deposit > 0,
+        msg: `checkBalanceTwoSides open info: balance ${balanceCanuse}, deposit ${order.deposit}`
+      } 
     } else if(order.orderType == 'close'){
       let short = this.getAsset('short').getBalance()
       let long = this.getAsset('long').getBalance()
@@ -541,10 +569,19 @@ module.exports = class ExchangeP extends Ex{
         order => order.status == OPEN && (order.side == 'buy') && (order.orderType == 'close')
       ))
 
-      if(order.direction == 'long') return order.amount <= short - longAmount
-      if(order.direction == 'short') return order.amount <= long - shortAmount
+      let code
+      if(order.direction == 'long') code = ( order.amount <= short - longAmount )
+      if(order.direction == 'short') code = ( order.amount <= long - shortAmount )
+
+      return {
+        code,
+        msg: `checkBalanceTwoSides close info: ${code?'success':'close quanlity cant be more than current position'}`
+      }
     } else {
-      return false
+      return {
+        code: false,
+        msg: 'checkBalanceTwoSides info: wrong orderType'
+      }
     }
   }
 

@@ -10,8 +10,8 @@ global.ERROR = 7
 global.LIMIT = 8
 
 // timeInForce下单类型
-global.GOOD_TILL_CANCEL = 'GoodTillCancel'
-global.POST_ONLY = 'PostOnly'
+global.GOOD_TILL_CANCEL = 'GTC' // Good Till Cancel 成交为止
+global.POST_ONLY = 'GTX' // Good Till Crossing 无法成为挂单方就撤销
 
 
 // TICKERS模块

@@ -506,11 +506,18 @@ module.exports = class ExchangeP extends Ex{
    */
   checkBalance(order) {
     // 如果是仅开仓或者平仓
-    if(['open', 'close'].includes(order.orderType)) {
+
+    if(this.dualSidePosition) {
       return this._checkBalanceTwoSides(order)
+    } else {
+      return this._checkBalanceOneSide(order)
     }
 
-    return this._checkBalanceOneSide(order)
+    // if(['open', 'close'].includes(order.orderType)) {
+    //   return this._checkBalanceTwoSides(order)
+    // }
+
+    // return this._checkBalanceOneSide(order)
 
 
   }

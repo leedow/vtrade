@@ -45,12 +45,15 @@ module.exports = class ExchangeP extends Ex{
    * @param {number} deposit 保证金
    */
   increasePosition(direction, price, amount, deposit) {
+    //console.log(`change ${direction}, price ${price}, amount ${amount}`)
     let balance = this.getAsset(direction).getBalance()
     this[direction]['avgPrice'] = (this[direction]['avgPrice']*balance + price*amount)/(balance + amount)
     this[direction]['deposit'] += deposit
     // this.getAsset(this.balance).decrease(deposit)
     this.getAsset(direction).increase(amount)
     this.updatePositionPrice(direction, price)
+
+    //console.log(`after change ${this.getAsset(direction).getBalance()}, ${this.getPosition()}`)
   }
 
   /**
@@ -249,13 +252,14 @@ module.exports = class ExchangeP extends Ex{
     this.subscribe(`ORDER_${this.eventName}`, (order) => {
       switch(order.status) {
         case OPEN: {
+          //console.log(order, order.deposit)
           this.getAsset(this.balance).frozen(order.deposit)
           break
         }
         case FILLED: {
           //if(order.orderType == '') this.updateAssets(order)
           //if(['open', 'close'].includes(order.orderType)) this.updateAssetsOneDirection(order)
-
+          //console.log('finish')
           if(this.dualSidePosition) {
             this.updateAssetsOneDirection(order)
           } else {
@@ -461,7 +465,7 @@ module.exports = class ExchangeP extends Ex{
     let price = this.tickers.getLast()[0]
 
     if(!price ) return 0
-      
+
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
 
@@ -531,6 +535,8 @@ module.exports = class ExchangeP extends Ex{
     }
 
     let deposit = order.deposit*(dif/order.amount)
+
+    //console.log(`checkBalanceOneSide info: balance ${balanceCanuse}, deposit ${deposit}`)
 
     if(dif >= 0) {
       return {

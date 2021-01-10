@@ -175,6 +175,7 @@ module.exports = class Ex extends Core {
     }
     //console.log('ehcking....')
     this.orders.forEach(order => {
+       
       order.checkStatusByPrice(
         priceBuy,
         priceSell

@@ -460,7 +460,7 @@ describe('测试exchangeP模块仿真',function(){
     const PRE_FROZEN = exchange.getAsset('btc').getFrozen()
     const PRE_BALANCE = exchange.getAsset('btc').getBalance()
     const PRICE = 4999
-    const FEE = 1/PRICE*TAKER_FEE
+    const FEE = 1/PRICE*MAKER_FEE
 
     events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4999, 2, 5001, 2])
     assert.equal( exchange.getOrdersLength(), 5)
@@ -474,7 +474,7 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('long').balance, 0)
     assert.equal( exchange.getAsset('short').balance, 0)
     //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (PRE_FROZEN-1/PRICE/LEVER-1/5001/LEVER).toFixed(10) )
-    assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE+FEE+(1/5001-1/4999) )
+    assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE-FEE+(1/5001-1/4999) )
   })
 
   it('测试获取下单数量',function(){

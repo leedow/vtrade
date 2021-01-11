@@ -619,6 +619,33 @@ module.exports = class ExchangeP extends Ex{
     let short = this.getAsset('short').getBalance()
     return long - short
   }
+ 
+  /*
+   * 获取保证金总数量
+   */
+  getBalance() {
+    return this.getAsset(this.balance).getBalance()
+  }
+
+  /*
+   * 获取实时仓位杠杆
+   * 如果是双向持仓，返回对冲后的杠杆值
+   */
+  getPositionLever() {
+    let pos = this.getPosition()
+    let balance = this.getBalance()
+
+    if(this.marginType == 'coin') {
+      //return pos/(balance*)
+    }
+    else if(this.marginType == 'usd') {
+
+    }
+    else {
+      console.error(`getPositionLever():unsupported marginType ${this.marginType}`)
+      return null
+    }
+  }
 
   /**
    * 获取仓位总价值

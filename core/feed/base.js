@@ -74,6 +74,13 @@ module.exports = class Base extends Core {
     }
   }
 
+  /*
+   * 是否包含数据
+   */
+  haveData() {
+    return this.data.length > 0
+  }
+
   /**
    * 获取最新时间戳，单位MS
    * @param {number} offset 获取倒数第index个数据

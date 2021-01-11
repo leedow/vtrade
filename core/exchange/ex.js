@@ -175,7 +175,7 @@ module.exports = class Ex extends Core {
     }
     //console.log('ehcking....')
     this.orders.forEach(order => {
-       
+
       order.checkStatusByPrice(
         priceBuy,
         priceSell
@@ -323,6 +323,15 @@ module.exports = class Ex extends Core {
     } else {
       return true
     }
+  }
+
+  /*
+   * 获取当前交易对最新价格
+   * 按照model优先级： ticker depth 获取
+   * 若没有上诉模块数据，返回null
+   */
+  getPrice() {
+    
   }
 
   /**

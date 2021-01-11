@@ -37,5 +37,11 @@ describe('测试feed/base模块',function(){
 
   })
 
+  it('haveData',function(){
+    assert.equal( base.haveData(), true)
+    
+
+  })
+
 
 })

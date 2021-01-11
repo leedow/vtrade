@@ -318,7 +318,7 @@ module.exports = class Ex extends Core {
    */
   checkOrderModel() {
     if(!this.Order) {
-      this.error(`buy(): Order model must be registered!`)
+      this.error(`ex.buy(): Order model must be registered!`)
       return false
     } else {
       return true
@@ -331,7 +331,13 @@ module.exports = class Ex extends Core {
    * 若没有上诉模块数据，返回null
    */
   getPrice() {
-    
+    if(this.tickers.haveData()) {
+      return this.tickers.getLast()[0]
+    }
+    if(this.depth.haveData()) {
+      return (this.depth.getBidPrice() + this.depth.getAskPrice())/2
+    }
+    this.error(`ex.getPrice(): all feed models have no data!`)
   }
 
   /**

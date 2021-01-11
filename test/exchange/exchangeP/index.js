@@ -257,6 +257,11 @@ describe('测试exchangeP模块仿真',function(){
     assert.deepEqual( exchange.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
   })
 
+  it('测试getPrice',function(){
+    //events.emit('ROBOT_TICKERS_test_btcusd_p_spot', [5000, 1, 4999, 2, 5001, 2, 0,0,0,0,0, 1584020145972])
+    assert.deepEqual( exchange.getPrice(), 5000)
+  })
+
   it('测试ex时钟',function(){
     assert.deepEqual( exchange.clock.time, 1584020145972)
   })

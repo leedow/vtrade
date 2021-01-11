@@ -642,7 +642,7 @@ module.exports = class ExchangeP extends Ex{
 
     }
     else {
-      console.error(`getPositionLever():unsupported marginType ${this.marginType}`)
+      this.error(`getPositionLever():unsupported marginType ${this.marginType}`)
       return null
     }
   }

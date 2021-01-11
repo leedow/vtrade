@@ -462,7 +462,7 @@ module.exports = class ExchangeP extends Ex{
    */
   getProfitUnfill(directions='all') {
     let profitUnfill = 0, profitUnfillLong = 0, profitUnfillShort = 0
-    let price = this.tickers.getLast()[0]
+    let price = this.getPrice()
 
     if(!price ) return 0
 
@@ -632,14 +632,22 @@ module.exports = class ExchangeP extends Ex{
    * 如果是双向持仓，返回对冲后的杠杆值
    */
   getPositionLever() {
-    let pos = this.getPosition()
+    let pos = Math.abs(this.getPosition())
     let balance = this.getBalance()
+    let price = this.getPrice()
 
-    if(this.marginType == 'coin') {
-      //return pos/(balance*)
+    if(!price) {
+      this.error(`exp.getPositionLever(): price cant be null`)
+      return null
+    }
+    else if(pos == 0) {
+      return 0
+    }
+    else if(this.marginType == 'coin') {
+      return pos/(balance*price)
     }
     else if(this.marginType == 'usd') {
-
+      return pos/(balance/price)
     }
     else {
       this.error(`getPositionLever():unsupported marginType ${this.marginType}`)

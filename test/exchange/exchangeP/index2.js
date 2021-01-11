@@ -413,6 +413,10 @@ describe('测试exchangeP模块仿真，usd本位，单向开仓,双向持仓',f
     assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE-FEE )
   })
 
+  it('测试实时杠杆',function(){
+    assert.equal( exchange.getPositionLever(), 1/(exchange.getBalance()/5000))
+  })
+
 
   it('测试仓位',function(){
     assert.equal( exchange.getPosition(), 1 )

@@ -255,6 +255,10 @@ describe('测试exchangeP usdt合约，单方向持仓，模块仿真',function(
     assert.equal( exchange.getAsset('usdt').balance, PRE_BALANCE-FEE )
   })
 
+  it('测试实时杠杆',function(){
+    assert.equal( exchange.getPositionLever(), 1/(exchange.getBalance()/5000))
+  })
+
   
 
   it('测试order finishTime',function(){
@@ -306,6 +310,10 @@ describe('测试exchangeP usdt合约，单方向持仓，模块仿真',function(
 
   it('测试多空仓位对消',function(){
     assert.equal( exchange.getPosition(), 0 )
+  })
+
+  it('测试实时杠杆',function(){
+    assert.equal( exchange.getPositionLever(), 0)
   })
 
   it('测试获取极价订单',function(){

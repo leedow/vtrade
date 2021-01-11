@@ -6,7 +6,7 @@ let exchange = null
 
 const LEVER = 2
 
-describe('测试exchangeP模块独立方法',function(){
+describe('测试exchangeP币本位模块独立方法',function(){
   let ex = new Exchange({
     name: 'test',
     exchange: 'test',
@@ -220,7 +220,7 @@ describe('测试exchangeP模块独立方法',function(){
 
 
 
-describe('测试exchangeP模块仿真',function(){
+describe('测试exchangeP币本位模块仿真',function(){
   const TAKER_FEE = 0.01
   const MAKER_FEE = -0.01
 
@@ -443,6 +443,10 @@ describe('测试exchangeP模块仿真',function(){
     assert.equal( exchange.getAsset('short').balance, 0)
     assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (PRE_FROZEN).toFixed(10) )
     assert.equal( exchange.getAsset('btc').balance, PRE_BALANCE-FEE )
+  })
+
+  it('测试实时杠杆',function(){
+    assert.equal( exchange.getPositionLever(), 1/(exchange.getBalance()*5000))
   })
 
   it('测试order finishTime',function(){

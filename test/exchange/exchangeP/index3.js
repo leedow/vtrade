@@ -237,6 +237,8 @@ describe('测试exchangeP模块仿真，在ws事件驱动下',function(){
     assert.equal( exchange.getAsset('usd').balance, PRE_BALANCE+FEE )
   })
 
+  
+
 
   it('5002平多0.5',function(){
     let res = exchange.closeLong(5002, 0.5)

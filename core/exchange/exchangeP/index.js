@@ -160,19 +160,23 @@ module.exports = class ExchangeP extends Ex{
     let lever = order.lever
     let direction = order.direction
     let deposit = order.deposit
-    let reduceOnly = order.reduceOnly
+    // let reduceOnly = order.reduceOnly
 
-    if( reduceOnly ) {
-      if( direction == 'long' ) {
-        amount = Math.min(short, amount)
-        order.amountFill = amount
-      }
+    // if( reduceOnly ) {
+    //   if( direction == 'long' ) {
+    //     amount = Math.min(short, amount)
+    //     order.amountFill = amount
+    //     order._setFee()
+    //   }
 
-      if( direction == 'short' ) {
-        amount = Math.min(long, amount)
-        order.amountFill = amount
-      }
-    }
+    //   if( direction == 'short' ) {
+    //     amount = Math.min(long, amount)
+    //     order.amountFill = amount
+    //     order._setFee()
+    //   }
+    // }
+
+    // if(amount == 0) return
 
     // console.log(order)
 

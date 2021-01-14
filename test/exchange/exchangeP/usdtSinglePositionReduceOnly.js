@@ -76,10 +76,21 @@ describe('测试exchangeP usdt合约reduceOnly，单方向持仓，模块仿真'
 
   it('4999买入3btc,成交1BTC',function(){
     //exchange.registerOrder(Order)
-    let res = exchange.buy(4999, 1, {
-      reduceOnly: false
+    let res = exchange.buy(4999, 3, {
+      reduceOnly: true
     })
     events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4997, 2, 4998, 2, 0,0,0,0,0, 1584020145985])
+    assert.equal( exchange.getAsset('long').getBalance(), 0)
+    assert.equal( exchange.getAsset('short').getBalance(), 0)
+  })
+
+
+  it('4999买入3btc,成交0BTC',function(){
+    //exchange.registerOrder(Order)
+    let res = exchange.buy(4999, 3, {
+      reduceOnly: true
+    })
+    events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4997, 2, 4998, 2, 0,0,0,0,0, 1584020145986])
     assert.equal( exchange.getAsset('long').getBalance(), 0)
     assert.equal( exchange.getAsset('short').getBalance(), 0)
   })

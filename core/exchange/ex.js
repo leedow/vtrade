@@ -178,7 +178,8 @@ module.exports = class Ex extends Core {
 
       order.checkStatusByPrice(
         priceBuy,
-        priceSell
+        priceSell,
+        this
       )
     })
 

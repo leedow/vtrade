@@ -10,6 +10,7 @@ module.exports = class OrderP extends O {
     this._direction = '' // long | short
     this.orderType = '' // '' | open | close, 空时默认自动平仓后开仓
     this.marginType = 'coin' // 保证金模式 coin 币本位 | usd本位
+    this.father = null
     this.copyOptions(options)
   }
 
@@ -48,6 +49,50 @@ module.exports = class OrderP extends O {
           return (this.amountFill*this.price)/this.lever
       } else {
           return (this.amount*this.price)/this.lever
+      }
+    }
+  }
+
+ /**
+   * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交
+   * 用于加快更新订单状态，减少API请求
+   */
+  checkStatusByPrice(buyPrice, sellPrice) {
+    if(this.status != OPEN) return
+
+      // let reduceOnly = order.reduceOnly
+    if(this.father) {
+      let long = this.father.getAsset("long").getBalance()
+      let short = this.father.getAsset("short").getBalance()
+
+
+      if( this.reduceOnly ) {
+        if( this.direction == 'long' ) {
+          this.amountFill = Math.min(short, this.amount)
+          this.amount = this.amountFill
+          this._setFee()
+        }
+
+        if( this.direction == 'short' ) {
+          this.amountFill = Math.min(long, this.amount)
+          this.amount = this.amountFill
+          this._setFee()
+        }
+      }
+    }
+     
+
+    if(this.side == 'buy') {
+      if(sellPrice <= this.price) {
+        this.postOnly?super._finishByPostOnly():super.finish()
+      } else {
+        this.isMaker = true
+      }
+    } else if(this.side == 'sell') {
+      if(buyPrice >= this.price) {
+        this.postOnly?super._finishByPostOnly():super.finish()
+      } else {
+        this.isMaker = true
       }
     }
   }

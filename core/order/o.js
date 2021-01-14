@@ -253,11 +253,11 @@ module.exports = class O extends Core{
   /**
    * 完成订单时判断postOnly条件，失败时取消订单
    */
-  _finishByPostOnly() {
+  _finishByPostOnly(amount) {
     if( this.postOnly ){
-        this.isMaker?this.finish():this.cancel('postOnly')
+        this.isMaker?this.finish(amount):this.cancel('postOnly')
     } else {
-        this.finish()
+        this.finish(amount)
     }
   }
 

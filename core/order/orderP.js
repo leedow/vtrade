@@ -39,17 +39,17 @@ module.exports = class OrderP extends O {
    */
   get deposit() {
     if( this.marginType == 'coin' ) {
-      if(this.amountFill > 0) {
-          return (this.amountFill/this.price)/this.lever
-      } else {
+      //if(this.amountFill > 0) {
+      //    return (this.amountFill/this.price)/this.lever
+      //} else {
           return (this.amount/this.price)/this.lever
-      }
+      //}
     } else if( this.marginType == 'usd' ) {
-      if(this.amountFill > 0) {
-          return (this.amountFill*this.price)/this.lever
-      } else {
+      //if(this.amountFill > 0) {
+       //   return (this.amountFill*this.price)/this.lever
+      //} else {
           return (this.amount*this.price)/this.lever
-      }
+      //}
     }
   }
 
@@ -60,37 +60,39 @@ module.exports = class OrderP extends O {
   checkStatusByPrice(buyPrice, sellPrice) {
     if(this.status != OPEN) return
 
-      // let reduceOnly = order.reduceOnly
+    let maxAmount = this.amount
+
     if(this.father) {
       let long = this.father.getAsset("long").getBalance()
       let short = this.father.getAsset("short").getBalance()
 
-
       if( this.reduceOnly ) {
         if( this.direction == 'long' ) {
-          this.amountFill = Math.min(short, this.amount)
-          this.amount = this.amountFill
-          this._setFee()
+          maxAmount = Math.min(short, this.amount)
         }
 
         if( this.direction == 'short' ) {
-          this.amountFill = Math.min(long, this.amount)
-          this.amount = this.amountFill
-          this._setFee()
+          maxAmount = Math.min(long, this.amount)
         }
       }
+      
+    }
+
+    if(maxAmount == 0) {
+      this.cancel('reduceOnly order:no position to reduce')
+      return
     }
      
 
     if(this.side == 'buy') {
       if(sellPrice <= this.price) {
-        this.postOnly?super._finishByPostOnly():super.finish()
+        this.postOnly?super._finishByPostOnly(maxAmount):super.finish(maxAmount)
       } else {
         this.isMaker = true
       }
     } else if(this.side == 'sell') {
       if(buyPrice >= this.price) {
-        this.postOnly?super._finishByPostOnly():super.finish()
+        this.postOnly?super._finishByPostOnly(maxAmount):super.finish(maxAmount)
       } else {
         this.isMaker = true
       }

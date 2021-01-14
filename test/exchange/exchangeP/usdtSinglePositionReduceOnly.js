@@ -52,6 +52,8 @@ describe('测试exchangeP usdt合约reduceOnly，单方向持仓，模块仿真'
     events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4998, 2, 4999, 2, 0,0,0,0,0, 1584020145982])
     assert.equal( exchange.getAsset('long').getBalance(), 1)
     assert.equal( exchange.getAsset('short').getBalance(), 0)
+    assert.equal( exchange.long.avgPrice.toFixed(0), 4999)
+
   })
 
   it('4999卖出2btc,只成交1BTC',function(){
@@ -62,6 +64,10 @@ describe('测试exchangeP usdt合约reduceOnly，单方向持仓，模块仿真'
     events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4999, 2, 4999.5, 2, 0,0,0,0,0, 1584020145983])
     assert.equal( exchange.getAsset('long').getBalance(), 0)
     assert.equal( exchange.getAsset('short').getBalance(), 0)
+    assert.equal( exchange.long.avgPrice.toFixed(0), 0)
+    assert.equal( exchange.short.avgPrice.toFixed(0), 0)
+
+
   })
 
   it('4999卖出1btc,成交1BTC',function(){
@@ -72,6 +78,8 @@ describe('测试exchangeP usdt合约reduceOnly，单方向持仓，模块仿真'
     events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4999, 2, 4999.5, 2, 0,0,0,0,0, 1584020145984])
     assert.equal( exchange.getAsset('long').getBalance(), 0)
     assert.equal( exchange.getAsset('short').getBalance(), 1)
+    assert.equal( exchange.long.avgPrice.toFixed(0), 0)
+    assert.equal( exchange.short.avgPrice.toFixed(0), 4999)
   })
 
   it('4999买入3btc,成交1BTC',function(){
@@ -93,6 +101,8 @@ describe('测试exchangeP usdt合约reduceOnly，单方向持仓，模块仿真'
     events.emit('ROBOT_TICKERS_test_btcusd_p_usdtFutures', [4999, 1, 4997, 2, 4998, 2, 0,0,0,0,0, 1584020145986])
     assert.equal( exchange.getAsset('long').getBalance(), 0)
     assert.equal( exchange.getAsset('short').getBalance(), 0)
+    assert.equal( exchange.long.avgPrice.toFixed(0), 0)
+    assert.equal( exchange.short.avgPrice.toFixed(0), 0)
   })
 
 

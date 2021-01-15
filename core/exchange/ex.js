@@ -339,6 +339,37 @@ module.exports = class Ex extends Core {
       return (this.depth.getBidPrice() + this.depth.getAskPrice())/2
     }
     this.error(`ex.getPrice(): all feed models have no data!`)
+    return null
+  }
+
+  /*
+   * 按 depth  tickers 优先级返回买一价
+   * 若不存在则返回null
+   */
+  getBidPrice() {
+    if(this.depth.haveData()) {
+      return this.depth.getBidPrice()
+    }
+    if(this.tickers.haveData()) {
+      let last = this.tickers.getLast()
+      return last[2]>0?last[2]:last[0]
+    }
+    return null
+  }
+
+  /*
+   * 按 depth  tickers 优先级返回卖一价
+   * 若不存在则返回null
+   */
+  getAskPrice() {
+    if(this.depth.haveData()) {
+      return this.depth.getAskPrice()
+    }
+    if(this.tickers.haveData()) {
+      let last = this.tickers.getLast()
+      return last[4]>0?last[4]:last[0]
+    }
+    return null
   }
 
   /**

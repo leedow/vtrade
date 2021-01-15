@@ -2,11 +2,19 @@ var assert = require('assert')
 var Ex = require('../../core/exchange/ex')
 let events = require('../../core/common/events')
 
+const exchange = 'test'
+const pair = 'btcusd_p'
 
 let ex = new Ex({
-  exchange: 'test',
-  pair: 'btcusd_p'
+  exchange: exchange,
+  pair: pair
 })
+
+const event_name = (type) => {
+  return `ROBOT_${type}_${exchange}_${pair}`
+}
+
+const TICKERS_EVENT = event_name('TICKERS')
 
 //ex.exchange = 'test'
 //ex.pair = 'btcusd_p'
@@ -32,9 +40,9 @@ describe('测试ex模块',function(){
   })
 
   // it('测试tickers数据订阅',function(){
-  //   events.emit('ROBOT_TICKERS_test_btcusd_p', [5000, 1, 4999, 2, 5001, 2])
+  //   events.emit(TICKERS_EVENT, [5000, 1, 4999, 2, 5001, 2])
   //   assert.deepEqual( ex.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
-  //   events.emit('ROBOT_TICKERS_test_btcusd_p', [5001, 1, 4999.5, 2, 5001.2, 2])
+  //   events.emit(TICKERS_EVENT, [5001, 1, 4999.5, 2, 5001.2, 2])
   //   assert.deepEqual( ex.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
   //   assert.deepEqual( ex.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
   // })

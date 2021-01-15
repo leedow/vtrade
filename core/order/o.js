@@ -232,18 +232,34 @@ module.exports = class O extends Core{
    * 根据价格完成订单，如果价格穿过仍未取消，订单则判定为成交
    * 用于加快更新订单状态，减少API请求
    */
-  checkStatusByPrice(buyPrice, sellPrice) {
+  checkStatusByPrice(buyPrice, sellPrice, maxAmount) {
     if(this.status != OPEN) return
 
     if(this.side == 'buy') {
-      if(sellPrice <= this.price) {
-        this.postOnly?this._finishByPostOnly():this.finish()
+      if(this.type == 'market') {
+        let priceFill = this.price
+        if( this.father ) {
+          let askPrice = this.father.getAskPrice()
+          if( askPrice ) priceFill = askPrice
+        }
+        this.priceFill = priceFill
+        this.finish(maxAmount)
+      } else if(sellPrice <= this.price) {
+        this.postOnly?this._finishByPostOnly(maxAmount):this.finish(maxAmount)
       } else {
         this.isMaker = true
       }
     } else if(this.side == 'sell') {
-      if(buyPrice >= this.price) {
-        this.postOnly?this._finishByPostOnly():this.finish()
+      if(this.type == 'market') {
+        let priceFill = this.price
+        if( this.father ) {
+          let bidPrice = this.father.getBidPrice()
+          if( bidPrice ) priceFill = bidPrice
+        }
+        this.priceFill = priceFill
+        this.finish(maxAmount)
+      } else if(buyPrice >= this.price) {
+        this.postOnly?this._finishByPostOnly(maxAmount):this.finish(maxAmount)
       } else {
         this.isMaker = true
       }

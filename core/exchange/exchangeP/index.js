@@ -156,8 +156,8 @@ module.exports = class ExchangeP extends Ex{
     let long = this.getAsset('long').getBalance()
     let short = this.getAsset('short').getBalance()
     let amount = order.amountFill
-    
-    let price = order.price
+
+    let price = order.priceFill||order.price
     let lever = order.lever
     let direction = order.direction
     let deposit = order.deposit

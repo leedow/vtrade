@@ -83,20 +83,7 @@ module.exports = class OrderP extends O {
       return
     }
      
-
-    if(this.side == 'buy') {
-      if(sellPrice <= this.price) {
-        this.postOnly?super._finishByPostOnly(maxAmount):super.finish(maxAmount)
-      } else {
-        this.isMaker = true
-      }
-    } else if(this.side == 'sell') {
-      if(buyPrice >= this.price) {
-        this.postOnly?super._finishByPostOnly(maxAmount):super.finish(maxAmount)
-      } else {
-        this.isMaker = true
-      }
-    }
+    super.checkStatusByPrice(buyPrice, sellPrice, maxAmount)
   }
 
   /**

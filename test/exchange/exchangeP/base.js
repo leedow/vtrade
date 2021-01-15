@@ -242,6 +242,10 @@ describe('测试exchangeP币本位模块独立方法',function(){
     assert.deepEqual( ex.getAskPrice(), 5001.2)
   })
 
+  it('测试getPrice',function(){
+    assert.deepEqual( ex.getPrice(), 5001)
+  })
+
   it('测试tickers不完整数据',function(){
     events.emit(TICKERS_EVENT, [5000, 1, 0, 0, 0, 0])
     assert.deepEqual( ex.getBidPrice(), 5000)
@@ -267,6 +271,10 @@ describe('测试exchangeP币本位模块独立方法',function(){
 
   it('测试getAskPrice',function(){
     assert.equal( ex.getAskPrice(), 5807.6)
+  })
+
+  it('测试getPrice',function(){
+    assert.deepEqual( ex.getPrice(), 5000)
   })
 
 })

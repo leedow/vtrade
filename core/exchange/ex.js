@@ -161,25 +161,23 @@ module.exports = class Ex extends Core {
     let hasDepth = this.depth.data.length>0
     let priceBuy = 0, priceSell = 0
 
-    if(hasTickers) {
-      let tickers = this.tickers.getLast()
-      priceBuy = tickers[TICKER_BID_PRICE]
-      priceSell = tickers[TICKER_ASK_PRICE]
-    }
+    // if(hasTickers) {
+    //   let tickers = this.tickers.getLast()
+    //   priceBuy = tickers[TICKER_BID_PRICE]
+    //   priceSell = tickers[TICKER_ASK_PRICE]
+    // }
 
-    if(
-      hasDepth
-    ) {
-      priceBuy = this.depth.getBidPrice()
-      priceSell = this.depth.getAskPrice()
-    }
+    // if(
+    //   hasDepth
+    // ) {
+    //   priceBuy = this.depth.getBidPrice()
+    //   priceSell = this.depth.getAskPrice()
+    // }
     //console.log('ehcking....')
     this.orders.forEach(order => {
-
       order.checkStatusByPrice(
-        priceBuy,
-        priceSell,
-        this
+        this.getBidPrice(),
+        this.getAskPrice()
       )
     })
 

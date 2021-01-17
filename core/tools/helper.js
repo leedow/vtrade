@@ -253,7 +253,8 @@ module.exports = {
         drawdown.push( Math.abs(  (min-item)/(item)  ) )
       }
     })
-    return Math.max(...drawdown)
+
+    return drawdown.length>0?Math.max(...drawdown):0
   },
   /**
    * 获取数字数组相对于起始位置的最大涨幅
@@ -261,12 +262,18 @@ module.exports = {
    */
   maxIncreaseFromBegan(data) {
     let increase = []
-    data.forEach((item, index) => {
-      const began = data[0]
-      if(item - began > 0) {
-        increase.push( (item-began)/began  ) 
-      }
-    })
-    return Math.max(...increase)
+    const began = data[0]
+    let max = Math.max(...data)
+    return max - began
+  },
+  /*
+   * 获取至最后数据的最大跌幅
+   * 跌为负数
+   */
+  maxDecreaseToLast(data) {
+    let drawdown = []
+    const last = data[data.length-1]
+    let max = Math.max(...data)
+    return last - max
   }
 }

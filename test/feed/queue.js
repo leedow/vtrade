@@ -66,32 +66,84 @@ describe('测试queue模块，时间模式',function(){
     assert.equal( queue2.data.length, 1)
     queue2.remember(0.001, t+11000)
     assert.equal( queue2.data.length, 2)
-    queue2.remember(0.002, t+12000)
+    queue2.remember(0.003, t+12000)
     assert.equal( queue2.data.length, 3)
-    queue2.remember(0.001, t+13000)
+    queue2.remember(0.0015, t+13000)
     assert.equal( queue2.data.length, 4)
-    queue2.remember(0.002, t+14000)
+    queue2.remember(0.006, t+14000)
     assert.equal( queue2.data.length, 5)
   })
 
   it('getPercentageByTime',function(){
-    assert.equal( queue2.getPercentageByTime(10000, 0), 1)
+    assert.equal( queue2.getPercentageByTime(10000, 0), 5)
   })
 
   it('getRetracementByTime',function(){
     assert.equal( queue2.getRetracementByTime(10000, 0), 0.5)
   })
 
-  it('getMaxDecrease',function(){
-    assert.equal( queue2.getMaxDecrease(), 0.5)
+  it('getMaxDecreaseToLast',function(){
+    assert.equal( queue2.getMaxDecreaseToLast(), 0)
   })
 
-  it('getMaxIncrease',function(){
-    assert.equal( queue2.getMaxIncrease(), 1)
+  it('getMaxIncreaseFromBegan',function(){
+    assert.equal( queue2.getMaxIncreaseFromBegan(), 0.005)
+  })
+})
+
+
+describe('测试queue模块，极端情况1',function(){
+  let t = Date.now()
+  let queue2 = new Queue()
+  queue2.filterSame = false
+  
+  it('添加新数据',function(){
+    queue2.remember(0.001, t)
+    assert.equal( queue2.data.length, 1)
+    queue2.remember(0.001, t+11000)
+    assert.equal( queue2.data.length, 2)
+    queue2.remember(0.002, t+12000)
+    assert.equal( queue2.data.length, 3)
+    queue2.remember(0.003, t+13000)
+    assert.equal( queue2.data.length, 4)
+    queue2.remember(0.004, t+14000)
+    assert.equal( queue2.data.length, 5)
   })
 
+  it('getMaxDecreaseToLast',function(){
+    assert.equal( queue2.getMaxDecreaseToLast(), 0)
+  })
+
+  it('getMaxIncreaseFromBegan',function(){
+    assert.equal( queue2.getMaxIncreaseFromBegan(), 0.003)
+  })
+})
 
 
+describe('测试queue模块，极端情况2',function(){
+  let t = Date.now()
+  let queue2 = new Queue()
+  queue2.filterSame = false
+  
+  it('添加新数据',function(){
+    queue2.remember(0.005, t)
+    assert.equal( queue2.data.length, 1)
+    queue2.remember(0.004, t+11000)
+    assert.equal( queue2.data.length, 2)
+    queue2.remember(0.003, t+12000)
+    assert.equal( queue2.data.length, 3)
+    queue2.remember(0.002, t+13000)
+    assert.equal( queue2.data.length, 4)
+    queue2.remember(0.001, t+14000)
+    assert.equal( queue2.data.length, 5)
+  })
 
+  it('getMaxDecreaseToLast',function(){
+    assert.equal( queue2.getMaxDecreaseToLast(), -0.004)
+  })
+
+  it('getMaxIncreaseFromBegan',function(){
+    assert.equal( queue2.getMaxIncreaseFromBegan(), 0)
+  })
 
 })

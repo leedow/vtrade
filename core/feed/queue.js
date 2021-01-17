@@ -108,8 +108,8 @@ module.exports = class Queue extends Base{
   /**
    * 获取全部数据的最大增幅
    */
-  getMaxDecrease() {
-    return helper.maxRetracement(
+  getMaxDecreaseToLast() {
+    return helper.maxDecreaseToLast(
       this.getData()
     ) 
   }
@@ -117,7 +117,7 @@ module.exports = class Queue extends Base{
   /**
    * 获取全部数据的最大跌幅
    */
-  getMaxIncrease() {
+  getMaxIncreaseFromBegan() {
     return helper.maxIncreaseFromBegan(
       this.getData()
     )  

@@ -254,5 +254,19 @@ module.exports = {
       }
     })
     return Math.max(...drawdown)
+  },
+  /**
+   * 获取数字数组相对于起始位置的最大涨幅
+   * @param {array[number]}
+   */
+  maxIncreaseFromBegan(data) {
+    let increase = []
+    data.forEach((item, index) => {
+      const began = data[0]
+      if(item - began > 0) {
+        increase.push( (item-began)/began  ) 
+      }
+    })
+    return Math.max(...increase)
   }
 }

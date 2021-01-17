@@ -82,6 +82,16 @@ describe('测试queue模块，时间模式',function(){
     assert.equal( queue2.getRetracementByTime(10000, 0), 0.5)
   })
 
+  it('getMaxDecrease',function(){
+    assert.equal( queue2.getMaxDecrease(), 0.5)
+  })
+
+  it('getMaxIncrease',function(){
+    assert.equal( queue2.getMaxIncrease(), 1)
+  })
+
+
+
 
 
 })

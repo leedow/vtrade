@@ -105,4 +105,22 @@ module.exports = class Queue extends Base{
     )
   }
 
+  /**
+   * 获取全部数据的最大增幅
+   */
+  getMaxDecrease() {
+    return helper.maxRetracement(
+      this.getData()
+    ) 
+  }
+
+  /**
+   * 获取全部数据的最大跌幅
+   */
+  getMaxIncrease() {
+    return helper.maxIncreaseFromBegan(
+      this.getData()
+    )  
+  }
+
 }

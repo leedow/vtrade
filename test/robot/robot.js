@@ -1,10 +1,10 @@
 var assert = require('assert')
 var Robot = require('../../core/robot/robot')
-var Exchange = require('../../core/exchange/exchange')
+var Exchange = require('../../core/exchange/exchangeP')
 var events = require('../../core/common/events')
 
 let robot = null
-let exchangeName = Date.now()
+let exchangeName = 'testex'
 describe('测试robot模块',function(){
   let ex
   it('创建robot，注册exchange，policy, prepare',function(){
@@ -62,6 +62,55 @@ describe('测试robot模块',function(){
     events.emit(`ROBOT_TICKERS_${exchangeName}_btcusdt`, [1, 1, 1, 1, 1, 1])
     events.emit(`ROBOT_TICKERS_${exchangeName}_btcusdt`, [2, 2, 2, 2, 1, 1])
   })
+
+  it('测试account事件',function(done){
+
+    let test = false
+
+    robot._policyCallback = false
+
+    robot.registerPolicy(() => { 
+      test = true
+    })
+   
+    events.emit(`ROBOT_ACCOUNT_${exchangeName}_btcusdt`, 1)
+
+    setTimeout(() => {
+      assert.equal( test, true)
+      done()
+    } , 100)
+  })
+
+  it('测试position事件',function(done){
+
+    let test = false
+
+    robot._policyCallback = false
+    robot.registerPolicy(() => { 
+      test = true
+    })
+   
+    events.emit(`ROBOT_POSITION_${exchangeName}_btcusdt`, {
+      long: {
+        amount: 10,
+        avgPrice: 100,
+        margin: 10
+      },
+      short: {
+        amount: 20,
+        avgPrice: 200,
+        margin: 20
+      }
+    })
+
+    setTimeout(() => {
+      assert.equal( test, true)
+      done()
+    } , 100)
+    
+  })
+
+
 
   it('测试queue',function(){
     robot.createQueue('q1')

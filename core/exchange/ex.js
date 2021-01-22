@@ -149,6 +149,8 @@ module.exports = class Ex extends Core {
         }
       }
     })
+    this.publishHeartbeat('ORDER_UPDATE')
+
   }
 
   /**

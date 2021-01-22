@@ -726,6 +726,7 @@ module.exports = class ExchangeP extends Ex{
   _handleAccount(account) {
       this.getAsset(this.balance).balance = account.balance
       this.getAsset(this.balance).balanceFrozen = account.margin
+      this.publishHeartbeat('ACCOUNT_UPDATE')
   }
 
   /**
@@ -750,6 +751,8 @@ module.exports = class ExchangeP extends Ex{
       this.short.maxPrice = 0
       this.short.minPrice = 0
     }
+    
+    this.publishHeartbeat('POSITION_UPDATE')
   }
 
 

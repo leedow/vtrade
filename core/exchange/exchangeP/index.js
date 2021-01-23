@@ -27,6 +27,9 @@ module.exports = class ExchangeP extends Ex{
 
     this.clear = new Clear()
 
+    this.accumulativeProfit = 0 // 从开始运行的累计利润，以balance单位计价
+    this.accumulativeFee = 0 // 从开始运行的累计手续费，以balance单位计价
+
     this.subscribeRobotTicker()
     this.subscribeRobotTrade()
     this.subscribeRobotDepth()
@@ -144,6 +147,7 @@ module.exports = class ExchangeP extends Ex{
     } else if(profit < 0) {
       this.getAsset(this.balance).decrease(-profit, false)
     }
+    this.accumulativeProfit += Number(profit)
   }
 
   /**
@@ -252,7 +256,7 @@ module.exports = class ExchangeP extends Ex{
   }
 
   /**
-   * 更新fee收入
+   * 更新fee收入,负数为收入，正数为支出
    */
   updateFee(fee) {
     if(fee>0) {
@@ -260,6 +264,7 @@ module.exports = class ExchangeP extends Ex{
     } else {
       this.getAsset(this.balance).increase(-fee)
     }
+    this.accumulativeFee += fee
   }
 
 

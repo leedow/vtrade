@@ -253,6 +253,10 @@ describe('测试exchangeP usdt合约，单方向持仓，模块仿真',function(
     assert.equal( exchange.getAsset('short').balance, 0)
     assert.equal( exchange.getAsset('usdt').getFrozen(10).toFixed(10), (PRE_FROZEN).toFixed(10) )
     assert.equal( exchange.getAsset('usdt').balance, PRE_BALANCE-FEE )
+    assert.equal( exchange.accumulativeFee, FEE )
+    assert.equal( exchange.accumulativeProfit, 0 )
+
+
   })
 
   it('测试实时杠杆',function(){
@@ -300,6 +304,8 @@ describe('测试exchangeP usdt合约，单方向持仓，模块仿真',function(
     assert.equal( exchange.getAsset('short').balance, 0)
     //assert.equal( exchange.getAsset('btc').getFrozen(10).toFixed(10), (PRE_FROZEN-1/PRICE/LEVER-1/5001/LEVER).toFixed(10) )
     assert.equal( exchange.getAsset('usdt').balance, PRE_BALANCE-FEE-(1*5001-1*4999) )
+    assert.equal( exchange.accumulativeFee, 1*5001*TAKER_FEE+FEE )
+    assert.equal( exchange.accumulativeProfit, -2 )
   })
 
 

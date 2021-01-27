@@ -81,6 +81,13 @@ module.exports = class Base extends Core {
     return this.data.length > 0
   }
 
+  /*
+   * 获取数据长度
+   */
+  getDataLength() {
+    return this.data.length 
+  }
+
   /**
    * 获取最新时间戳，单位MS
    * @param {number} offset 获取倒数第index个数据
@@ -159,6 +166,13 @@ module.exports = class Base extends Core {
     i = i<0?0:i
     if(this.data.length == 0) return false
     return withTime?this.data[i]:this.data[i]['d']
+  }
+
+  /*
+   * 不更新时间参数
+   */
+  updateLast(data) {
+    this.data[this.data.length-1]['d'] = data
   }
 
   /**

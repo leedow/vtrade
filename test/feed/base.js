@@ -2,9 +2,12 @@ var assert = require('assert')
 var Base = require('../../core/feed/base')
 var helper = require('../../core/tools/helper')
 
-let base = new Base()
-base.filterSame = false
+
 describe('测试feed/base模块',function(){
+  let base = new Base()
+  base.filterSame = false
+
+
   it('添加新数据',function(){
     base.remember(0.001)
     assert.equal( base.data.length, 1)

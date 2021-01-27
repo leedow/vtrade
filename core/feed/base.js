@@ -195,6 +195,15 @@ module.exports = class Base extends Core {
   }
 
   /**
+   * 获取多少时间后的数据
+   */
+  getAfterTime(time, withTime=false) {
+    let aims = this.data.filter(item => item.t - time >= 0)
+    if(aims.length == 0) return []
+    return withTime?aims:this._mapData(aims)//aims.map(item => item.d)
+  }
+
+  /**
    * 获取多少时间前的多少时间内的数据
    * @param {number} beforeTime 单位ms，多少时间前开始取数
    */

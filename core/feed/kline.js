@@ -1,6 +1,19 @@
 let Base = require('./base')
 let helper = require('../tools/helper')
 let talib = require('talib')
+
+
+const mas = {
+  'SMA'  : 0,
+  'EMA'   : 1,
+  'WMA'   : 2,
+  'DEMA' : 3,
+  'TEMA'  : 4,
+  'TRIMA' : 5,
+  'KAMA'  : 6,
+  'MAMA'  : 7,
+  'T3'    : 8
+}
 /**
  * K线模块
  * 数据结构： {id,high,low,open,close,vol,stime,etime}
@@ -72,17 +85,7 @@ module.exports = class Kline extends Base{
       return
     }
 
-    let mas = {
-      'SMA'  : 0,
-      'EMA'   : 1,
-      'WMA'   : 2,
-      'DEMA' : 3,
-      'TEMA'  : 4,
-      'TRIMA' : 5,
-      'KAMA'  : 6,
-      'MAMA'  : 7,
-      'T3'    : 8
-    }
+     
 
     try {
       let params = {
@@ -130,21 +133,84 @@ module.exports = class Kline extends Base{
     }
   }
 
-
-  RSI(step, size = 1) {
+  RSI(step=14, size = 1) {
     return this.talib('RSI', {step, size: size-1})
   }
 
-  EMA(step, size = 1) {
+  EMA(step=30, size = 1) {
     return this.talib('EMA', {step, ma: 'EMA', size: size-1})
   }
 
-  SMA(step, size = 1) {
+  SMA(step=30, size = 1) {
     return this.talib('SMA', {step, ma: 'SMA', size: size-1})
   }
 
-  ATR(step , size = 1) {
+  ATR(step=14 , size = 1) {
     return this.talib('ATR', {step, size: size-1})
+  }
+
+  ADX(step=14 , size = 1) {
+    return this.talib('ADX', {step, size: size-1})
+  }
+
+  BOLL(step=5, up=2, down=2, ma="EMA", size = 1) {
+    try {
+      let boll = this.talib('BBANDS', {
+        optInTimePeriod: step,
+        optInNbDevUp: up,
+        optInNbDevDn: down,
+        optInMAType: mas[ma],
+        size: size - 1
+      })
+
+      if(boll.outRealUpperBand && boll.outRealUpperBand.length>0) {
+        return {
+          upper: boll.outRealUpperBand.length>1?boll.outRealUpperBand:boll.outRealUpperBand[0],
+          lower: boll.outRealLowerBand.length>1?boll.outRealLowerBand:boll.outRealLowerBand[0],
+          middle: boll.outRealMiddleBand.length>1?boll.outRealMiddleBand:boll.outRealMiddleBand[0],
+        }
+
+      } else {
+        return {upper:0, lower:0, middle:0}
+      }
+
+    } catch(e) {
+      console.error(e)
+      return {upper:0, lower:0, middle:0}
+    }
+  }
+
+  KDJ(k1=5, k2=3, d=3, ma='EMA', size = 1) {
+    try {
+      let kd = this.talib('STOCH', {
+        optInFastK_Period: k1,
+        optInSlowK_Period: k2,
+        optInSlowK_MAType: mas[ma],
+        optInSlowD_Period: d,
+        optInSlowD_MAType: mas[ma],
+        size: size - 1
+      })
+
+      if(kd.outSlowK && kd.outSlowK.length>0) {
+        let J = []
+        kd.outSlowK.forEach((item, index) => {
+          J.push( 3*item - 2*kd.outSlowD[index] )
+        })
+
+        return {
+          K: kd.outSlowK.length>1?kd.outSlowK:kd.outSlowK[0],
+          D: kd.outSlowD.length>1?kd.outSlowD:kd.outSlowD[0],
+          J: J.length>1?J:J[0]
+        }
+
+      } else {
+        return {K:0, D:0, J:0}
+      }
+      
+    } catch(e) {
+      console.error(e)
+      return {K:0, D:0, J:0}
+    }
   }
 
 

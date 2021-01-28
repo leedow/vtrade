@@ -28,7 +28,7 @@ const randomPrice = () => {
 return  Number ( (1000*Math.random()).toFixed(2)  )
 }
 
-const getK = (size=10000) => {
+const getK = (size=1000) => {
 let res = []
 while(size--) {
   res.push([randomPrice(), 0,0,0,0,0,0,0,0,0,0, nextTime()])
@@ -45,17 +45,19 @@ tickers.remember(item, item[11])
 
 kline.transTickers(tickers)
 
-      console.dir( talib.explain('ATR'), {depth:null} )
+   //   console.dir( talib.explain('ATR'), {depth:null} )
 
 
 
 let go = () => {
-	console.log(kline.talib('ATR', {step:100}))
+	console.log(kline.BOLL(5,2,2,'EMA', 10))
 } 
 
+go()
 
 
-      console.dir( talib.explain('RSI'), {depth:null} )
+
+      console.dir( talib.explain('BBANDS'), {depth:null} )
  
 
 

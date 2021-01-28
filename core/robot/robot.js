@@ -2,6 +2,7 @@ let Core = require('../common/core')
 let Queue = require('../feed/queue')
 let Group = require('../feed/group')
 let Ma = require('../feed/ma')
+let Kline = require('../feed/kline')
 
 /**
  * 交易机器人
@@ -18,6 +19,7 @@ module.exports = class Robot extends Core{
     this.queues = []
     this.groups = []
     this.ma = []
+     
 
     // this.timers = [] // 内置定时器
     // this.pauseTimers = false // 暂停内置定时器执行代码

@@ -1,6 +1,6 @@
 let Base = require('./base')
 let helper = require('../tools/helper')
-
+let talib = require('talib')
 /**
  * K线模块
  * 数据结构： {id,high,low,open,close,vol,stime,etime}
@@ -12,8 +12,141 @@ module.exports = class Kline extends Base{
     this.id = null
     this.ktype = 60 // K线时间类型，单位s，如60代表一分钟K线
     this.readTickers = true // 是否从tickers自动计算
+    this.talibConfig = {}
     this.copyOptions(options)
+    this.initTalib()
   }
+
+  /*
+   * 初始化talib参数
+   */
+  initTalib() {
+    talib.functions.forEach(func => {
+      let explain = talib.explain(func.name)
+      let inputs = []
+
+      explain.inputs.forEach(input => {
+        if( input.flags ) {
+          let keys = Object.keys(input.flags)
+          if( keys.length > 0 ) {
+            keys.forEach(key => {
+              inputs.push({
+                name: key
+              })
+            })
+          } else {
+            inputs.push({
+              name: input.name
+            })
+          }
+        } else {
+          inputs.push({
+            name: input.name
+          })
+        }
+      })
+
+      explain.optInputs.forEach(input => {
+        inputs.push({
+          name: input.name
+        })
+      })
+
+      this.talibConfig[func.name] = {
+        name: explain.name,
+        inputs
+      }
+
+      //this.talib[explain.name] = this._handle
+    })
+  }
+
+  talib(name, options) {
+    if(this.data.length < 2) {
+      console.error('data length is less than 2')
+      return
+    }
+
+    if(!this.talibConfig[name]) {
+      console.error(`do not suport ${name}`)
+      return
+    }
+
+    let mas = {
+      'SMA'  : 0,
+      'EMA'   : 1,
+      'WMA'   : 2,
+      'DEMA' : 3,
+      'TEMA'  : 4,
+      'TRIMA' : 5,
+      'KAMA'  : 6,
+      'MAMA'  : 7,
+      'T3'    : 8
+    }
+
+    try {
+      let params = {
+        name,
+        startIdx: this.data.length-1,
+        endIdx: this.data.length-1
+      }
+
+      for (let key in options) {
+        if(key == 'step') {
+          params['optInTimePeriod'] = options[key]
+        } else if(key == 'ma') {
+          params['optInMAType'] = mas[key]
+        } else if(key == 'start') {
+          params['startIdx'] = options[key]
+        } else if(key == 'size') {
+          params['startIdx'] = Math.max(0, params.startIdx-options[key])
+        } else if(key == 'end') {
+          params['endIdx'] = options[key]
+        } else {
+          params[key] = options[key]
+        }
+      }
+
+      let data = this.getData()
+
+      params.high = data.map(item => item.high)
+      params.low = data.map(item => item.low)
+      params.open = data.map(item => item.open)
+      params.close = data.map(item => item.close)
+      params.inReal = data.map(item => item.close)
+      //console.dir( talib.explain(name), {depth:null} )
+
+      let res = talib.execute(params)
+
+      if(Object.keys(res.result).length == 1) {
+        return res.result.outReal.length==1?res.result.outReal[0]:res.result.outReal
+      } else {
+        return res.result
+      }
+
+    } catch(e) {
+      console.error(`talib ${name} wrong`, e)
+      console.dir( talib.explain(name), {depth:null} )
+    }
+  }
+
+
+  RSI(step, size = 1) {
+    return this.talib('RSI', {step, size: size-1})
+  }
+
+  EMA(step, size = 1) {
+    return this.talib('EMA', {step, ma: 'EMA', size: size-1})
+  }
+
+  SMA(step, size = 1) {
+    return this.talib('SMA', {step, ma: 'SMA', size: size-1})
+  }
+
+  ATR(step , size = 1) {
+    return this.talib('ATR', {step, size: size-1})
+  }
+
 
   /*
    * 如果data中包含id，用id判重，否则用stime判重

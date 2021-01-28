@@ -226,12 +226,34 @@ describe('测试exchangeP币本位模块独立方法',function(){
     assert.equal( ex.getAsset('btc').balance, PRE_BALANCE+1/100-1/101)
   })
 
-  it('测试tickers数据订阅',function(){
+  it('测试创建kline',function(){
+     ex.createKline(60)
+      assert.deepEqual( ex.klines.length, 1)
+     ex.createKline(300)
+      assert.deepEqual( ex.klines.length, 2)
+  })
+
+  it('测试获取kline',function(){
+     
+      assert.deepEqual( ex.getKline(60), ex.klines[0])
+      assert.deepEqual( ex.getKline(60).haveData(), false)
+
+      assert.deepEqual( ex.getKline(300), ex.klines[1])
+      assert.deepEqual( ex.getKline(300).haveData(), false)
+
+      assert.deepEqual( ex.getKline(900), undefined)
+  
+  })
+
+  it('测试tickers数据订阅,及Kline更新',function(){
     events.emit(TICKERS_EVENT, [5000, 1, 4999, 2, 5001, 2])
     assert.deepEqual( ex.tickers.getLast(1), [5000, 1, 4999, 2, 5001, 2])
     events.emit(TICKERS_EVENT, [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( ex.tickers.getLast(1), [5001, 1, 4999.5, 2, 5001.2, 2])
     assert.deepEqual( ex.tickers.getLast(2), [5000, 1, 4999, 2, 5001, 2])
+
+    assert.deepEqual( ex.getKline(60).haveData(), true)
+    assert.deepEqual( ex.getKline(300).haveData(), true)
   })
 
   it('测试getBidPrice',function(){

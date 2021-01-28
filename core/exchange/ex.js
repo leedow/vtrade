@@ -3,6 +3,7 @@ let Asset = require('./asset')
 let Tickers = require('../feed/tickers')
 let Trades = require('../feed/trades')
 let Depth = require('../feed/depth')
+let Kline = require('../feed/kline')
 
 module.exports = class Ex extends Core {
   constructor(options) {
@@ -26,6 +27,7 @@ module.exports = class Ex extends Core {
     this.tickers = new Tickers()
     this.trades = new Trades()
     this.depth = new Depth()
+    this.klines = []
 
     this.subTickers = true
     this.subTrades = false
@@ -97,7 +99,19 @@ module.exports = class Ex extends Core {
 
     this.tickers.remember(data)
     this._checkOrderStatus()
+    this._transTickersToKline()
     this.publishHeartbeat('TICKERS_UPDATE')
+  }
+
+  /*
+   * 计算K线数据
+   */
+  _transTickersToKline() {
+    this.klines.forEach(kline => {
+      if(kline.readTickers) {
+        kline.transTickers(this.tickers)
+      }
+    })
   }
 
   /**
@@ -400,6 +414,31 @@ module.exports = class Ex extends Core {
       }
     })
     return aim
+  }
+
+  /*
+   * 创建一个K线收集器
+   * @params {number} 单位s的类型，如60位1分钟线
+   */
+  createKline(type) {
+    if(this.klines.filter(item => item.ktype == type).length == 0) {
+      let kline  = new Kline({
+        id: type, 
+        ktype: type
+      })
+      this.klines.push(kline)
+      return kline
+    } else {
+      return false
+    }
+  }
+
+
+  /*
+   * 获取指定K线
+   */
+  getKline(type) {
+    return this.klines.find(kline => kline.ktype==type)
   }
 
 

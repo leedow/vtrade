@@ -2,7 +2,6 @@ let Core = require('../common/core')
 let Queue = require('../feed/queue')
 let Group = require('../feed/group')
 let Ma = require('../feed/ma')
-let Kline = require('../feed/kline')
 
 /**
  * 交易机器人

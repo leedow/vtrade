@@ -5,9 +5,7 @@ let events = require('../../../core/common/events')
 let exchange = null
 
 const LEVER = 2
-
 const total = 100000
-
 
 describe('Kline事件驱动下：测试exchangeP usdt合约，单方向持仓，开平仓仓位及持仓价变化',function(){
   const TAKER_FEE = 0.02

@@ -24,7 +24,7 @@ module.exports = class Kline extends Base{
     super.name = 'KLINE MODEL'
     this.id = null
     this.ktype = 60 // K线时间类型，单位s，如60代表一分钟K线
-    this.readTickers = true // 是否从tickers自动计算
+    this.readTickers = false // 是否从tickers自动计算
     this.talibConfig = {}
     this.copyOptions(options)
     this.initTalib()
@@ -76,12 +76,12 @@ module.exports = class Kline extends Base{
 
   talib(name, options) {
     if(this.data.length < 2) {
-      console.error('data length is less than 2')
+      this.error('data length is less than 2')
       return
     }
 
     if(!this.talibConfig[name]) {
-      console.error(`do not suport ${name}`)
+      this.error(`do not suport ${name}`)
       return
     }
 
@@ -128,7 +128,7 @@ module.exports = class Kline extends Base{
       }
 
     } catch(e) {
-      console.error(`talib ${name} wrong`, e)
+      this.error(`talib ${name} wrong`, e)
       console.dir( talib.explain(name), {depth:null} )
     }
   }
@@ -175,7 +175,7 @@ module.exports = class Kline extends Base{
       }
 
     } catch(e) {
-      console.error(e)
+      this.error(e)
       return {upper:0, lower:0, middle:0}
     }
   }
@@ -208,7 +208,7 @@ module.exports = class Kline extends Base{
       }
       
     } catch(e) {
-      console.error(e)
+      this.error(e)
       return {K:0, D:0, J:0}
     }
   }

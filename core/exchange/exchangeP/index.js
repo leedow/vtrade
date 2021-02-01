@@ -31,6 +31,7 @@ module.exports = class ExchangeP extends Ex{
     this.accumulativeFee = 0 // 从开始运行的累计手续费，以balance单位计价
 
     this.subscribeRobotTicker()
+    this.subscribeRobotKline()
     this.subscribeRobotTrade()
     this.subscribeRobotDepth()
     this.subscribeRobotOrders()

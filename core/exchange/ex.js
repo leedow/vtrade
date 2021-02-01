@@ -55,6 +55,18 @@ module.exports = class Ex extends Core {
   }
 
   /**
+   * 订阅kline数据
+   */
+  subscribeRobotKline() {
+    this.subscribeGlobal(`ROBOT_KLINE_${this.eventName}`, (data) => {
+      this._handleKline(data)
+    })
+    this.subscribe(`ROBOT_KLINE_${this.eventName}`, (data) => {
+      this._handleKline(data)
+    })
+  }
+
+  /**
    * 订阅depth数据
    */
   subscribeRobotDepth() {
@@ -101,6 +113,24 @@ module.exports = class Ex extends Core {
     this._checkOrderStatus()
     this._transTickersToKline()
     this.publishHeartbeat('TICKERS_UPDATE')
+  }
+
+  /**
+   * 处理kline数据
+   * @params {object} {id,high,low,open,close,vol,stime,etime, type}
+   */
+  _handleKline(data) {
+    let kline = this.getKline(data.type)
+
+    if(kline) {
+      kline.remember(data)
+      // 只在第一根kline更新时判断订单成交
+      if(data.type == this.klines[0].ktype)
+        this._checkOrderStatus()
+      this.publishHeartbeat('KLINE_UPDATE')
+    } else {
+      this.error(`kline type ${data.type} has not created yet!`)
+    }
   }
 
   /*
@@ -352,12 +382,18 @@ module.exports = class Ex extends Core {
     if(this.depth.haveData()) {
       return (this.depth.getBidPrice() + this.depth.getAskPrice())/2
     }
+    // 如果存在klines则以第一个Kline为准
+    if(this.klines.length > 0) {
+      if(this.klines[0].haveData()) {
+        return this.klines[0].getLast().close
+      }
+    }
     this.error(`ex.getPrice(): all feed models have no data!`)
     return null
   }
 
   /*
-   * 按 depth  tickers 优先级返回买一价
+   * 按 depth  tickers kline 优先级返回买一价
    * 若不存在则返回null
    */
   getBidPrice() {
@@ -367,6 +403,11 @@ module.exports = class Ex extends Core {
     if(this.tickers.haveData()) {
       let last = this.tickers.getLast()
       return last[2]>0?last[2]:last[0]
+    }
+    if(this.klines.length > 0) {
+      if(this.klines[0].haveData()) {
+        return this.klines[0].getLast().high
+      }
     }
     return null
   }
@@ -382,6 +423,11 @@ module.exports = class Ex extends Core {
     if(this.tickers.haveData()) {
       let last = this.tickers.getLast()
       return last[4]>0?last[4]:last[0]
+    }
+    if(this.klines.length > 0) {
+      if(this.klines[0].haveData()) {
+        return this.klines[0].getLast().low
+      }
     }
     return null
   }

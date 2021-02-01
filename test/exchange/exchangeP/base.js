@@ -15,6 +15,8 @@ const event_name = (type) => {
 
 const TICKERS_EVENT = event_name('TICKERS')
 const DEPTH_EVENT = event_name('DEPTH')
+const KLINE_EVENT = event_name('KLINE')
+
 
 
 describe('测试exchangeP币本位模块独立方法',function(){
@@ -227,11 +229,43 @@ describe('测试exchangeP币本位模块独立方法',function(){
   })
 
   it('测试创建kline',function(){
-     ex.createKline(60)
+     let k = ex.createKline(60)
+     k.readTickers = true
+
       assert.deepEqual( ex.klines.length, 1)
-     ex.createKline(300)
+     let k2 =ex.createKline(300)
+     k2.readTickers = true
+
       assert.deepEqual( ex.klines.length, 2)
   })
+
+  
+  it('测试kline数据订阅',function(){
+    const k1 = {id:1,high:100,low:1,open:2,close:98,vol:1,stime:1,etime:61, type:60}
+    events.emit(KLINE_EVENT, k1)
+    assert.deepEqual( ex.getKline(60).getLast(), k1)
+
+    const k2 = {id:1,high:200,low:15,open:2,close:8,vol:1,stime:1,etime:61, type:300}
+    events.emit(KLINE_EVENT, k2)
+    assert.deepEqual( ex.getKline(300).getLast(), k2)
+  })
+
+
+  it('测试kline数据驱动下的getBidPrice',function(){
+    assert.deepEqual( ex.getBidPrice(), 100)
+      
+  })
+
+  it('测试kline数据驱动下的getAskPrice',function(){
+     assert.deepEqual( ex.getAskPrice(), 1)
+
+     ex.klines.forEach(kline => {
+        kline.forget()
+     })
+  })
+
+  
+
 
   it('测试获取kline',function(){
      

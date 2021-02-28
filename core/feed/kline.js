@@ -76,7 +76,7 @@ module.exports = class Kline extends Base{
 
   talib(name, options) {
     if(this.data.length < 2) {
-      this.error('data length is less than 2')
+      //this.error('data length is less than 2')
       return
     }
 
@@ -175,7 +175,7 @@ module.exports = class Kline extends Base{
       }
 
     } catch(e) {
-      this.error(e)
+      //this.error(e)
       return {upper:0, lower:0, middle:0}
     }
   }

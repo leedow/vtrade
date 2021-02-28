@@ -239,6 +239,19 @@ describe('测试exchangeP币本位模块独立方法',function(){
       assert.deepEqual( ex.klines.length, 2)
   })
 
+  it('测试kline批量数据订阅',function(){
+    const k1 = [
+            {id:-1,high:103,low:1,open:2,close:99,vol:1,stime:1,etime:61, type:60},
+            {id:-1,high:103,low:1,open:2,close:99,vol:1,stime:1,etime:61, type:60},
+            {id:-2,high:100,low:1,open:2,close:98,vol:1,stime:1,etime:61, type:60}
+          ]
+    events.emit(KLINE_EVENT, k1)
+    //console.log( ex.getKline(60).getLast() )
+    assert.deepEqual( ex.getKline(60).getLast(), k1[2])
+    assert.equal( ex.getKline(60).data.length, 2)
+
+  })
+
   
   it('测试kline数据订阅',function(){
     const k1 = {id:1,high:100,low:1,open:2,close:98,vol:1,stime:1,etime:61, type:60}
@@ -250,10 +263,8 @@ describe('测试exchangeP币本位模块独立方法',function(){
     assert.deepEqual( ex.getKline(300).getLast(), k2)
   })
 
-
   it('测试kline数据驱动下的getBidPrice',function(){
-    assert.deepEqual( ex.getBidPrice(), 100)
-      
+    assert.deepEqual( ex.getBidPrice(), 100)   
   })
 
   it('测试kline数据驱动下的getAskPrice',function(){

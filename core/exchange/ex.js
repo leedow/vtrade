@@ -35,6 +35,8 @@ module.exports = class Ex extends Core {
     this.subOrders = false
     this.subAccount = false
     this.subPosition = false
+    this.subKline = false
+
     // this.copyOptions(options)
     // this.subscribeRobotTicker()
     // this.subscribeRobotTrade()
@@ -120,17 +122,36 @@ module.exports = class Ex extends Core {
    * @params {object} {id,high,low,open,close,vol,stime,etime, type}
    */
   _handleKline(data) {
-    let kline = this.getKline(data.type)
 
-    if(kline) {
+    let type = null
+
+    if(Array.isArray(data)) {
+      type = data[0]['type']
+    } else {
+      type = data['type']
+    }
+
+    let kline = this.getKline(type)
+
+    if(!kline) {
+      this.error(`kline type ${type} has not created yet!`)
+      return
+    }
+
+    if(Array.isArray(data)) {
+      for (var i = 0; i < data.length; i++) {
+
+        kline.remember(data[i])
+      }
+      if(data[0].type == this.klines[0].ktype) this._checkOrderStatus()
+    } else {
       kline.remember(data)
       // 只在第一根kline更新时判断订单成交
-      if(data.type == this.klines[0].ktype)
-        this._checkOrderStatus()
-      this.publishHeartbeat('KLINE_UPDATE')
-    } else {
-      this.error(`kline type ${data.type} has not created yet!`)
+      if(data.type == this.klines[0].ktype) this._checkOrderStatus()
     }
+
+    this.publishHeartbeat('KLINE_UPDATE') 
+
   }
 
   /*
@@ -194,7 +215,6 @@ module.exports = class Ex extends Core {
       }
     })
     this.publishHeartbeat('ORDER_UPDATE')
-
   }
 
   /**

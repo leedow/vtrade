@@ -25,6 +25,7 @@ module.exports = class Kline extends Base{
     this.id = null
     this.ktype = 60 // K线时间类型，单位s，如60代表一分钟K线
     this.readTickers = false // 是否从tickers自动计算
+    this.ignoreIncomplete = false // 计算指标是否忽略最后一根未完结的K柱
     this.talibConfig = {}
     this.copyOptions(options)
     this.initTalib()
@@ -85,8 +86,6 @@ module.exports = class Kline extends Base{
       return
     }
 
-     
-
     try {
       let params = {
         name,
@@ -111,6 +110,26 @@ module.exports = class Kline extends Base{
       }
 
       let data = this.getData()
+
+      if( this.ignoreIncomplete ) {
+        let tmp = []
+        let last = data[data.length-1]
+
+        if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
+          if(this.data.length < 3) return
+
+          for (let i = 0; i < data.length-1; i++) {
+            tmp.push(data[i])
+          }
+
+          data = tmp
+
+          params.endIdx = params.endIdx-1
+          params.startIdx = Math.max(0, params.startIdx-1)
+
+        }   
+      }
+
 
       params.high = data.map(item => item.high)
       params.low = data.map(item => item.low)

@@ -45,6 +45,7 @@ describe('测试robot模块',function(){
 
     let prepare = (r) => {
       assert.deepEqual(r, robot)
+      r.ex.createKline(60)
     }
 
     robot.registerPrepare(prepare)
@@ -107,6 +108,88 @@ describe('测试robot模块',function(){
       assert.equal( test, true)
       done()
     } , 100)
+    
+  })
+
+
+
+  it('测试kline事件',function(){
+
+    const ks = [{
+      id: 1,
+      high: 100,
+      low: 1,
+      open: 50,
+      close: 40,
+      stime: 1,
+      etime: 2,
+      type: 60
+    },{
+      id: 2,
+      high: 200,
+      low: 15,
+      open: 40,
+      close: 70,
+      stime: 2,
+      etime: 3,
+      type: 60
+
+    },{
+      id: 2,
+      high: 300,
+      low: 15,
+      open: 70,
+      close: 70,
+      stime: 2,
+      etime: 3,
+      type: 60
+
+    },{
+      id: 3,
+      high: 300,
+      low: 15,
+      open: 70,
+      close: 70,
+      stime: 2,
+      etime: 3,
+      type: 60
+
+    }]
+
+    let updateTime = 0,  createTime = 0
+
+    robot._policyCallback = false
+    robot.registerPolicy((V, e) => { 
+
+      if(e.event == 'KLINE_UPDATE') updateTime++
+      if(e.event == 'KLINE_CREATE') createTime++
+    })
+   
+    events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[0])
+
+    assert.equal( updateTime, 1)
+    assert.equal( createTime, 1)
+
+
+    events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[1])
+
+    assert.equal( updateTime, 2)
+    assert.equal( createTime, 2)
+
+
+    events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[2])
+
+    assert.equal( updateTime, 3)
+    assert.equal( createTime, 2)
+
+
+    events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[3])
+
+    assert.equal( updateTime, 4)
+    assert.equal( createTime, 3)
+
+
+  
     
   })
 

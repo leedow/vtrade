@@ -40,7 +40,6 @@ module.exports = class Ex extends Core {
     // this.copyOptions(options)
     // this.subscribeRobotTicker()
     // this.subscribeRobotTrade()
-
     // super.copyOptions.call(this, options)
   }
 
@@ -118,7 +117,8 @@ module.exports = class Ex extends Core {
   }
 
   /**
-   * 处理kline数据
+   * 处理kline数据，并广播KLINE_UPDATE事件
+   * 在KLINE产生新K柱时广播KLINE_CREATE事件
    * @params {object} {id,high,low,open,close,vol,stime,etime, type}
    */
   _handleKline(data) {
@@ -144,12 +144,16 @@ module.exports = class Ex extends Core {
       }
       if(data[0].type == this.klines[0].ktype) this._checkOrderStatus()
     } else {
-      kline.remember(data)
+      let res = kline.remember(data)
+
+      // 广播KLine完成完整K柱事件
+      if(res.code && res.event == 'create') {
+        this.publishHeartbeat('KLINE_CREATE') 
+      }
+
       // 只在第一根kline更新时判断订单成交
       if(data.type == this.klines[0].ktype) this._checkOrderStatus()
 
-      // 广播KLine完成完整K柱事件
-      
     }
 
     this.publishHeartbeat('KLINE_UPDATE') 

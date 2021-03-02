@@ -275,9 +275,6 @@ describe('测试exchangeP币本位模块独立方法',function(){
      })
   })
 
-  
-
-
   it('测试获取kline',function(){
      
       assert.deepEqual( ex.getKline(60), ex.klines[0])

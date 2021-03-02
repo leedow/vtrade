@@ -140,7 +140,6 @@ module.exports = class Ex extends Core {
 
     if(Array.isArray(data)) {
       for (var i = 0; i < data.length; i++) {
-
         kline.remember(data[i])
       }
       if(data[0].type == this.klines[0].ktype) this._checkOrderStatus()
@@ -148,6 +147,9 @@ module.exports = class Ex extends Core {
       kline.remember(data)
       // 只在第一根kline更新时判断订单成交
       if(data.type == this.klines[0].ktype) this._checkOrderStatus()
+
+      // 广播KLine完成完整K柱事件
+      
     }
 
     this.publishHeartbeat('KLINE_UPDATE') 

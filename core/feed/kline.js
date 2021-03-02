@@ -175,7 +175,7 @@ module.exports = class Kline extends Base{
       }
 
     } catch(e) {
-      //this.error(e)
+      this.error(e)
       return {upper:0, lower:0, middle:0}
     }
   }
@@ -218,25 +218,30 @@ module.exports = class Kline extends Base{
    * 如果data中包含id，用id判重，否则用stime判重
    * @params {object} data 完整的k数据
    * @params {number} time 记录时间
+   * @return {code:boolean, event: update|create|wrong}
    */
   remember(data, time) {
     let last = this.getLast(1, true)
     if(!last) {
         super.remember(data, time)
-        return
+        return {code: true, event: 'create'}
     }
 
     if(data.id && last.d.id) {
       if(data.id == last.d.id) {
         this.updateLast(data)
+        return {code: true, event: 'update'}
       } else {
-        super.remember(data, time)
+        let res = super.remember(data, time)
+        return {code: res, event: res?'create':'wrong'}
       }
     } else {
       if(data.stime == last.d.stime) {
         this.updateLast(data)
+        return {code: true, event: 'update'}
       } else {
-        super.remember(data, time)
+        let res = super.remember(data, time)
+        return {code: res, event: res?'create':'wrong'}
       }
     }
   }

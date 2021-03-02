@@ -33,15 +33,19 @@ describe('测试feed/kline模块带ID情况',function(){
   }]
 
   it('添加新数据',function(){
-    base.remember(ks[0])
+    let res1 = base.remember(ks[0])
     assert.equal( base.data.length, 1)
-    base.remember(ks[1])
+    assert.equal( res1.event, 'create')
+
+    let res2 = base.remember(ks[1])
     assert.equal( base.data.length, 2)
+    assert.equal( res2.event, 'create')
   })
 
   it('测试更新',function(){
-    base.remember(ks[2])
+    let res = base.remember(ks[2])
     assert.equal( base.data.length, 2)
+    assert.equal( res.event, 'update')
     assert.deepEqual( base.getLast(), ks[2])
   })
 
@@ -76,15 +80,20 @@ describe('测试feed/kline模块不带ID情况',function(){
   }]
 
   it('添加新数据',function(){
-    base.remember(ks[0])
+    let res1 = base.remember(ks[0])
     assert.equal( base.data.length, 1)
-    base.remember(ks[1])
+    assert.equal( res1.event, 'create')
+
+    let res2 = base.remember(ks[1])
     assert.equal( base.data.length, 2)
+    assert.equal( res2.event, 'create')
+
   })
 
   it('测试更新',function(){
-    base.remember(ks[2])
+    let res = base.remember(ks[2])
     assert.equal( base.data.length, 2)
+    assert.equal( res.event, 'update')
     assert.deepEqual( base.getLast(), ks[2])
   })
 

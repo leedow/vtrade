@@ -29,10 +29,12 @@ module.exports = class Robot extends Core{
   }
 
   async run() {
+    let prepare = 'ready'
     if(this._prepareCallback) {
-      await this._prepareCallback(this)
+      prepare = await this._prepareCallback(this)
     }
     this.subscribeExHeartbeat()
+    return prepare
   }
 
   /**

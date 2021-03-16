@@ -46,6 +46,7 @@ describe('测试robot模块',function(){
     let prepare = (r) => {
       assert.deepEqual(r, robot)
       r.ex.createKline(60)
+      return 'pause'
     }
 
     robot.registerPrepare(prepare)
@@ -58,8 +59,9 @@ describe('测试robot模块',function(){
   })
 
   //events.emit('rROBOT_TICKERS_test_btcusdt', [1, 1, 1, 1, 1, 1])
-  it('执行run',function(){
-    robot.run()
+  it('执行run',async function(){
+    let res = await robot.run()
+    assert.equal( res, 'pause')
     events.emit(`ROBOT_TICKERS_${exchangeName}_btcusdt`, [1, 1, 1, 1, 1, 1])
     events.emit(`ROBOT_TICKERS_${exchangeName}_btcusdt`, [2, 2, 2, 2, 1, 1])
   })

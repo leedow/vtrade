@@ -156,6 +156,20 @@ module.exports = class Kline extends Base{
     return this.talib('RSI', {step, size: size-1})
   }
 
+  MA(step=30, size = 1) {
+    return this.talib('MA', {step, ma: 'MA', size: size-1})
+  }
+
+  ma(step=30, size = 1) {
+    if(size == 1) {
+      return helper.ma(this.getDataIgnore().map(item => item.close), step)
+    } else {
+      console.log('ma has not support size > 1 yet')
+      return null
+    }
+    
+  }
+
   EMA(step=30, size = 1) {
     return this.talib('EMA', {step, ma: 'EMA', size: size-1})
   }
@@ -311,6 +325,28 @@ module.exports = class Kline extends Base{
       lastTime = this.getTime()
     } // end for
 
+  }
+
+  /*
+   * 根据是否设置ignoreIncomplate参数返回data
+   */
+  getDataIgnore() {
+    let data = this.getData()
+
+    if( this.ignoreIncomplete ) {
+      let tmp = []
+      let last = data[data.length-1]
+
+      if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
+        for (let i = 0; i < data.length-1; i++) {
+          tmp.push(data[i])
+        }
+
+        data = tmp
+      }   
+    }
+
+    return data
   }
 
 }

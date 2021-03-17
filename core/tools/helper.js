@@ -54,17 +54,22 @@ module.exports = {
       return sum
     })
   },
-  ma(data, n) {
+  /*
+   * 算数平均
+   */
+  ma(data, n=1, offset=0) {
     if(typeof n == 'undefined') {
       n = data.length
     }
-    let d = data.slice(data.length-n)
+
+    if(offset+n > data.length) return null
+    let d = data.slice(data.length-n-offset, data.length-offset)
     let sum = 0
 
     d.forEach(item => {
       sum = sum + Number(item)
     })
-    return Number( (sum/d.length).toFixed(4) )
+    return Number( sum/d.length )
   },
   ema(data, n, a) {
     if(typeof n == 'undefined') {

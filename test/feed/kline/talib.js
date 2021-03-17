@@ -49,6 +49,14 @@ describe('测试feed/kline模块指标计算',function(){
     assert.equal( kline.RSI(14, 2).length,  2 )
   })
 
+  it('MA',function(){
+    assert.equal( typeof kline.MA(14),  'number' )
+  })
+
+  it('ma',function(){
+    assert.equal( kline.MA(14),  kline.ma(14) )
+  })
+
   it('EMA',function(){
     assert.equal( typeof kline.EMA(14),  'number' )
   })

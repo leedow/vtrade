@@ -4,7 +4,7 @@ var Tickers = require('../../../core/feed/tickers')
 var helper = require('../../../core/tools/helper')
 let talib = require('talib')
 
-describe('测试feed/kline模块指标计算',function(){
+describe('测试feed/kline模块指标计算，核对和talib直接计算结果',function(){
   let kline = new Kline()
   
   kline.filterSame = false
@@ -54,6 +54,34 @@ describe('测试feed/kline模块指标计算',function(){
     kline.remember(k)
   })
 
+  it('MA',function(){
+    let real1 = talib.execute({
+        name: 'MA',
+        startIdx: ks.length-1,
+        endIdx: ks.length-1,
+        optInTimePeriod: 2,
+        optInMAType: 1,
+        inReal: ks.map(item => item.close)
+    })
+
+    let real2 = kline.MA(2, 1)
+    assert.equal( real1.result.outReal[0], real2 )
+  })
+
+  it('ma',function(){
+    let real1 = talib.execute({
+        name: 'MA',
+        startIdx: ks.length-1,
+        endIdx: ks.length-1,
+        optInTimePeriod: 2,
+        optInMAType: 1,
+        inReal: ks.map(item => item.close)
+    })
+
+    let real2 = kline.ma(2, 1)
+    assert.equal( real1.result.outReal[0], real2 )
+  })
+
  
   it('EMA',function(){
     let real1 = talib.execute({
@@ -68,6 +96,8 @@ describe('测试feed/kline模块指标计算',function(){
     let real2 = kline.EMA(2, 1)
     assert.equal( real1.result.outReal[0], real2 )
   })
+
+
 
   it('RSI',function(){
     let real1 = talib.execute({
@@ -148,7 +178,6 @@ describe('测试feed/kline模块指标计算',function(){
     assert.equal( real1.result.outReal[0], real2 )
   })
 
-  
 
 
 })

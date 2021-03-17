@@ -131,6 +131,20 @@ describe('测试feed/kline模块指标计算，核对和talib直接计算结果'
     assert.equal( real1.result.outReal[0], real2 )
   })
 
+  it('MA with ignoreIncomplete',function(){
+    let real1 = talib.execute({
+        name: 'MA',
+        startIdx: ks2.length-1,
+        endIdx: ks2.length-1,
+        optInTimePeriod: 2,
+        optInMAType: 1,
+        inReal: ks2.map(item => item.close)
+    })
+    kline.ignoreIncomplete = true
+    let real2 = kline.MA(2, 1)
+    assert.equal( real1.result.outReal[0], real2 )
+  })
+
 
   it('EMA with ignoreIncomplete',function(){
     let real1 = talib.execute({

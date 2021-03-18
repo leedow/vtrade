@@ -2,68 +2,39 @@ var talib = require('talib');
 var Kline = require('./core/feed/kline')
 var Tickers = require('./core/feed/tickers')
 
+let ks = [1,2,3,4,10, 20, 30, 30]
+let ks2 = [5, 10, 20, 30, 30]
 
 
 
+let real1 = talib.execute({
+        name: 'ATR',
+        startIdx: ks.length-4,
+        endIdx: ks.length-1,
+        optInTimePeriod: 2,
+        optInMAType: 1,
+        inReal: ks,
+        high: ks,
+        low: ks,
+        open: ks,
+        close: ks
 
-let kline = new Kline()
-let tickers = new Tickers()
+    })
 
-
-kline.filterSame = false
-kline.memoryTimeLimit = 99999999999999999
-kline.ktype = 60
-tickers.filterSame = false
-tickers.memoryTimeLimit = 99999999999999999
-
-let now = Date.now()
-let n = 0
-const nextTime = () => {
-
-now =  now + parseInt(10000*Math.random())
-return now
-}
-
-const randomPrice = () => {
-return  Number ( (1000*Math.random()).toFixed(2)  )
-}
-
-const getK = (size=1000) => {
-let res = []
-while(size--) {
-  res.push([randomPrice(), 0,0,0,0,0,0,0,0,0,0, nextTime()])
-  n++
-}
-return res
-}
-
-let k = getK()
-
-k.forEach(item => {
-tickers.remember(item, item[11])
-})
-
-kline.transTickers(tickers)
-
-   //   console.dir( talib.explain('ATR'), {depth:null} )
+console.log(real1)
 
 
+let real2 = talib.execute({
+        name: 'ATR',
+        startIdx: ks.length-3,
+        endIdx: ks.length-1,
+        optInTimePeriod: 2,
+        optInMAType: 0,
+        inReal: ks,
+        high: ks,
+        low: ks,
+        open: ks,
+        close: ks
+    })
 
-let go = () => {
-	console.log(kline.BOLL(5,2,2,'EMA', 10))
-} 
-
-go()
-
-
-
-      console.dir( talib.explain('BBANDS'), {depth:null} )
- 
-
-
-console.log(2223345546454)
-
- 
- 
- 
- 
+console.log(real2)

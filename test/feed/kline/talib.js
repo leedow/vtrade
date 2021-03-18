@@ -24,7 +24,7 @@ describe('测试feed/kline模块指标计算',function(){
     return Number ( (1000*Math.random()).toFixed(2)  )
   }
 
-  const getK = (size=10000) => {
+  const getK = (size=1000) => {
     let res = []
     while(size--) {
       res.push([randomPrice(), 0,0,0,0,0,0,0,0,0,0, nextTime()])
@@ -59,6 +59,10 @@ describe('测试feed/kline模块指标计算',function(){
 
   it('EMA',function(){
     assert.equal( typeof kline.EMA(14),  'number' )
+  })
+
+  it('ema',function(){
+    //assert.equal(  kline.SMA(13),  kline.ema(13) )
   })
 
   it('SMA',function(){

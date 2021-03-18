@@ -1,6 +1,7 @@
 let Base = require('./base')
 let helper = require('../tools/helper')
 let talib = require('talib')
+//let sig = require('trading-signals')
 
 
 const mas = {
@@ -172,6 +173,24 @@ module.exports = class Kline extends Base{
 
   EMA(step=30, size = 1) {
     return this.talib('EMA', {step, ma: 'EMA', size: size-1})
+  }
+
+  ema(step=30, size = 1) {
+    if(size == 1) {
+      return helper.ema(this.getDataIgnore().map(item => item.close), step) 
+    } else {
+      console.log('ema has not support size > 1 yet')
+      return null
+    } 
+  }
+
+  sd(step=30, size = 1) {
+    if(size == 1) {
+      return helper.SD(this.getDataIgnore().map(item => item.close), step) 
+    } else {
+      console.log('sd has not support size > 1 yet')
+      return null
+    } 
   }
 
   SMA(step=30, size = 1) {

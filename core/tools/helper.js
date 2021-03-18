@@ -71,22 +71,28 @@ module.exports = {
     })
     return Number( sum/d.length )
   },
-  ema(data, n, a) {
+  ema(data, n=1, offset=0) {
     if(typeof n == 'undefined') {
       n = data.length
     }
 
-    let total = n*(n+1)/2
-    let d = data.slice(data.length-n)
-    let pre = 0
+    if(offset+n > data.length) return null
+    let d = data
+    let sum = 0
+
     d.forEach((item, index) => {
-      pre += (1/total)*(index+1)*item
+      sum += item*Math.pow((n-1)/(n+1), d.length-index-1)*2/(n+1)
     })
-    return pre
+    return sum
   },
   // 标准差
-  SD(data) {
+  SD(data, n) {
     let ma = 0
+
+    if(n) {
+      data = data.slice(data.length-n)
+    }
+
     data.forEach(item => {
       ma += item/data.length
     })

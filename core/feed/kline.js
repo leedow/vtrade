@@ -352,20 +352,27 @@ module.exports = class Kline extends Base{
   getDataIgnore() {
     let data = this.getData()
 
-    if( this.ignoreIncomplete ) {
-      let tmp = []
-      let last = data[data.length-1]
+    try {
+      if( this.ignoreIncomplete ) {
+        let tmp = []
+        let last = data[data.length-1]
 
-      if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
-        for (let i = 0; i < data.length-1; i++) {
-          tmp.push(data[i])
-        }
+        if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
+          for (let i = 0; i < data.length-1; i++) {
+            tmp.push(data[i])
+          }
 
-        data = tmp
-      }   
+          data = tmp
+        }   
+      }
+
+      return data
+    } catch(e) {
+      console.log(e)
+      return []
     }
 
-    return data
+     
   }
 
 }

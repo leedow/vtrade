@@ -15,5 +15,16 @@ describe('测试helper模块',function(){
     })
   })
 
+  it('avg',function(){
+    assert.equal( helper.avg(datas).toFixed(6), ((1+5+ 2+ 6+3+6+6)/7).toFixed(6)  )
+  })
+
+  it('max',function(){
+    assert.deepEqual( helper.max(datas), [6, 3] )
+  })
+
+  it('min',function(){
+    assert.deepEqual( helper.min(datas), [1, 0] )
+  })
  
 })

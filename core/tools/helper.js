@@ -286,5 +286,36 @@ module.exports = {
     const last = data[data.length-1]
     let max = Math.max(...data)
     return last - max
+  },
+  /*
+   * 后数据减去前数据差额
+   */
+  sub(data) {
+    let res = []
+    data.forEach((item, index) => {
+      if(index == 0) {
+        res.push(item)
+      } else {
+        res.push( data[index] - data[index-1] )
+      }
+    })
+    return res
+  },
+  /*
+   * 获取时间队列数据相邻数据，上涨下跌或持平的数量
+   */
+  riseFall(data) {
+    let rise = 0 , fall = 0, same = 0
+    for (var i = 0; i < data.length; i++) {
+      if(i > 0) {
+        let dif = data[i] - data[i-1]
+        if(dif > 0) rise++
+        if(dif < 0) fall++
+        if(dif == 0) same++
+      }
+    }
+    return {
+      rise, fall, same
+    }
   }
 }

@@ -368,7 +368,7 @@ module.exports = class Kline extends Base{
 
       return data
     } catch(e) {
-      console.log(e)
+      //console.log(e)
       return []
     }
 

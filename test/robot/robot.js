@@ -158,37 +158,46 @@ describe('测试robot模块',function(){
 
     }]
 
-    let updateTime = 0,  createTime = 0
+    let updateTime = 0,  createTime = 0, data = null
 
     robot._policyCallback = false
     robot.registerPolicy((V, e) => { 
 
       if(e.event == 'KLINE_UPDATE') updateTime++
       if(e.event == 'KLINE_CREATE') createTime++
+      data = e.data
     })
    
     events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[0])
 
     assert.equal( updateTime, 1)
     assert.equal( createTime, 1)
+    assert.equal( data, ks[0])
+
 
 
     events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[1])
 
     assert.equal( updateTime, 2)
     assert.equal( createTime, 2)
+    assert.equal( data, ks[1])
+
 
 
     events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[2])
 
     assert.equal( updateTime, 3)
     assert.equal( createTime, 2)
+    assert.equal( data, ks[2])
+
 
 
     events.emit(`ROBOT_KLINE_${exchangeName}_btcusdt`, ks[3])
 
     assert.equal( updateTime, 4)
     assert.equal( createTime, 3)
+    assert.equal( data, ks[3])
+
 
 
   

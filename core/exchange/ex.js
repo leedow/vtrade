@@ -148,7 +148,7 @@ module.exports = class Ex extends Core {
 
       // 广播KLine完成完整K柱事件
       if(res.code && res.event == 'create') {
-        this.publishHeartbeat('KLINE_CREATE') 
+        this.publishHeartbeat('KLINE_CREATE', data) 
       }
 
       // 只在第一根kline更新时判断订单成交
@@ -156,7 +156,7 @@ module.exports = class Ex extends Core {
 
     }
 
-    this.publishHeartbeat('KLINE_UPDATE') 
+    this.publishHeartbeat('KLINE_UPDATE', data) 
 
   }
 
@@ -257,11 +257,13 @@ module.exports = class Ex extends Core {
 
   /**
    * 广播exchange策略执行心跳
+   * @originData 引起事件的原始数据
    */
-  publishHeartbeat(eventName) {
+  publishHeartbeat(eventName, originData) {
     this.publish(this.fullEventName, {
       event: eventName,
-      from: this
+      from: this,
+      data: originData
     })
   }
 

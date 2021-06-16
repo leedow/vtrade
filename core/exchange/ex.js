@@ -146,13 +146,18 @@ module.exports = class Ex extends Core {
     } else {
       let res = kline.remember(data)
 
+      // 只在第一根kline更新时判断订单成交
+      if(data.type == this.klines[0].ktype) this._checkOrderStatus()
+
       // 广播KLine完成完整K柱事件
       if(res.code && res.event == 'create') {
         this.publishHeartbeat('KLINE_CREATE', data) 
       }
 
       // 只在第一根kline更新时判断订单成交
-      if(data.type == this.klines[0].ktype) this._checkOrderStatus()
+      // if(data.type == this.klines[0].ktype) this._checkOrderStatus()
+
+       
 
     }
 

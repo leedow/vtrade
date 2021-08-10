@@ -76,18 +76,26 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     assert.equal( kline.sd(2), Math.sqrt( (85-avg1)*(85-avg1)/2 + (77-avg1)*(77-avg1)/2 ) )
   })
 
-
   it('ma with ignoreIncomplete',function(){
     kline.ignoreIncomplete = true
     assert.equal( kline.ma(2), (77+70)/2 )
     
   })
 
+  it('ma with ignoreIncomplete offset 2',function(){
+    kline.ignoreIncomplete = true
+    assert.equal( kline.ma(2,1,1), (70+70)/2 )
+  })
+
   it('ema with ignoreIncomplete',function(){
     kline.ignoreIncomplete = true
 
     assert.equal( kline.ema(2), 77*2/(2+1) + 70*2/(2+1)*Math.pow(1/3, 1) + 70*2/(2+1)*Math.pow(1/3, 2) + 40*2/(2+1)*Math.pow(1/3, 3) )
+  
+
   })
+
+ 
 
   it('sd with ignoreIncomplete',function(){
     kline.ignoreIncomplete = true

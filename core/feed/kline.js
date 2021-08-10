@@ -161,9 +161,9 @@ module.exports = class Kline extends Base{
     return this.talib('MA', {step, ma: 'MA', size: size-1})
   }
 
-  ma(step=30, size = 1) {
+  ma(step=30, size = 1, offset=0) {
     if(size == 1) {
-      return helper.ma(this.getDataIgnore().map(item => item.close), step)
+      return helper.ma(this.getDataIgnore(offset).map(item => item.close), step)
     } else {
       console.log('ma has not support size > 1 yet')
       return null
@@ -175,9 +175,9 @@ module.exports = class Kline extends Base{
     return this.talib('EMA', {step, ma: 'EMA', size: size-1})
   }
 
-  ema(step=30, size = 1) {
+  ema(step=30, size = 1, offset=0) {
     if(size == 1) {
-      return helper.ema(this.getDataIgnore().map(item => item.close), step) 
+      return helper.ema(this.getDataIgnore(offset).map(item => item.close), step) 
     } else {
       console.log('ema has not support size > 1 yet')
       return null
@@ -348,8 +348,9 @@ module.exports = class Kline extends Base{
 
   /*
    * 根据是否设置ignoreIncomplate参数返回data
+   * @params {number} 舍弃后面的几位
    */
-  getDataIgnore() {
+  getDataIgnore(offset=0) {
     let data = this.getData()
 
     try {
@@ -366,7 +367,7 @@ module.exports = class Kline extends Base{
         }   
       }
 
-      return data
+      return offset>0?data.slice(0,data.length-offset):data
     } catch(e) {
       //console.log(e)
       return []

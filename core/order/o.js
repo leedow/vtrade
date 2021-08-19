@@ -240,7 +240,7 @@ module.exports = class O extends Core{
         let priceFill = this.price
         if( this.father ) {
           let askPrice = this.father.getAskPrice()
-          if( askPrice ) priceFill = askPrice
+          if( askPrice && this.father.resetPriceFill ) priceFill = askPrice
         }
         this.priceFill = priceFill
         this.finish(maxAmount)
@@ -254,7 +254,7 @@ module.exports = class O extends Core{
         let priceFill = this.price
         if( this.father ) {
           let bidPrice = this.father.getBidPrice()
-          if( bidPrice ) priceFill = bidPrice
+          if( bidPrice && this.father.resetPriceFill ) priceFill = bidPrice
         }
         this.priceFill = priceFill
         this.finish(maxAmount)

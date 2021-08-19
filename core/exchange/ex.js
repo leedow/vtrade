@@ -37,6 +37,8 @@ module.exports = class Ex extends Core {
     this.subPosition = false
     this.subKline = false
 
+    this.resetPriceFill = true // 是否自动更新market成交价，若为false则默认以限价成交
+
     // this.copyOptions(options)
     // this.subscribeRobotTicker()
     // this.subscribeRobotTrade()

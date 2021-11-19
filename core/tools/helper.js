@@ -320,18 +320,28 @@ module.exports = {
   },
   /*
    * 获取事件队列数据，突破历史新高的数量统计
+   * @Mode more | same
    */
-  breakHigh(data) {
+  breakHigh(data, mode="more") {
     let high = data[0], count = 0
     for (let i = 0; i < data.length; i++) {
-      if(data[i] - high > 0) {
-        count++
-        high = data[i]
+      if(mode == 'more') {
+        if(data[i] - high > 0) {
+          count++
+          high = data[i]
+        }
+      } else if(mode == 'same') {
+        if(data[i] - high >= 0) {
+          count++
+          high = data[i]
+        }
       }
+       
     }
     return {
       count,
       percent: count/data.length
     }
+       
   }
 }

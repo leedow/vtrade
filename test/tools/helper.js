@@ -16,9 +16,16 @@ describe('测试helper模块',function(){
   })
 
   it('breakHigh',function(){
-    let res = helper.breakHigh(datas)
+    let res = helper.breakHigh(datas, 'more')
     assert.deepEqual( res.count, 2)
     assert.deepEqual( res.percent.toFixed(5), (2/7).toFixed(5))
+
+  })
+
+  it('breakHigh by same',function(){
+    let res = helper.breakHigh(datas, 'same')
+    assert.deepEqual( res.count, 5)
+    assert.deepEqual( res.percent.toFixed(5), (5/7).toFixed(5))
 
   })
 

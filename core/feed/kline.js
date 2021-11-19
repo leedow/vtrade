@@ -201,6 +201,38 @@ module.exports = class Kline extends Base{
     return this.talib('ATR', {step, size: size-1})
   }
 
+  atr(step=20, size = 1) {
+    if(size == 1) {
+      let ks = this.getDataIgnore()
+      ks = ks.slice(-step-1)
+
+      let trs = []
+
+      for (let i = 0; i < ks.length; i++) {
+        if(i > 0) {
+          let pre = ks[i-1]
+          let current = ks[i]
+
+          let tr = Math.max( 
+            current.high - current.low, 
+            Math.abs(current.high-pre.close), 
+            Math.abs(current.low - pre.close)
+          )
+
+          trs.push(tr)
+        }
+      }
+
+      //console.log(ks, trs)
+
+      return helper.ma(trs, step)
+
+    } else {
+      console.log('atr has not support size > 1 yet')
+      return null
+    } 
+  }
+
   ADX(step=14 , size = 1) {
     return this.talib('ADX', {step, size: size-1})
   }

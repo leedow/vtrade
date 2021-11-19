@@ -306,7 +306,7 @@ module.exports = {
    */
   riseFall(data) {
     let rise = 0 , fall = 0, same = 0
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       if(i > 0) {
         let dif = data[i] - data[i-1]
         if(dif > 0) rise++
@@ -316,6 +316,22 @@ module.exports = {
     }
     return {
       rise, fall, same
+    }
+  },
+  /*
+   * 获取事件队列数据，突破历史新高的数量统计
+   */
+  breakHigh(data) {
+    let high = data[0], count = 0
+    for (let i = 0; i < data.length; i++) {
+      if(data[i] - high > 0) {
+        count++
+        high = data[i]
+      }
+    }
+    return {
+      count,
+      percent: count/data.length
     }
   }
 }

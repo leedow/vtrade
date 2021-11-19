@@ -24,6 +24,7 @@ module.exports = class Ex extends Core {
 
     this.autoCheckOrders = true // 是否开启订单状态判定，实盘中可通过该设置项关闭检测避免误差
 
+
     this.tickers = new Tickers()
     this.trades = new Trades()
     this.depth = new Depth()

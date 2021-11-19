@@ -76,6 +76,10 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     assert.equal( kline.sd(2), Math.sqrt( (85-avg1)*(85-avg1)/2 + (77-avg1)*(77-avg1)/2 ) )
   })
 
+  it('atr',function(){
+    assert.equal( kline.atr(2), 309 )
+  })
+
   it('ma with ignoreIncomplete',function(){
     kline.ignoreIncomplete = true
     assert.equal( kline.ma(2), (77+70)/2 )
@@ -98,6 +102,24 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
 
     let avg1 = (70+77)/2
     assert.equal( kline.sd(2), Math.sqrt( (77-avg1)*(77-avg1)/2 + (70-avg1)*(70-avg1)/2 ) )
+  })
+
+  it('atr跳空',function(){
+    // close 85
+    kline.ignoreIncomplete = false
+
+    let res = kline.remember({
+      id: st + 5*60000,
+      high: 280,
+      low: 99,
+      open: 100,
+      close: 150,
+      stime: st + 5*60000,
+      etime: st + 5*60000 + 59994
+    })
+
+    console.log(res)
+    assert.equal( kline.atr(2), (309+195)/2 )
   })
 
  

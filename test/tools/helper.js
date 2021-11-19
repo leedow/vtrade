@@ -15,6 +15,13 @@ describe('测试helper模块',function(){
     })
   })
 
+  it('breakHigh',function(){
+    let res = helper.breakHigh(datas)
+    assert.deepEqual( res.count, 2)
+    assert.deepEqual( res.percent.toFixed(5), (2/7).toFixed(5))
+
+  })
+
   it('avg',function(){
     assert.equal( helper.avg(datas).toFixed(6), ((1+5+ 2+ 6+3+6+6)/7).toFixed(6)  )
   })

@@ -20,7 +20,8 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     open: 50,
     close: 40,
     stime: st,
-    etime: st + 59999
+    etime: st + 59999,
+    vol: 1
   },{
     id: st + 60000,
     high: 200,
@@ -28,7 +29,8 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     open: 40,
     close: 70,
     stime: st + 60000,
-    etime: st + 60000 + 59999
+    etime: st + 60000 + 59999,
+    vol: 2
   },{
     id: st + 2*60000,
     high: 300,
@@ -36,7 +38,8 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     open: 70,
     close: 70,
     stime: st + 2*60000,
-    etime: st + 2*60000 + 59999
+    etime: st + 2*60000 + 59999,
+    vol: 3
   },{
     id: st + 3*60000,
     high: 320,
@@ -44,7 +47,8 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     open: 72,
     close: 77,
     stime: st + 3*60000,
-    etime: st + 3*60000 + 59999
+    etime: st + 3*60000 + 59999,
+    vol: 4
   },{
     id: st + 4*60000,
     high: 320,
@@ -52,7 +56,8 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     open: 72,
     close: 85,
     stime: st + 4*60000,
-    etime: st + 4*60000 + 59994
+    etime: st + 4*60000 + 59994,
+    vol: 5
   }]
 
   const ks2 = [ks[0], ks[1], ks[2]]
@@ -64,6 +69,11 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
   it('ma',function(){
     assert.equal( kline.ma(2), (85+77)/2 )
     assert.equal( kline.ma(3), (85+77+70)/3 )
+  })
+
+  it('volma',function(){
+    assert.equal( kline.volma(2), (5+4)/2 )
+    assert.equal( kline.volma(3), (5+4+3)/3 )
   })
   
   it('ema',function(){
@@ -83,6 +93,12 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
   it('ma with ignoreIncomplete',function(){
     kline.ignoreIncomplete = true
     assert.equal( kline.ma(2), (77+70)/2 )
+    
+  })
+
+  it('volma with ignoreIncomplete',function(){
+    kline.ignoreIncomplete = true
+    assert.equal( kline.volma(2), (4+3)/2 )
     
   })
 

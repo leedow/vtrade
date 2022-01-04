@@ -557,6 +557,7 @@ module.exports = class ExchangeP extends Ex{
    * @return {Boolean} 是否可下单
    */
   _checkBalanceOneSide(order) {
+
     let balanceCanuse = this.getAsset(this.balance).getAvailable() + this.getProfitUnfill()
     let dif = 0
     if( order.direction == 'long' ) {

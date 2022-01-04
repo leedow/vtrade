@@ -171,6 +171,15 @@ module.exports = class Kline extends Base{
     
   }
 
+  volma(step=30, size = 1, offset=0) {
+    if(size == 1) {
+      return helper.ma(this.getDataIgnore(offset).map(item => item.vol||0), step)
+    } else {
+      console.log('volma has not support size > 1 yet')
+      return null
+    }
+  }
+
   EMA(step=30, size = 1) {
     return this.talib('EMA', {step, ma: 'EMA', size: size-1})
   }
@@ -200,6 +209,8 @@ module.exports = class Kline extends Base{
   ATR(step=14 , size = 1) {
     return this.talib('ATR', {step, size: size-1})
   }
+
+
 
   atr(step=20, size = 1) {
     if(size == 1) {

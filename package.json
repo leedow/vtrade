@@ -1,6 +1,6 @@
 {
   "name": "vtrade",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "description": "Flexible quantized transation framework",
   "main": "index.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "vtrade",
-  "version": "1.8.5",
+  "version": "1.8.6",
   "description": "Flexible quantized transation framework",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,6 @@
     "mocha": "^6.2.2"
   },
   "dependencies": {
-    "talib": "^1.1.3",
     "trading-signals": "^1.6.0",
     "uuid": "^3.3.3"
   }

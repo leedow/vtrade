@@ -343,5 +343,12 @@ module.exports = {
       percent: count/data.length
     }
        
+  },
+  /*
+   * 支持多条件优先级的排序
+   * @datas [{a,b,c}...]
+   */
+  sortMulti(datas) {
+    
   }
 }

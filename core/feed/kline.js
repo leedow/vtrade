@@ -1,6 +1,6 @@
 let Base = require('./base')
 let helper = require('../tools/helper')
-let talib = require('talib')
+//let talib = require('talib')
 //let sig = require('trading-signals')
 
 
@@ -29,137 +29,137 @@ module.exports = class Kline extends Base{
     this.ignoreIncomplete = false // 计算指标是否忽略最后一根未完结的K柱
     this.talibConfig = {}
     this.copyOptions(options)
-    this.initTalib()
+    //this.initTalib()
   }
 
   /*
    * 初始化talib参数
    */
-  initTalib() {
-    talib.functions.forEach(func => {
-      let explain = talib.explain(func.name)
-      let inputs = []
+  // initTalib() {
+  //   talib.functions.forEach(func => {
+  //     let explain = talib.explain(func.name)
+  //     let inputs = []
 
-      explain.inputs.forEach(input => {
-        if( input.flags ) {
-          let keys = Object.keys(input.flags)
-          if( keys.length > 0 ) {
-            keys.forEach(key => {
-              inputs.push({
-                name: key
-              })
-            })
-          } else {
-            inputs.push({
-              name: input.name
-            })
-          }
-        } else {
-          inputs.push({
-            name: input.name
-          })
-        }
-      })
+  //     explain.inputs.forEach(input => {
+  //       if( input.flags ) {
+  //         let keys = Object.keys(input.flags)
+  //         if( keys.length > 0 ) {
+  //           keys.forEach(key => {
+  //             inputs.push({
+  //               name: key
+  //             })
+  //           })
+  //         } else {
+  //           inputs.push({
+  //             name: input.name
+  //           })
+  //         }
+  //       } else {
+  //         inputs.push({
+  //           name: input.name
+  //         })
+  //       }
+  //     })
 
-      explain.optInputs.forEach(input => {
-        inputs.push({
-          name: input.name
-        })
-      })
+  //     explain.optInputs.forEach(input => {
+  //       inputs.push({
+  //         name: input.name
+  //       })
+  //     })
 
-      this.talibConfig[func.name] = {
-        name: explain.name,
-        inputs
-      }
+  //     this.talibConfig[func.name] = {
+  //       name: explain.name,
+  //       inputs
+  //     }
 
-      //this.talib[explain.name] = this._handle
-    })
-  }
+  //     //this.talib[explain.name] = this._handle
+  //   })
+  // }
 
-  talib(name, options) {
-    if(this.data.length < 2) {
-      //this.error('data length is less than 2')
-      return
-    }
+  // talib(name, options) {
+  //   if(this.data.length < 2) {
+  //     //this.error('data length is less than 2')
+  //     return
+  //   }
 
-    if(!this.talibConfig[name]) {
-      this.error(`do not suport ${name}`)
-      return
-    }
+  //   if(!this.talibConfig[name]) {
+  //     this.error(`do not suport ${name}`)
+  //     return
+  //   }
 
-    try {
-      let params = {
-        name,
-        startIdx: this.data.length-1,
-        endIdx: this.data.length-1
-      }
+  //   try {
+  //     let params = {
+  //       name,
+  //       startIdx: this.data.length-1,
+  //       endIdx: this.data.length-1
+  //     }
 
-      for (let key in options) {
-        if(key == 'step') {
-          params['optInTimePeriod'] = options[key]
-        } else if(key == 'ma') {
-          params['optInMAType'] = mas[key]
-        } else if(key == 'start') {
-          params['startIdx'] = options[key]
-        } else if(key == 'size') {
-          params['startIdx'] = Math.max(0, params.startIdx-options[key])
-        } else if(key == 'end') {
-          params['endIdx'] = options[key]
-        } else {
-          params[key] = options[key]
-        }
-      }
+  //     for (let key in options) {
+  //       if(key == 'step') {
+  //         params['optInTimePeriod'] = options[key]
+  //       } else if(key == 'ma') {
+  //         params['optInMAType'] = mas[key]
+  //       } else if(key == 'start') {
+  //         params['startIdx'] = options[key]
+  //       } else if(key == 'size') {
+  //         params['startIdx'] = Math.max(0, params.startIdx-options[key])
+  //       } else if(key == 'end') {
+  //         params['endIdx'] = options[key]
+  //       } else {
+  //         params[key] = options[key]
+  //       }
+  //     }
 
-      let data = this.getData()
+  //     let data = this.getData()
 
-      if( this.ignoreIncomplete ) {
-        let tmp = []
-        let last = data[data.length-1]
+  //     if( this.ignoreIncomplete ) {
+  //       let tmp = []
+  //       let last = data[data.length-1]
 
-        if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
-          if(this.data.length < 3) return
+  //       if( last['etime'] - last['stime'] < this.ktype*1000 - 1 ) {
+  //         if(this.data.length < 3) return
 
-          for (let i = 0; i < data.length-1; i++) {
-            tmp.push(data[i])
-          }
+  //         for (let i = 0; i < data.length-1; i++) {
+  //           tmp.push(data[i])
+  //         }
 
-          data = tmp
+  //         data = tmp
 
-          params.endIdx = params.endIdx-1
-          params.startIdx = Math.max(0, params.startIdx-1)
+  //         params.endIdx = params.endIdx-1
+  //         params.startIdx = Math.max(0, params.startIdx-1)
 
-        }   
-      }
+  //       }   
+  //     }
 
 
-      params.high = data.map(item => item.high)
-      params.low = data.map(item => item.low)
-      params.open = data.map(item => item.open)
-      params.close = data.map(item => item.close)
-      params.inReal = data.map(item => item.close)
-      //console.dir( talib.explain(name), {depth:null} )
+  //     params.high = data.map(item => item.high)
+  //     params.low = data.map(item => item.low)
+  //     params.open = data.map(item => item.open)
+  //     params.close = data.map(item => item.close)
+  //     params.inReal = data.map(item => item.close)
+  //     //console.dir( talib.explain(name), {depth:null} )
 
-      let res = talib.execute(params)
+  //     let res = talib.execute(params)
 
-      if(Object.keys(res.result).length == 1) {
-        return res.result.outReal.length==1?res.result.outReal[0]:res.result.outReal
-      } else {
-        return res.result
-      }
+  //     if(Object.keys(res.result).length == 1) {
+  //       return res.result.outReal.length==1?res.result.outReal[0]:res.result.outReal
+  //     } else {
+  //       return res.result
+  //     }
 
-    } catch(e) {
-      this.error(`talib ${name} wrong`, e)
-      console.dir( talib.explain(name), {depth:null} )
-    }
-  }
+  //   } catch(e) {
+  //     this.error(`talib ${name} wrong`, e)
+  //     console.dir( talib.explain(name), {depth:null} )
+  //   }
+  // }
 
-  RSI(step=14, size = 1) {
-    return this.talib('RSI', {step, size: size-1})
-  }
+  // RSI(step=14, size = 1) {
+  //   return this.talib('RSI', {step, size: size-1})
+  // }
 
-  MA(step=30, size = 1) {
-    return this.talib('MA', {step, ma: 'MA', size: size-1})
-  }
+  // MA(step=30, size = 1) {
+  //   return this.talib('MA', {step, ma: 'MA', size: size-1})
+  // }
 
   ma(step=30, size = 1, offset=0) {
     if(size == 1) {
@@ -180,9 +180,9 @@ module.exports = class Kline extends Base{
     }
   }
 
-  EMA(step=30, size = 1) {
-    return this.talib('EMA', {step, ma: 'EMA', size: size-1})
-  }
+  // EMA(step=30, size = 1) {
+  //   return this.talib('EMA', {step, ma: 'EMA', size: size-1})
+  // }
 
   ema(step=30, size = 1, offset=0) {
     if(size == 1) {
@@ -202,13 +202,13 @@ module.exports = class Kline extends Base{
     } 
   }
 
-  SMA(step=30, size = 1) {
-    return this.talib('SMA', {step, ma: 'SMA', size: size-1})
-  }
+  // SMA(step=30, size = 1) {
+  //   return this.talib('SMA', {step, ma: 'SMA', size: size-1})
+  // }
 
-  ATR(step=14 , size = 1) {
-    return this.talib('ATR', {step, size: size-1})
-  }
+  // ATR(step=14 , size = 1) {
+  //   return this.talib('ATR', {step, size: size-1})
+  // }
 
 
 
@@ -244,69 +244,69 @@ module.exports = class Kline extends Base{
     } 
   }
 
-  ADX(step=14 , size = 1) {
-    return this.talib('ADX', {step, size: size-1})
-  }
+  // ADX(step=14 , size = 1) {
+  //   return this.talib('ADX', {step, size: size-1})
+  // }
 
-  BOLL(step=5, up=2, down=2, ma="EMA", size = 1) {
-    try {
-      let boll = this.talib('BBANDS', {
-        optInTimePeriod: step,
-        optInNbDevUp: up,
-        optInNbDevDn: down,
-        optInMAType: mas[ma],
-        size: size - 1
-      })
+  // BOLL(step=5, up=2, down=2, ma="EMA", size = 1) {
+  //   try {
+  //     let boll = this.talib('BBANDS', {
+  //       optInTimePeriod: step,
+  //       optInNbDevUp: up,
+  //       optInNbDevDn: down,
+  //       optInMAType: mas[ma],
+  //       size: size - 1
+  //     })
 
-      if(boll.outRealUpperBand && boll.outRealUpperBand.length>0) {
-        return {
-          upper: boll.outRealUpperBand.length>1?boll.outRealUpperBand:boll.outRealUpperBand[0],
-          lower: boll.outRealLowerBand.length>1?boll.outRealLowerBand:boll.outRealLowerBand[0],
-          middle: boll.outRealMiddleBand.length>1?boll.outRealMiddleBand:boll.outRealMiddleBand[0],
-        }
+  //     if(boll.outRealUpperBand && boll.outRealUpperBand.length>0) {
+  //       return {
+  //         upper: boll.outRealUpperBand.length>1?boll.outRealUpperBand:boll.outRealUpperBand[0],
+  //         lower: boll.outRealLowerBand.length>1?boll.outRealLowerBand:boll.outRealLowerBand[0],
+  //         middle: boll.outRealMiddleBand.length>1?boll.outRealMiddleBand:boll.outRealMiddleBand[0],
+  //       }
 
-      } else {
-        return {upper:0, lower:0, middle:0}
-      }
+  //     } else {
+  //       return {upper:0, lower:0, middle:0}
+  //     }
 
-    } catch(e) {
-      this.error(e)
-      return {upper:0, lower:0, middle:0}
-    }
-  }
+  //   } catch(e) {
+  //     this.error(e)
+  //     return {upper:0, lower:0, middle:0}
+  //   }
+  // }
 
-  KDJ(k1=5, k2=3, d=3, ma='EMA', size = 1) {
-    try {
-      let kd = this.talib('STOCH', {
-        optInFastK_Period: k1,
-        optInSlowK_Period: k2,
-        optInSlowK_MAType: mas[ma],
-        optInSlowD_Period: d,
-        optInSlowD_MAType: mas[ma],
-        size: size - 1
-      })
+  // KDJ(k1=5, k2=3, d=3, ma='EMA', size = 1) {
+  //   try {
+  //     let kd = this.talib('STOCH', {
+  //       optInFastK_Period: k1,
+  //       optInSlowK_Period: k2,
+  //       optInSlowK_MAType: mas[ma],
+  //       optInSlowD_Period: d,
+  //       optInSlowD_MAType: mas[ma],
+  //       size: size - 1
+  //     })
 
-      if(kd.outSlowK && kd.outSlowK.length>0) {
-        let J = []
-        kd.outSlowK.forEach((item, index) => {
-          J.push( 3*item - 2*kd.outSlowD[index] )
-        })
+  //     if(kd.outSlowK && kd.outSlowK.length>0) {
+  //       let J = []
+  //       kd.outSlowK.forEach((item, index) => {
+  //         J.push( 3*item - 2*kd.outSlowD[index] )
+  //       })
 
-        return {
-          K: kd.outSlowK.length>1?kd.outSlowK:kd.outSlowK[0],
-          D: kd.outSlowD.length>1?kd.outSlowD:kd.outSlowD[0],
-          J: J.length>1?J:J[0]
-        }
+  //       return {
+  //         K: kd.outSlowK.length>1?kd.outSlowK:kd.outSlowK[0],
+  //         D: kd.outSlowD.length>1?kd.outSlowD:kd.outSlowD[0],
+  //         J: J.length>1?J:J[0]
+  //       }
 
-      } else {
-        return {K:0, D:0, J:0}
-      }
+  //     } else {
+  //       return {K:0, D:0, J:0}
+  //     }
       
-    } catch(e) {
-      this.error(e)
-      return {K:0, D:0, J:0}
-    }
-  }
+  //   } catch(e) {
+  //     this.error(e)
+  //     return {K:0, D:0, J:0}
+  //   }
+  // }
 
 
   /*

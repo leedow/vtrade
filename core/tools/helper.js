@@ -104,6 +104,33 @@ module.exports = {
 
     return Math.sqrt(total)
   },
+  // 标准差pro
+  SDP(data, n) {
+    let ma = 0, max = 0, min = 0
+
+    if(n) {
+      data = data.slice(data.length-n)
+    }
+
+    data.forEach(item => {
+      ma += item/data.length
+    })
+
+    let total = 0
+    data.forEach(item => {
+      let dif = (item - ma)/ma
+      total += (item - ma)*(item - ma)/data.length
+
+      if( dif - max > 0 ) max = dif
+      if( dif - min < 0 ) min = dif
+    })
+
+    return {
+      max,
+      min,
+      sd: Math.sqrt(total)
+    } 
+  },
   /**
    * 输入最大最小值，和最小区间，划分数组到指定长度区间的数组中
    */

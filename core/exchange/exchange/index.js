@@ -15,6 +15,8 @@ module.exports = class Exchange extends Ex{
     this.createAsset(this.from, 0)
     this.createAsset(this.to, 0)
 
+    this.avgPrice = 0
+
     this.clear = new Clear()
 
     this.subscribeRobotTicker()
@@ -40,8 +42,13 @@ module.exports = class Exchange extends Ex{
         }
         case FILLED: {
           if(order.side == 'buy') {
+            let holdAmount = this.getAsset(this.to).balance
+            this.avgPrice = (this.avgPrice*holdAmount + order.amountFill*order.price)/(holdAmount + order.amountFill)
+
             this.getAsset(this.from).decrease(order.amountFill*order.price)
             this.getAsset(this.to).increase(order.amountFill-order.fee)
+
+
           } else if(order.side == 'sell') {
             this.getAsset(this.from).increase(order.amountFill*order.price-order.fee)
             this.getAsset(this.to).decrease(order.amountFill)
@@ -94,6 +101,7 @@ module.exports = class Exchange extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
+      product: this.product,
       side: 'buy',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,
@@ -105,6 +113,7 @@ module.exports = class Exchange extends Ex{
       robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
       params: this._getValue(params, 'params', null),
+      type: this._getValue(params, 'type', 'limit'),
       father: this
     })
 
@@ -139,6 +148,7 @@ module.exports = class Exchange extends Ex{
     let order = new this.Order({
       exchange: this.exchange,
       pair: this.pair,
+      product: this.product,
       side: 'sell',
       amountAcc: this.amountAcc,
       priceAcc: this.priceAcc,
@@ -150,6 +160,7 @@ module.exports = class Exchange extends Ex{
       robotId: this.robotId,
       postOnly: this._getValue(params, 'postOnly', false),
       params: this._getValue(params, 'params', null),
+      type: this._getValue(params, 'type', 'limit'),
       father: this
     })
 

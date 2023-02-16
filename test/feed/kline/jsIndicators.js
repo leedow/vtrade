@@ -86,6 +86,19 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     assert.equal( kline.sd(2), Math.sqrt( (85-avg1)*(85-avg1)/2 + (77-avg1)*(77-avg1)/2 ) )
   })
 
+  it('sdvol',function(){
+    let avg1 = (5+4)/2
+    assert.equal( kline.sdvol(2), Math.sqrt( (5-avg1)*(5-avg1)/2 + (4-avg1)*(4-avg1)/2 ) )
+  })
+
+  it('sdp',function(){
+    let avg1 = (85+77)/2
+    assert.equal( kline.sdp(2).sd, Math.sqrt( (85-avg1)*(85-avg1)/2 + (77-avg1)*(77-avg1)/2 ) )
+    assert.equal( kline.sdp(2).max, (85 - avg1)/avg1 )
+    assert.equal( kline.sdp(2).min, (77 - avg1)/avg1 )
+
+  })
+
   it('atr',function(){
     assert.equal( kline.atr(2), 309 )
   })

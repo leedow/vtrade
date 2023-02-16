@@ -202,6 +202,24 @@ module.exports = class Kline extends Base{
     } 
   }
 
+  sdvol(step=30, size = 1) {
+    if(size == 1) {
+      return helper.SD(this.getDataIgnore().map(item => item.vol||0), step) 
+    } else {
+      console.log('sd has not support size > 1 yet')
+      return null
+    } 
+  }
+
+  sdp(step=30, size = 1) {
+    if(size == 1) {
+      return helper.SDP(this.getDataIgnore().map(item => item.close), step) 
+    } else {
+      console.log('sd has not support size > 1 yet')
+      return null
+    } 
+  }
+
   // SMA(step=30, size = 1) {
   //   return this.talib('SMA', {step, ma: 'SMA', size: size-1})
   // }

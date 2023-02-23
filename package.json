@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/leedow/vtrade#readme",
   "devDependencies": {
-    "mocha": "^6.2.2"
+    "mocha": "^10.2.0"
   },
   "dependencies": {
     "trading-signals": "^1.6.0",

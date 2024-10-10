@@ -151,6 +151,25 @@ describe('测试feed/kline模块指标计算，原生js计算的指标',function
     assert.equal( kline.atr(2), (309+195)/2 )
   })
 
+
+  it('rsi',function(){
+    let kline = new Kline()
+  
+    kline.filterSame = false
+    kline.memoryTimeLimit = 99999999999999999
+    kline.ktype = 60
+    kline.ignoreIncomplete = false
+    const ks = [{id:1,close:10},{id:2,close:25},{id:3,close:20},{id:4,close:30},{id:5,close:10}]
+    ks.forEach(k => {
+      kline.remember(k)
+    })
+
+    const priceChanges = [15, -5, 10, -20]
+    const up = (25/2)
+    const down = Math.abs(-25/2)
+    assert.equal( kline.rsi(4), 100-100/(1+up/down) )
+  })
+
  
 
 })

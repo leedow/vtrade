@@ -2,7 +2,7 @@ var assert = require('assert')
 var Kline = require('../../../core/feed/kline')
 var Tickers = require('../../../core/feed/tickers')
 var helper = require('../../../core/tools/helper')
-let talib = require('talib')
+
 
 describe('测试feed/kline模块指标计算，原生js计算的指标',function(){
   let kline = new Kline()

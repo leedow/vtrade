@@ -139,7 +139,7 @@ module.exports = class Kline extends Base{
       })
 
       if(priceChanges.length == 0) return null
-      console.log(priceChanges)
+      //console.log(priceChanges)
 
       const upward = priceChanges.filter(item => item > 0)
       const downward = priceChanges.filter(item => item < 0)

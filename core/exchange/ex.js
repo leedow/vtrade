@@ -40,6 +40,23 @@ module.exports = class Ex extends Core {
 
     this.resetPriceFill = true // 是否自动更新market成交价，若为false则默认以限价成交
 
+
+    /**
+     * 订单自定义成交价，以及是否成交规则
+     * 举例
+     * 1.limit订单判定是否成交，修改成交价格
+     * this.orderFillPriceRule = (ex, order) => {
+     *    // 判断逻辑
+     *    order.price = price*ex.klines[0].getLast().open //修改报价为当日开盘价
+     * 
+     *    return {
+     *      buyPrice,
+     *      sellPrice //通过重置买卖价格控制是否成交
+     *    }
+     * }
+     */
+    this.limitOrderFillPriceRule = null // 现价订单自定义成交价，以及是否成交规则
+
     // this.copyOptions(options)
     // this.subscribeRobotTicker()
     // this.subscribeRobotTrade()
@@ -255,10 +272,21 @@ module.exports = class Ex extends Core {
     // }
     //console.log('ehcking....')
     this.orders.forEach(order => {
-      order.checkStatusByPrice(
-        this.getBidPrice(),
-        this.getAskPrice()
-      )
+
+      if(order.type == 'limit' && this.limitOrderFillPriceRule) {
+        const filterResult = this.limitOrderFillPriceRule(this, order)
+        order.checkStatusByPrice(
+          filterResult.buyPrice,
+          filterResult.sellPrice
+        )
+      } else {
+        order.checkStatusByPrice(
+          this.getBidPrice(),
+          this.getAskPrice()
+        )
+      }
+
+       
     })
 
   }

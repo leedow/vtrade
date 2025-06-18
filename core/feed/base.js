@@ -233,6 +233,18 @@ module.exports = class Base extends Core {
   }
 
   /**
+   * 获取指定时间戳的数据
+   * @param {number} time 单位ms的时间戳
+   * @param {boolean} withTime 是否返回带时间戳的数据
+   * @returns {object|false} 如果找到返回数据对象，否则返回false
+   */
+  getDataByTime(time, withTime=false) {
+    const found = this.data.find(item => item.t == time)
+    if (!found) return false
+    return withTime ? found : found.d
+  }
+
+  /**
    * 去除数组中的t项
    */
   _mapData(data) {

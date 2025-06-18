@@ -32,7 +32,21 @@ module.exports = class Kline extends Base{
     //this.initTalib()
   }
 
+  getKlineByTime(time, timeTag='etime') {
+    let data = this.getData()
+    let closest = null
+    let minDiff = Infinity
 
+    for (let k of data) {
+      let diff = Math.abs(k[timeTag] - time)
+      if (diff < this.ktype * 1000 && diff < minDiff) {
+        minDiff = diff
+        closest = k
+      }
+    }
+
+    return closest
+  }
 
   ma(step=30, size = 1, offset=0) {
     if(size == 1) {

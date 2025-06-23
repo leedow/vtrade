@@ -220,4 +220,15 @@ module.exports = class Robot extends Core{
   // }
 
 
+  /**
+   * 优雅退出，注销所有事件订阅防止内存溢出
+   */
+  destroy() {
+    this.exchanges.forEach(ex => {
+      ex.unsubscribeAll()
+    })
+    this.unsubscribeAll()
+  }
+
+
 }

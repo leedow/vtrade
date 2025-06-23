@@ -10,21 +10,19 @@ module.exports = class Core {
     this.robotId = 0
     this.events = events
     this.modelName = ''
-
     this.enableLog = true
     this.enableError = true
-
     this.clock = clock
-
     this.events.setMaxListeners(100)
+    this.eventsCallbacks = [] // 回调函数的引用，用于安全推出注销事件订阅使用
   }
 
   /**
    * 初始化参数
    */
   copyOptions(options) {
-    if(typeof options == 'object') {
-      for(let key in options) {
+    if (typeof options == 'object') {
+      for (let key in options) {
         this[key] = options[key]
       }
     }
@@ -33,23 +31,29 @@ module.exports = class Core {
   /**
    * 从一个对象中获取指定参数，如果不存在则返回res
    */
-  _getValue(aim, key, res=null) {
+  _getValue(aim, key, res = null) {
     try {
-      return aim[key]?aim[key]:res
-    } catch(e) {
+      return aim[key] ? aim[key] : res
+    } catch (e) {
       // console.error(e)
       return res
     }
   }
 
-
   /**
    * 订阅
    */
   subscribe(eventName, listener) {
-    //console.log(`${eventName}-${this._id}`)
-    this.events.on(`${eventName}_${this._id}`, listener)
+    let eventNameId = `${eventName}_${this._id}`
+    this.events.on(eventNameId, listener)
+
+    this.eventsCallbacks.push({
+      eventName: eventNameId,
+      listener
+    })
+     
   }
+
 
   /**
    * 向目标对象广播事件
@@ -62,7 +66,13 @@ module.exports = class Core {
    * 订阅世界事件
    */
   subscribeGlobal(eventName, listener) {
+     
     this.events.on(eventName, listener)
+    this.eventsCallbacks.push({
+      eventName,
+      listener
+    })
+     
   }
 
   /**
@@ -73,15 +83,38 @@ module.exports = class Core {
   }
 
   log(content) {
-    if(this.enableLog) {
+    if (this.enableLog) {
       console.log(content)
     }
   }
 
   error(content) {
-    if(this.enableError) {
+    if (this.enableError) {
       console.error(content)
     }
   }
+
+  /**
+  * 注销所有事件订阅
+  */
+  unsubscribeAll() {
+    for (let callback of this.eventsCallbacks) {
+      this.events.off(callback.eventName, callback.listener)
+    }
+    this.eventsCallbacks = []
+  }
+
+  /**
+   * 查询事件订阅数量
+   */
+  getEventsCount() {
+    const eventsNames = this.events.eventNames()
+    let totalListeners = 0
+    for (const name of eventsNames) {
+      totalListeners += this.events.listeners(name).length
+    }
+    return totalListeners
+  }
+
 
 }
